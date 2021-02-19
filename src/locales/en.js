@@ -17,6 +17,7 @@ export const en = {
   Groups: 'Groups',
   Customers: 'Customers',
   Blackouts: 'Blackouts',
+  TwilioRules: 'Twilio Rules',
   Permissions: 'Permissions',
   APIKeys: 'API Keys',
   Labels: 'Labels',
@@ -189,6 +190,17 @@ export const en = {
   Active: 'Active',
   Pending: 'Pending',
   Expired: 'Expired',
+
+  // Twilio Rules
+  TwilioRules: 'Twilio Rules',
+  Deactivated: 'Deactivated',
+  NewTwilioRule: 'New Twilio Rule',
+  EditTwilioRule: 'Edit Twilio Rule',
+  FromNumber: 'From Number',
+  ToNumber: 'To Number',
+  StartTime: 'Start Time',
+  EndTime: 'End Time',
+  Days: 'Days',
 
   // Customers
   LookUp: 'Look Up',
