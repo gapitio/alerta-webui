@@ -17,6 +17,7 @@ export const fr = {
   Groups: 'Groupes',
   Customers: 'Clients',
   Blackouts: 'Gestion des temps d\'arrêts',
+  TwilioRules: 'Règles Twilio',
   Permissions: 'Permissions',
   APIKeys: 'Clés API',
   Searches: 'Searches',
@@ -133,6 +134,10 @@ export const fr = {
   // Alert list filter
   Filters: 'Filtres',
   FilterDescription: 'Filtrer les résultats par recherche de texte',
+  AllEnvironments: 'Tous les environnement',
+  EnvironmentDescription: 'Choisissez un ou plusieurs environnement',
+  AllSeverities: 'Tous les gravité',
+  SeverityDescription: 'Choisissez un ou plusieurs gravité',
   AllStatuses: 'Tous les statuts',
   StatusDescription: 'Choisissez un ou plusieurs statuts',
   AllCustomers: 'Tous les clients',
@@ -185,6 +190,18 @@ export const fr = {
   Active: 'Actif',
   Pending: 'En Attente',
   Expired: 'Expiré',
+
+  // Twilio Rules
+  TwilioRules: 'Règles Twilio',
+  Deactivated: 'Désactivé',
+  NewTwilioRule: 'Nouvelle Règle Twilio',
+  EditTwilioRule: 'Modifier la Règle Twilio',
+  FromNumber: 'Du Numéro',
+  ToNumber: 'Au Numéro',
+  StartTime: 'Heure de Début',
+  EndTime: 'Heure de Fin',
+  Days: 'Jours',
+  
 
   // Customers
   LookUp: 'Chercher',
@@ -252,6 +269,9 @@ export const fr = {
   minutes: 'minutes',
   AckTimeout: 'Durée de mise en affecter',
   ShelveTimeout: 'Durée de mise en attente',
+  BlackoutSettings: 'Paramètres de blackout',
+  BlackoutStartNow: 'Commencer immédiatement la période d\'incident',
+  BlackoutPeriod: 'Durée de la période d\'incident',
   hours: 'heures',
 
   // Profile
@@ -290,11 +310,12 @@ export const fr = {
   EditUser: 'Modifier utilisateur',
   
   // Reports
-  TopFlapping: 'Top 10 des signaux de présence',
+  Top: 'Top',
+  Flapping: 'des signaux de présence',
+  Offenders: 'du nombres d\'alerte',
+  Standing: 'des alertes constantes',
   TopFlappingDescription: 'Sources d\'alerte ayant généré le plus grand nombre de changements de gravité d\'alerte.',
-  TopOffenders: 'Top 10 du nombres d\'alerte',
   TopOffendersDescription: 'Sources d’alerte fréquentes ayant généré le plus grand nombre d’alertes et de doublons d’alerte.',
-  TopStanding: 'Top 10 des alertes constantes',
   TopStandingDescription: 'Sources d\'alertes obsolètes ayant des alertes actives pendant une durée prolongée.',
   
   Count: 'Compteur',

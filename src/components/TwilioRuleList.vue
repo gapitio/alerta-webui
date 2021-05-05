@@ -26,6 +26,20 @@
                     clearable
                   />
                 </v-flex>
+
+                <v-flex
+                  xs12
+                >
+                  <v-select
+                    v-model="editedItem.type"
+                    :items="types"
+                    :label="$t('Type')"
+                    :rules="[rules.required]"
+                    required
+                  />
+                </v-flex>
+
+
                 <v-flex
                   xs12
                 >
@@ -39,76 +53,69 @@
                 </v-flex>
 
                 <v-flex
-                  xs4
+                  xs12
                 >
-                  <v-menu
-                    ref="menu1"
-                    v-model="menu1"
-                    :close-on-content-click="false"
-                    :nudge-right="40"
-                    lazy
-                    transition="scale-transition"
-                    offset-y
-                    full-width
-                    max-width="290px"
-                    min-width="290px"
-                  >
-                    <v-text-field
-                      slot="activator"
-                      v-model="editedItem.period.startDate"
-                      :label="$t('StartDate')"
-                      prepend-icon="event"
-                    />
-                    <v-date-picker
-                      v-model="editedItem.period.startDate"
-                      no-title
-                      @input="menu1 = false"
-                    />
-                  </v-menu>
+                  <v-text-field
+                    v-model.trim="editedItem.fromNumber"
+                    :label="$t('FromNumber')"
+                    :rules="[rules.required]"
+                    required
+                  />
                 </v-flex>
 
                 <v-flex
-                  xs2
+                  xs12
+                >
+                  <v-combobox
+                    v-model="editedItem.toNumbers"
+                    :label="$t('ToNumber')"
+                    multiple
+                    chips
+                  >
+                  </v-combobox>
+                </v-flex>
+
+                <v-flex
+                  xs12
+                >
+                  <v-select
+                    v-model="editedItem.severity"
+                    :items="severities"
+                    :label="$t('Severity')"
+                    chips
+                    multiple
+                  />
+                </v-flex>
+
+                <v-flex
+                  xs12
+                >
+                  <v-select
+                    v-model="editedItem.days"
+                    :items="days"
+                    :label="$t('Days')"
+                    chips
+                    multiple
+                  />
+                </v-flex>
+
+                <v-flex
+                  xs6
                 >
                   <v-combobox
                     v-model="editedItem.period.startTime"
                     :items="times"
+                    :label="$t('StartTime')"
                   />
                 </v-flex>
                 <v-flex
-                  xs2
+                  xs6
                 >
                   <v-combobox
                     v-model="editedItem.period.endTime"
                     :items="times"
+                    :label="$t('EndTime')"
                   />
-                </v-flex>
-
-                <v-flex
-                  xs4
-                >
-                  <v-menu
-                    v-model="menu2"
-                    :close-on-content-click="false"
-                    :nudge-right="40"
-                    lazy
-                    transition="scale-transition"
-                    offset-y
-                    full-width
-                    max-width="290px"
-                    min-width="290px"
-                  >
-                    <v-text-field
-                      slot="activator"
-                      v-model="editedItem.period.endDate"
-                      :label="$t('EndDate')"
-                    />
-                    <v-date-picker
-                      v-model="editedItem.period.endDate"
-                      no-title
-                      @input="menu2 = false"
-                    />
-                  </v-menu>
                 </v-flex>
 
                 <v-flex
@@ -185,17 +192,8 @@
                   xs12
                 >
                   <v-text-field
-                    v-model.trim="editedItem.origin"
-                    :label="$t('Origin')"
-                  />
-                </v-flex>
-
-                <v-flex
-                  xs12
-                >
-                  <v-text-field
                     v-model.trim="editedItem.text"
-                    :label="$t('Reason')"
+                    :label="$t('Text')"
                   />
                 </v-flex>
               </v-layout>
@@ -225,7 +223,7 @@
 
     <v-card>
       <v-card-title class="title">
-        {{ $t('Blackouts') }}
+        {{ $t('TwilioRules') }}
         <v-spacer />
         <v-btn-toggle
           v-model="status"
@@ -244,25 +242,14 @@
             </v-tooltip>
           </v-btn>
           <v-btn
-            value="pending"
+            value="deactivated"
             flat
           >
             <v-tooltip bottom>
               <v-icon slot="activator">
                 schedule
               </v-icon>
-              <span>{{ $t('Pending') }}</span>
-            </v-tooltip>
-          </v-btn>
-          <v-btn
-            value="expired"
-            flat
-          >
-            <v-tooltip bottom>
-              <v-icon slot="activator">
-                block
-              </v-icon>
-              <span>{{ $t('Expired') }}</span>
+              <span>{{ $t('Deactivated') }}</span>
             </v-tooltip>
           </v-btn>
         </v-btn-toggle>
@@ -278,11 +265,11 @@
 
       <v-data-table
         :headers="computedHeaders"
-        :items="blackouts"
-        :rows-per-page-items="rowsPerPageItems"
+        :items="twilio_rules"
         :pagination.sync="pagination"
+        :total-items="pagination.totalItems"
+        :rows-per-page-items="pagination.rowsPerPageItems"
         class="px-2"
-        :search="search"
         :loading="isLoading"
         must-sort
         sort-icon="arrow_drop_down"
@@ -297,6 +284,46 @@
             {{ props.item.customer }}
           </td>
           <td>{{ props.item.environment }}</td>
+          <td>{{ props.item.type }}</td>
+          <td><v-chip
+              outline
+              small
+            >
+              {{ props.item.fromNumber }}
+            </v-chip>
+          </td>
+          <td>
+            <v-chip
+              v-for="number in props.item.toNumbers"
+              :key="number"
+              outline
+              small
+            >
+              {{ number }}
+            </v-chip>
+          </td>
+          <td>
+            <v-chip
+              v-for="severity in props.item.severity"
+              :key="severity"
+              outline
+              small
+            >
+              {{ severity }}
+            </v-chip>
+          </td>
+          <td>
+            <v-chip
+              v-for="day in props.item.days"
+              :key="day"
+              outline
+              small
+            >
+              {{ day }}
+            </v-chip>
+          </td>
+          <td class="text-xs-left">{{ props.item.period.startTime }}</td>
+          <td class="text-xs-left">{{ props.item.period.endTime }}</td>
           <td>
             <v-chip
               v-for="service in props.item.service"
@@ -322,54 +349,26 @@
               </v-icon>{{ tag }}
             </v-chip>
           </td>
-          <td>{{ props.item.origin }}</td>
           <td class="text-xs-right">
             <v-tooltip top>
               {{ props.item.status | capitalize }}
-              <v-icon
-                v-if="props.item.status == 'pending'"
-                slot="activator"
-                light
-                small
-              >
-                schedule
-              </v-icon>
-
               <v-icon
                 v-if="props.item.status == 'active'"
                 slot="activator"
                 color="primary"
                 small
               >
-                notifications_paused
+                accept
               </v-icon>
 
               <v-icon
-                v-if="props.item.status == 'expired'"
+                v-if="props.item.status == 'deactivated'"
                 slot="activator"
                 small
               >
                 block
               </v-icon>
             </v-tooltip>
-          </td>
-          <td class="text-xs-left">
-            <date-time
-              :value="props.item.startTime"
-              format="mediumDate"
-            />
-          </td>
-          <td class="text-xs-left">
-            <date-time
-              :value="props.item.endTime"
-              format="mediumDate"
-            />
-          </td>
-          <td
-            class="text-xs-left text-no-wrap"
-          >
-            {{ props.item.endTime | until }}
-          </td>
           <td class="text-xs-left">
             {{ props.item.user }}
           </td>
@@ -378,7 +377,7 @@
           </td>
           <td class="text-no-wrap">
             <v-btn
-              v-has-perms.disable="'write:blackouts'"
+              v-has-perms.disable="'write:twilio_rules'"
               icon
               class="btn--plain mr-0"
               @click="editItem(props.item)"
@@ -391,7 +390,7 @@
               </v-icon>
             </v-btn>
             <v-btn
-              v-has-perms.disable="'write:blackouts'"
+              v-has-perms.disable="'write:twilio_rules'"
               icon
               class="btn--plain mx-0"
               @click="copyItem(props.item)"
@@ -404,7 +403,7 @@
               </v-icon>
             </v-btn>
             <v-btn
-              v-has-perms.disable="'write:blackouts'"
+              v-has-perms.disable="'write:twilio_rules'"
               icon
               class="btn--plain mx-0"
               @click="deleteItem(props.item)"
@@ -439,110 +438,128 @@
     </v-card>
 
     <list-button-add
-      perms="write:blackouts"
+      perms="write:twilio_rules"
       @add-to-list="dialog = true"
     />
   </div>
 </template>
 
 <script>
-import DateTime from './lib/DateTime'
 import ListButtonAdd from './lib/ListButtonAdd'
 import moment from 'moment'
 import i18n from '@/plugins/i18n'
 
 export default {
   components: {
-    DateTime,
     ListButtonAdd
   },
   data: vm => ({
-    descending: true,
-    page: 1,
-    rowsPerPageItems: [10, 20, 30, 40, 50],
-    pagination: {
-      sortBy: 'startTime',
-      rowsPerPage: 20
-    },
-    // totalItems: number,
-    status: ['active', 'pending', 'expired'],
+    status: ['active', 'deactivated'],
+    types: ['sms', 'call'],
+    days: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
     search: '',
     dialog: false,
     headers: [
       { text: i18n.t('Customer'), value: 'customer' },
       { text: i18n.t('Environment'), value: 'environment' },
+      { text: i18n.t('Type'), value: 'type' },
+      { text: i18n.t('FromNumber'), value: 'fromNumber' },
+      { text: i18n.t('ToNumber'), value: 'toNumbers' },
+      { text: i18n.t('Severity'), value: 'severity' },
+      { text: i18n.t('Days'), value: 'days' },
+      { text: i18n.t('Start'), value: 'startTime' },
+      { text: i18n.t('End'), value: 'endTime' },
       { text: i18n.t('Service'), value: 'service' },
       { text: i18n.t('Resource'), value: 'resource' },
       { text: i18n.t('Event'), value: 'event' },
       { text: i18n.t('Group'), value: 'group' },
       { text: i18n.t('Tags'), value: 'tags' },
-      { text: i18n.t('Origin'), value: 'origin' },
       { text: '', value: 'status' },
-      { text: i18n.t('Start'), value: 'startTime' },
-      { text: i18n.t('End'), value: 'endTime' },
-      { text: i18n.t('Expires'), value: 'remaining' },
       { text: i18n.t('User'), value: 'user' },
-      // { text: 'Created', value: 'createTime' }, FIXME
-      { text: i18n.t('Reason'), value: 'text' },
+      { text: 'Text', value: 'text' },
       { text: i18n.t('Actions'), value: 'name', sortable: false }
     ],
     editedId: null,
     editedItem: {
+      type: null,
       customer: null,
       environment: null,
+      fromNumber: null,
+      toNumbers: [],
       service: [],
       resource: null,
       event: null,
       group: null,
       tags: [],
-      origin: null,
       period: {
-        startDate: null,
-        startTime: null,
-        endDate: null,
-        endTime: null
+        startTime: '',
+        endTime: ''
       },
-      text: ''
+      startTime: '',
+      endTime: '',
+      text: '',
+      days:[],
+      severity:[]
     },
     menu1: false,
     menu2: false,
     defaultItem: {
+      type: 'sms',
       customer: null,
       environment: null,
+      fromNumber: null,
+      toNumbers: [],
       service: [],
       resource: null,
       event: null,
       group: null,
       tags: [],
-      origin: null,
       period: {
-        startDate: null,
-        startTime: null,
-        endDate: null,
-        endTime: null
+        startTime: '',
+        endTime: ''
       },
-      text: ''
+      startTime: '',
+      endTime: '',
+      text: '',
+      days:[],
+      severity:[]
     },
     rules: {
       required: v => !!v || i18n.t('Required')
     }
   }),
   computed: {
-    blackouts() {
-      return this.$store.state.blackouts.blackouts
+    twilio_rules() {
+      return this.$store.state.twilioRule.twilio_rules
         .filter(b => !this.status || this.status.includes(b.status))
+        .filter(b => this.search ? (Object.keys(b).some(k => b[k] && b[k].toString().includes(this.search))) : true)
         .map(b => {
-          let s = moment(b.startTime)
-          let e = moment(b.endTime)
-          return Object.assign(b, {
-            period: {
-              startDate: s.format('YYYY-MM-DD'),
-              startTime: s.format('HH:mm'),
-              endDate: e.format('YYYY-MM-DD'),
-              endTime: e.format('HH:mm')
-            }
+          let period = {
+            startTime: '',
+            endTime: ''
+          }
+          if(b.startTime !== null && b.endTime !== null) {
+            let sTime = new Date()
+            let eTime = new Date()
+            sTime.setUTCHours(parseInt(b.startTime.substr(0,2)), parseInt(b.startTime.substr(3)))
+            eTime.setUTCHours(parseInt(b.endTime.substr(0,2)), parseInt(b.endTime.substr(3)))
+            period.startTime = `${("0" + sTime.getHours()).slice(-2)}:${('0' + sTime.getMinutes()).slice(-2)}`
+            period.endTime = `${("0" + eTime.getHours()).slice(-2)}:${('0' + eTime.getMinutes()).slice(-2)}`
+          }
+
+          return Object.assign({...b}, {
+            period: period,
+            text: b.text.replace(/%\((\w*)\)s/g, "{$1}")
           })
         })
+    },
+    pagination: {
+      get() {
+        return this.$store.getters['twilioRule/pagination']
+      },
+      set(value) {
+        this.$store.dispatch('twilioRule/setPagination', value)
+      }
     },
     computedHeaders() {
       return this.headers.filter(h => !this.$config.customer_views ? h.value != 'customer' : true)
@@ -560,29 +577,27 @@ export default {
       return this.$store.getters['alerts/tags']
     },
     isLoading() {
-      return this.$store.state.blackouts.isLoading
+      return this.$store.state.twilioRule.isLoading
     },
     formTitle() {
-      return !this.editedId ? i18n.t('NewBlackout') : i18n.t('EditBlackout')
+      return !this.editedId ? i18n.t('NewTwilioRule') : i18n.t('EditTwilioRule')
     },
-    blackoutStartNow() {
-      return this.$store.getters.getPreference('blackoutStartNow')
-    },
-    blackoutPeriod() {
-      return (
-        (this.$store.getters.getPreference('blackoutPeriod') ||
-          this.$store.getters.getConfig('blackouts').duration)
-      )
+    severities() {
+      return Object.keys(this.$store.getters.getConfig("alarm_model").severity)
     },
     times() {
       return Array.from(
         {
-          length: (24 * 60) / 15
+          length: (24 * 60) / 15 + 1
         },
         (v, i) => {
-          let h = Math.floor((i * 15) / 60)
-          let m = i * 15 - h * 60
-          return ('0' + h).slice(-2) + ':' + ('0' + m).slice(-2)
+          if (i == 0) {
+            return ''
+          } else {
+            let h = Math.floor(((i-1) * 15) / 60)
+            let m = (i-1) * 15 - h * 60
+            return ('0' + h).slice(-2) + ':' + ('0' + m).slice(-2)
+          }
         }
       )
     },
@@ -596,25 +611,30 @@ export default {
     },
     refresh(val) {
       if (!val) return
-      this.getBlackouts()
+      this.getTwilioRules()
       this.getCustomers()
       this.getEnvironments()
       this.getServices()
       this.getTags()
+    },
+    pagination: {
+      handler () {
+        this.getTwilioRules()
+      },
+      deep: true
     }
   },
   created() {
-    this.getBlackouts()
+    this.getTwilioRules()
     this.getCustomers()
     this.getEnvironments()
     this.getServices()
     this.getTags()
     this.editedItem = Object.assign({}, this.defaultItem)
-    this.editedItem.period = this.defaultTimes()
   },
   methods: {
-    getBlackouts() {
-      this.$store.dispatch('blackouts/getBlackouts')
+    getTwilioRules() {
+      this.$store.dispatch('twilioRule/getTwilioRules')
     },
     getCustomers() {
       this.$store.dispatch('customers/getCustomers')
@@ -628,33 +648,6 @@ export default {
     getTags() {
       this.$store.dispatch('alerts/getTags')
     },
-    getBlackoutTime(date) {
-      if (this.blackoutStartNow) {
-        return moment(date)
-      }
-      // return soonest 15 minute interval
-      return moment(
-        new Date(
-          Math.ceil(date.getTime() / 1000 / 60 / 15) * 1000 * 60 * 15
-        ).toISOString()
-      )
-    },
-    defaultTimes() {
-      let now = new Date()
-      let start = this.getBlackoutTime(now)
-      now.setTime(now.getTime() + this.blackoutPeriod * 1000)
-      let end = this.getBlackoutTime(now)
-
-      return {
-        startDate: start.format('YYYY-MM-DD'),
-        startTime: start.format('HH:mm'),
-        endDate: end.format('YYYY-MM-DD'),
-        endTime: end.format('HH:mm')
-      }
-    },
-    toISODate(date, time) {
-      return new Date(date + ' ' + time).toISOString()
-    },
     editItem(item) {
       this.editedId = item.id
       this.editedItem = Object.assign({}, item)
@@ -662,20 +655,18 @@ export default {
     },
     copyItem(item) {
       this.editedItem = Object.assign({}, item)
-      this.editedItem.period = this.defaultTimes()
       this.editedId = null
       this.dialog = true
     },
     deleteItem(item) {
       confirm(i18n.t('ConfirmDelete')) &&
-        this.$store.dispatch('blackouts/deleteBlackout', item.id)
+        this.$store.dispatch('twilioRule/deleteTwilioRule', item.id)
     },
     close() {
       this.dialog = false
       setTimeout(() => {
         this.$refs.form.resetValidation()
         this.editedItem = Object.assign({}, this.defaultItem)
-        this.editedItem.period = this.defaultTimes()
         this.editedId = null
       }, 300)
     },
@@ -686,42 +677,45 @@ export default {
       }
     },
     save() {
+      let sTimeStr = null
+      let eTimeStr = null
+      if (this.editedItem.period.startTime !== '' && this.editedItem.period.endTime !== '') {
+        let sTime = new Date()
+        let eTime = new Date()
+        sTime.setHours(this.editedItem.period.startTime.substr(0,2), this.editedItem.period.startTime.substr(3))
+        eTime.setHours(this.editedItem.period.endTime.substr(0,2), this.editedItem.period.endTime.substr(3))
+        sTimeStr = `${("0" + sTime.getUTCHours()).slice(-2)}:${('0' + sTime.getUTCMinutes()).slice(-2)}`
+        eTimeStr = `${("0" + eTime.getUTCHours()).slice(-2)}:${('0' + eTime.getUTCMinutes()).slice(-2)}`
+      }
       if (this.editedId) {
-        this.$store.dispatch('blackouts/updateBlackout', [
+        this.$store.dispatch('twilioRule/updateTwilioRule', [
           this.editedId,
           {
             customer: this.editedItem.customer,
+            type: this.editedItem.type,
             environment: this.editedItem.environment,
+            toNumbers: this.editedItem.toNumbers,
+            fromNumber: this.editedItem.fromNumber,
             service: this.editedItem.service,
             resource: this.editedItem.resource,
             event: this.editedItem.event,
             group: this.editedItem.group,
             tags: this.editedItem.tags,
-            origin: this.editItem.origin,
-            startTime: this.toISODate(
-              this.editedItem.period.startDate,
-              this.editedItem.period.startTime
-            ),
-            endTime: this.toISODate(
-              this.editedItem.period.endDate,
-              this.editedItem.period.endTime
-            ),
-            text: this.editedItem.text
+            startTime: sTimeStr,
+            endTime: eTimeStr,
+            text: this.editedItem.text.replace(/\{(\w*)\}/g, "%($1)s"),
+            days: this.editedItem.days,
+            severity: this.editedItem.severity
           }
         ])
       } else {
         this.$store.dispatch(
-          'blackouts/createBlackout',
+          'twilioRule/createTwilioRule',
           Object.assign(this.editedItem, {
             id: null,
-            startTime: this.toISODate(
-              this.editedItem.period.startDate,
-              this.editedItem.period.startTime
-            ),
-            endTime: this.toISODate(
-              this.editedItem.period.endDate,
-              this.editedItem.period.endTime
-            )
+            startTime: sTimeStr,
+            endTime: eTimeStr,
+            text: this.editedItem.text.replace(/\{(\w*)\}/g, "%($1)s")
           })
         )
       }
