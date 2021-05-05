@@ -134,6 +134,10 @@ export const de = {
   // Alert list filter
   Filters: 'Filter',
   FilterDescription: 'Ergebnisse durch Textsuche filtern',
+  AllEnvironments: 'Alle Umgebung',
+  EnvironmentDescription: 'Wähle einen oder mehrere Umgebung',
+  AllSeverities: 'Alle Schweregrad',
+  SeverityDescription: 'Wähle einen oder mehrere Schweregrad',
   AllStatuses: 'Alle Status',
   StatusDescription: 'Wähle einen oder mehrere Status',
   AllCustomers: 'Alle Kunden',
@@ -264,6 +268,9 @@ export const de = {
   minutes: 'Minuten',
   AckTimeout: 'Ack timeout',
   ShelveTimeout: 'Shelve timeout',
+  BlackoutSettings: 'Blackoutseinstellungen',
+  BlackoutStartNow: 'Starten Sie den Zeitraum sofort',
+  BlackoutPeriod: 'Blackout Zeitraum',
   hours: 'Stunden',
 
   // Profile
@@ -302,11 +309,12 @@ export const de = {
   EditUser: 'Bearbeite Nutzer',
 
   // Reports
-  TopFlapping: 'Top 10 Flapping',
+  Top: 'Top',
+  Flapping: 'Flapping',
+  Offenders: 'Offenders',
+  Standing: 'Standing',
   TopFlappingDescription: 'Chattering and fleeting alert sources that have generated the most number of alert severity changes.',
-  TopOffenders: 'Top 10 Offenders',
   TopOffendersDescription: 'Frequently occurring alert sources that have generated the most number of alerts and alert duplicates.',
-  TopStanding: 'Top 10 Standing',
   TopStandingDescription: 'Stale alert sources that have active alerts for a prolonged duration.',
   
   Count: 'Anzahl',

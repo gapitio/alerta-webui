@@ -185,6 +185,15 @@
                   xs12
                 >
                   <v-text-field
+                    v-model.trim="editedItem.origin"
+                    :label="$t('Origin')"
+                  />
+                </v-flex>
+
+                <v-flex
+                  xs12
+                >
+                  <v-text-field
                     v-model.trim="editedItem.text"
                     :label="$t('Reason')"
                   />
@@ -270,10 +279,10 @@
       <v-data-table
         :headers="computedHeaders"
         :items="blackouts"
+        :rows-per-page-items="rowsPerPageItems"
         :pagination.sync="pagination"
-        :total-items="pagination.totalItems"
-        :rows-per-page-items="pagination.rowsPerPageItems"
         class="px-2"
+        :search="search"
         :loading="isLoading"
         must-sort
         sort-icon="arrow_drop_down"
@@ -313,6 +322,7 @@
               </v-icon>{{ tag }}
             </v-chip>
           </td>
+          <td>{{ props.item.origin }}</td>
           <td class="text-xs-right">
             <v-tooltip top>
               {{ props.item.status | capitalize }}
@@ -447,6 +457,14 @@ export default {
     ListButtonAdd
   },
   data: vm => ({
+    descending: true,
+    page: 1,
+    rowsPerPageItems: [10, 20, 30, 40, 50],
+    pagination: {
+      sortBy: 'startTime',
+      rowsPerPage: 20
+    },
+    // totalItems: number,
     status: ['active', 'pending', 'expired'],
     search: '',
     dialog: false,
@@ -458,6 +476,7 @@ export default {
       { text: i18n.t('Event'), value: 'event' },
       { text: i18n.t('Group'), value: 'group' },
       { text: i18n.t('Tags'), value: 'tags' },
+      { text: i18n.t('Origin'), value: 'origin' },
       { text: '', value: 'status' },
       { text: i18n.t('Start'), value: 'startTime' },
       { text: i18n.t('End'), value: 'endTime' },
@@ -476,6 +495,7 @@ export default {
       event: null,
       group: null,
       tags: [],
+      origin: null,
       period: {
         startDate: null,
         startTime: null,
@@ -494,6 +514,7 @@ export default {
       event: null,
       group: null,
       tags: [],
+      origin: null,
       period: {
         startDate: null,
         startTime: null,
@@ -510,7 +531,6 @@ export default {
     blackouts() {
       return this.$store.state.blackouts.blackouts
         .filter(b => !this.status || this.status.includes(b.status))
-        .filter(b => this.search ? (Object.keys(b).some(k => b[k] && b[k].toString().includes(this.search))) : true)
         .map(b => {
           let s = moment(b.startTime)
           let e = moment(b.endTime)
@@ -523,14 +543,6 @@ export default {
             }
           })
         })
-    },
-    pagination: {
-      get() {
-        return this.$store.getters['blackouts/pagination']
-      },
-      set(value) {
-        this.$store.dispatch('blackouts/setPagination', value)
-      }
     },
     computedHeaders() {
       return this.headers.filter(h => !this.$config.customer_views ? h.value != 'customer' : true)
@@ -552,6 +564,15 @@ export default {
     },
     formTitle() {
       return !this.editedId ? i18n.t('NewBlackout') : i18n.t('EditBlackout')
+    },
+    blackoutStartNow() {
+      return this.$store.getters.getPreference('blackoutStartNow')
+    },
+    blackoutPeriod() {
+      return (
+        (this.$store.getters.getPreference('blackoutPeriod') ||
+          this.$store.getters.getConfig('blackouts').duration)
+      )
     },
     times() {
       return Array.from(
@@ -580,12 +601,6 @@ export default {
       this.getEnvironments()
       this.getServices()
       this.getTags()
-    },
-    pagination: {
-      handler () {
-        this.getBlackouts()
-      },
-      deep: true
     }
   },
   created() {
@@ -613,7 +628,11 @@ export default {
     getTags() {
       this.$store.dispatch('alerts/getTags')
     },
-    getNext15mins(date) {
+    getBlackoutTime(date) {
+      if (this.blackoutStartNow) {
+        return moment(date)
+      }
+      // return soonest 15 minute interval
       return moment(
         new Date(
           Math.ceil(date.getTime() / 1000 / 60 / 15) * 1000 * 60 * 15
@@ -622,9 +641,9 @@ export default {
     },
     defaultTimes() {
       let now = new Date()
-      let start = this.getNext15mins(now)
-      now.setTime(now.getTime() + 1 * 60 * 60 * 1000) // plus 1 hour
-      let end = this.getNext15mins(now)
+      let start = this.getBlackoutTime(now)
+      now.setTime(now.getTime() + this.blackoutPeriod * 1000)
+      let end = this.getBlackoutTime(now)
 
       return {
         startDate: start.format('YYYY-MM-DD'),
@@ -678,6 +697,7 @@ export default {
             event: this.editedItem.event,
             group: this.editedItem.group,
             tags: this.editedItem.tags,
+            origin: this.editItem.origin,
             startTime: this.toISODate(
               this.editedItem.period.startDate,
               this.editedItem.period.startTime
