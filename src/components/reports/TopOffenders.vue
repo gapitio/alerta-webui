@@ -4,7 +4,7 @@
       <v-card-title primary-title>
         <div>
           <div class="headline">
-            {{ $t('TopOffenders') }}
+            {{ $t('Top') }} {{ rowsPerPage }} {{ $t('Offenders') }}
           </div><br>
           <span class="grey--text">{{ $t('TopOffendersDescription') }}</span>
         </div>
@@ -46,7 +46,6 @@
 </template>
 
 <script>
-import moment from 'moment'
 import i18n from '@/plugins/i18n'
 
 export default {
@@ -62,13 +61,37 @@ export default {
   }),
   computed: {
     top10() {
-      return this.$store.state.alerts.offenders
+      if (this.filter) {
+        return this.$store.state.reports.offenders
+          .filter(alert =>
+            this.filter.text
+              ? Object.keys(alert).some(k => alert[k] && alert[k].toString().toLowerCase().includes(this.filter.text.toLowerCase()))
+              : true
+          )
+      } else {
+        return this.$store.state.reports.offenders
+      }
+    },
+    filter() {
+      return this.$store.state.reports.filter
+    },
+    rowsPerPage() {
+      return this.$store.state.reports.pagination.rowsPerPage
     },
     refresh() {
       return this.$store.state.refresh
     }
   },
   watch: {
+    filter: {
+      handler(val) {
+        this.getTopOffenders()
+      },
+      deep: true
+    },
+    rowsPerPage(val) {
+      this.getTopOffenders()
+    },
     refresh(val) {
       val || this.getTopOffenders()
     }
@@ -78,7 +101,7 @@ export default {
   },
   methods: {
     getTopOffenders() {
-      return this.$store.dispatch('alerts/getTopOffenders')
+      return this.$store.dispatch('reports/getTopOffenders')
     }
   }
 }
