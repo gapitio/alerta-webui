@@ -1,6 +1,6 @@
 Alerta Web UI 7.0
 =================
-
+notification
 [![Actions Status](https://github.com/alerta/alerta-webui/workflows/CI%20Tests/badge.svg)](https://github.com/alerta/alerta-webui/actions) [![Slack chat](https://img.shields.io/badge/chat-on%20slack-blue?logo=slack)](https://slack.alerta.dev)
 
 Version 7.0 of the Alerta web UI is a [VueJS](https://vuejs.org/) web app.
