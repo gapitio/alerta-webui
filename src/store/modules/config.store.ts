@@ -5,6 +5,8 @@ const state = {
   alarm_model: {},  // includes severity, colors and status maps
 
   auth_required: true,
+  allow_readonly: false,
+  readonly_scopes: ['read'],
   provider: 'basic',
   customer_views: false,
   signup_enabled: true,
@@ -23,6 +25,8 @@ const state = {
   colors: {},  // moved to alarm_model
 
   timeouts: {}, // includes alert, heartbeat, ack and shelve timeouts
+
+  blackouts: {}, // include default duration
 
   dates: {
     longDate: 'ddd D MMM, YYYY HH:mm:ss.SSS Z',

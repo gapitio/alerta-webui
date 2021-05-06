@@ -67,6 +67,13 @@ export function createRouter(basePath): VueRouter {
         meta: { title: 'Blackouts', requiresAuth: true }
       },
       {
+        path: '/twiliorules',
+        name: 'twiliorules',
+        component: () =>
+          import(/* webpackChunkName: 'user' */ './views/TwilioRule.vue'),
+        meta: { title: 'TwilioRules', requiresAuth: true }
+      },
+      {
         path: '/perms',
         name: 'perms',
         component: () =>
@@ -172,7 +179,8 @@ export function createRouter(basePath): VueRouter {
   router.beforeEach((to, from, next) => {
     if ((store.getters.getConfig('auth_required') &&
       to.matched.some(record => record.meta.requiresAuth))) {
-      if (!store.getters['auth/isLoggedIn']) {
+      if (!store.getters['auth/isLoggedIn'] && 
+        !store.getters.getConfig('allow_readonly')) {
         next({
           path: '/login',
           query: { redirect: to.fullPath }
