@@ -17,7 +17,6 @@ export const fr = {
   Groups: 'Groupes',
   Customers: 'Clients',
   Blackouts: 'Gestion des temps d\'arrêts',
-  TwilioRules: 'Règles Twilio',
   Permissions: 'Permissions',
   APIKeys: 'Clés API',
   Searches: 'Searches',
@@ -191,11 +190,7 @@ export const fr = {
   Pending: 'En Attente',
   Expired: 'Expiré',
 
-  // Twilio Rules
-  TwilioRules: 'Règles Twilio',
   Deactivated: 'Désactivé',
-  NewTwilioRule: 'Nouvelle Règle Twilio',
-  EditTwilioRule: 'Modifier la Règle Twilio',
   FromNumber: 'Du Numéro',
   ToNumber: 'Au Numéro',
   StartTime: 'Heure de Début',
