@@ -29,7 +29,7 @@
           slot-scope="props"
         > 
           <tr
-            :style="{'background-color': severityColor(props.item.confirmed, props.item.sent)}"
+            :style="{'background-color': severityColor(props.item.confirmed, props.item.sent), 'color': 'black'}"
           >
             <td>{{ props.item.id }}</td>
             <td>{{ props.item.sent }}</td>
@@ -160,7 +160,7 @@ export default {
     },
     severityColor(confirmed, sent) {
       const config = this.$store.getters.getConfig('colors')
-      return config.severity[confirmed ? 'ok' : sent ? 'warning' : 'critical'] || 'white'
+      return config.severity[confirmed ? 'ok' : sent ? 'normal' : 'critical'] || 'white'
     },
     findAlert(id){
       this.$router.push({ path: `/alerts?q=id:"${id}"` })
