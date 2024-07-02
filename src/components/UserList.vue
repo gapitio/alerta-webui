@@ -63,7 +63,7 @@
                 >
                   <v-text-field
                     v-model.trim="editedItem.email"
-                    :disabled="!isBasicAuth"
+                    :disabled="!isBasicAuth && !ldapEmailEdit"
                     :label="$t('Email')"
                     :rules="[rules.required]"
                     required
@@ -528,6 +528,9 @@ export default {
   computed: {
     isBasicAuth() {
       return this.$config.provider == 'basic'
+    },
+    ldapEmailEdit() {
+      return this.$config.provider == 'ldap' && this.$config.ldap_email_edit
     },
     users() {
       return this.$store.state.users.users.filter(u => !this.status || this.status.includes(u.status))
