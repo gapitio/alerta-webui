@@ -11,9 +11,13 @@
     >
       <td class="text-xs-center">
         {{ version }}
+        <br>
+        {{ gapitVersion }}
       </td>
       <td>
         <span class="hidden-sm-and-down">{{ application | capitalize }} {{ $t('API') }} </span>{{ props.item.release }}
+        <br>
+        {{ gapitVersion }}
       </td>
       <td>{{ props.item.build }}</td>
       <td>
@@ -91,6 +95,9 @@ export default {
     },
     version() {
       return process.env.VUE_APP_VERSION || 'dev'
+    },
+    gapitVersion() {
+      return this.$config.version || 'dev'
     },
     refresh() {
       return this.$store.state.refresh
