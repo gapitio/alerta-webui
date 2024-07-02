@@ -977,7 +977,7 @@ export default {
       return !this.$config.alarm_model.name.includes('ISA 18')
     },
     isOpen(status) {
-      return status == 'open' || status == 'NORM' || status == 'UNACK' || status == 'RTNUN'
+      return status == 'open' || status == 'NORM' || status == 'UNACK' || status == 'RTNUN' || status == 'unack'
     },
     isWatched(tags) {
       const tag = `watch:${this.username}`
