@@ -385,10 +385,8 @@ export default {
       { text: 'smtp (mail)', value: 'smtp' },
       { text: 'twilio (sms)', value: 'twilio_sms' },
       { text: 'twilio (call + sms)', value: 'twilio_call' },
-      { text: 'link moblity (sms)', value: 'link_mobility' },
       { text: 'link moblity xml (sms)', value: 'link_mobility_xml' },
-      { text: 'my link', value: 'my_link' },
-      { text: 'jira', value: 'jira' }
+      { text: 'my link', value: 'my_link' }
     ],
     search: '',
     dialog: false,
