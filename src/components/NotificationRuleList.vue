@@ -93,6 +93,88 @@
       </v-form>
     </v-dialog>
     <v-dialog
+      v-model="deactivateBulkDialog"
+      max-width="540px"
+    >
+      <v-form ref="form">
+        <v-card>
+          <v-card-title>
+            <v-flex
+              xs12
+              sm6
+              md9
+            >
+              <span class="headline">
+                Active
+              </span>
+            </v-flex>
+          </v-card-title>
+
+          <v-card-text>
+            <v-container grid-list-md>
+              <v-layout wrap>
+                <v-flex
+                  xs8
+                >
+                  <v-menu
+                    ref="menu3"
+                    v-model="menu3"
+                    :close-on-content-click="false"
+                    :nudge-right="40"
+                    lazy
+                    transition="scale-transition"
+                    offset-y
+                    full-width
+                    max-width="290px"
+                    min-width="290px"
+                  >
+                    <v-text-field
+                      slot="activator"
+                      v-model="bulkDeactivateItem.reactivateDate"
+                      :label="$t('ReactivateDate')"
+                      prepend-icon="event"
+                    />
+                    <v-date-picker
+                      v-model="bulkDeactivateItem.reactivateDate"
+                      no-title
+                      @input="menu3 = false"
+                    />
+                  </v-menu>
+                </v-flex>
+
+                <v-flex
+                  xs4
+                >
+                  <v-combobox
+                    v-model="bulkDeactivateItem.reactivateTime"
+                    :items="times"
+                  />
+                </v-flex>
+              </v-layout>
+            </v-container>
+          </v-card-text>
+
+          <v-card-actions>
+            <v-spacer />
+            <v-btn
+              color="blue darken-1"
+              flat
+              @click="closeBulkActive()"
+            >
+              {{ $t('Cancel') }}
+            </v-btn>
+            <v-btn
+              color="blue darken-1"
+              flat
+              @click="changeBulkState(bulkDeactivateItem)"
+            >
+              {{ $t('Save') }}
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-form>
+    </v-dialog>
+    <v-dialog
       v-model="dialog"
       max-width="540px"
     >
@@ -512,6 +594,46 @@
       <v-card-title class="title">
         {{ $t('notificationRules') }}
         <v-spacer />
+        <span 
+          v-if="selectableRows"
+          class="subheading" 
+        >
+          {{ selected.length }}<span class="hidden-sm-and-down"> {{ $t('selected') }}</span>
+        </span>
+
+        <v-tooltip
+          v-if="selectableRows"
+          bottom
+        >
+          <v-btn
+            slot="activator"
+            icon
+            class="btn--plain"
+            @click="activateBulk()"
+          >
+            <v-icon>
+              check
+            </v-icon>
+          </v-btn>
+          <span>{{ $t('Activate') }}</span>
+        </v-tooltip>
+        <v-tooltip 
+          v-if="selectableRows"
+          bottom 
+        >
+          <v-btn
+            slot="activator"
+            icon
+            class="btn--plain"
+            @click="deactivateBulk()"
+          >
+            <v-icon>
+              highlight_off
+            </v-icon>
+          </v-btn>
+          <span>{{ $t('Deactivate') }}</span>
+        </v-tooltip>
+        <v-spacer />
         <v-btn-toggle
           v-model="status"
           class="transparent"
@@ -554,20 +676,33 @@
       </v-card-title>
 
       <v-data-table
+        v-model="selected"
         :headers="computedHeaders"
         :items="notification_rules"
         :pagination.sync="pagination"
         :total-items="pagination.totalItems"
         :rows-per-page-items="pagination.rowsPerPageItems"
-        class="px-2"
+        class="table"
         :loading="isLoading"
         must-sort
         sort-icon="arrow_drop_down"
+        select-all
       >
         <template
           slot="items"
           slot-scope="props"
         >
+          <td>
+            <v-checkbox
+              v-model="props.selected"
+              primary
+              hide-details
+              color="gray"
+              class="select-box"
+              :ripple="false"
+              @click.stop
+            />
+          </td>
           <td>
             <v-btn
               v-has-perms.disable="'write:notification_rules'"
@@ -792,6 +927,17 @@ export default {
       { text: i18n.t('Actions'), value: 'name', sortable: false }
     ],
     editedId: null,
+    deactivateBulkDialog: false,
+    bulkDeactivateItem:{
+      active: false,
+      reactivateDate: null,
+      reactivateTime: null,
+    },
+    bulkDeactivateDefaultItem:{
+      active: false,
+      reactivateDate: null,
+      reactivateTime: null,
+    },
     editedItem: {
       active: true,
       customer: null,
@@ -827,6 +973,7 @@ export default {
     },
     menu1: false,
     menu2: false,
+    menu3: false,
     defaultItem: {
       active: true,
       customer: null,
@@ -972,6 +1119,17 @@ export default {
     statuses() {
       return Object.keys(this.$store.getters.getConfig('alarm_model').status)
     },
+    selected: {
+      get() {
+        return this.$store.state.notificationRules.selected
+      },
+      set(value) {
+        this.$store.dispatch('notificationRules/updateSelected', value)
+      }
+    },
+    selectableRows() {
+      return this.selected.length > 0
+    },
     times() {
       return Array.from(
         {
@@ -1076,6 +1234,12 @@ export default {
       if (this.editedItem.active) this.changeState(this.editedItem)
       else this.active_dialog = true
     },
+    deactivateBulk() {
+      this.deactivateBulkDialog = true
+    },
+    activateBulk() {
+      this.changeBulkState({active:true})
+    },
     editItem(item) {
       this.editedId = item.id
       this.editedItem = Object.assign({}, item)
@@ -1108,6 +1272,12 @@ export default {
         this.editedId = null
       }, 300)
     },
+    closeBulkActive() {
+      this.deactivateBulkDialog = false
+      setTimeout(() => {
+        this.bulkDeactivateItem = Object.assign({}, this.bulkDeactivateDefaultItem)
+      }, 300)
+    },
     validate() {
       if (this.$refs.form.validate()) {
         this.$refs.form.resetValidation()
@@ -1126,6 +1296,26 @@ export default {
         }
       ])
       this.close_active()
+    },
+    changeBulkState(item) {
+      this.selected.map(a => {
+        this.$store
+          .dispatch('notificationRules/updateNotificationRule', [
+            a.id,
+            {
+              active: item.active,
+              reactivate: this.bulkDeactivateItem.reactivateDate ? this.toISODate(
+                this.bulkDeactivateItem.reactivateDate,
+                this.bulkDeactivateItem.reactivateTime
+              ) : null
+            }
+          ])
+      })
+      this.clearSelected()
+      this.closeBulkActive()
+    },
+    clearSelected() {
+      this.$store.dispatch('notificationRules/updateSelected', [])
     },
     refresh_all() {
       this.$store.dispatch('set', ['refresh', true])
@@ -1209,4 +1399,8 @@ export default {
 }
 </script>
 
-<style></style>
+<style>
+.table .v-table th, td {
+  padding: 0px 5px !important;
+}
+</style>
