@@ -6,6 +6,7 @@ const state = {
   isLoading: false,
 
   notification_rules: [],
+  selected: [],
 
   query: {},
 
@@ -30,6 +31,9 @@ const mutations = {
     state.notification_rules = notificationRules
     state.pagination.totalItems = total
     state.pagination.rowsPerPage = pageSize
+  },
+  SET_SELECTED(state, selected) {
+    state.selected = selected
   },
   RESET_LOADING(state) {
     state.isLoading = false
@@ -61,6 +65,9 @@ const actions = {
     return NotificationRuleApi.createNotificationRule(notificationrule).then(response => {
       dispatch('getNotificationRules')
     })
+  },
+  updateSelected({commit}, selected) {
+    commit('SET_SELECTED', selected)
   },
   updateNotificationRule({dispatch, commit}, [notificationRuleId, update]) {
     return NotificationRuleApi.updateNotificationRule(notificationRuleId, update).then(response => {
