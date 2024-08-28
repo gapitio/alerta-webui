@@ -17,6 +17,14 @@
 
         <v-btn
           flat
+          :href="export_reports()"
+          download
+        >
+          Export
+        </v-btn>
+
+        <v-btn
+          flat
           icon
           :class="{ 'filter-active': isActive }"
           @click="sidesheet = !sidesheet"
@@ -72,6 +80,13 @@ export default {
         this.$store.dispatch('reports/setPageSize', value)
       }
     },
+  },
+  methods: {
+    export_reports () {
+      const pagination = this.$store.state.reports.pagination
+      return `${this.$config.endpoint}/alerts/reports/download?page-size=${pagination.rowsPerPage}`
+    }
   }
 }
+
 </script>
