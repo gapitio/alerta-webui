@@ -355,7 +355,7 @@
                       <v-btn
                         icon
                         @click="
-                          editedItem.advancedSeverity.push({ from: [], to: [] })
+                          editedItem.advancedSeverity.push({ from: [], to: [], text: null })
                         "
                       >
                         add
@@ -380,25 +380,38 @@
                         wrap
                         xs12
                       >
-                        <v-flex xs5>
-                          <v-select
-                            v-model="item.from"
-                            :items="severities"
-                            :label="$t('From')"
-                            chips
-                            multiple
-                          />
-                        </v-flex>
-                        <v-flex xs5>
-                          <v-select
-                            v-model="item.to"
-                            :items="severities"
-                            :label="$t('To')"
-                            chips
-                            multiple
-                          />
-                        </v-flex>
-                        <v-flex xs2>
+                        <v-flex xs10>
+                          <v-layout wrap>
+                            <v-flex xs5>
+                              <v-select
+                                v-model="item.from"
+                                :items="severities"
+                                :label="$t('From')"
+                                chips
+                                multiple
+                              />
+                            </v-flex>
+                            <v-flex xs5>
+                              <v-select
+                                v-model="item.to"
+                                :items="severities"
+                                :label="$t('To')"
+                                chips
+                                multiple
+                              />
+                            </v-flex>
+                            <v-flex xs10>
+                              <v-text-field
+                                v-model="item.text"
+                                :label="$t('Text')"
+                              />
+                            </v-flex>                            
+                          </v-layout>
+                        </v-flex>                                                 
+                        <v-flex 
+                          xs2
+                          align-self-center
+                        >
                           <v-btn
                             icon
                             @click="
@@ -407,6 +420,9 @@
                           >
                             <v-icon>delete</v-icon>
                           </v-btn>
+                        </v-flex>
+                        <v-flex>
+                          <v-divider />
                         </v-flex>
                       </v-layout>
                     </v-container>
@@ -1052,7 +1068,8 @@ export default {
               text:
                 b.text === null
                   ? ''
-                  : b.text.replace(/%\(([\w\[\]\. ]*)\)s/g, '{$1}')
+                  : b.text.replace(/%\(([\w\[\]\. ]*)\)s/g, '{$1}'),
+              advancedSeverity:  b.advancedSeverity.map(a => {return {...a, text: a.text !== null ? a.text.replace(/%\(([\w\[\]\. ]*)\)s/g, '{$1}') : a.text}})
             },
             reactivate ? {reactivateDate: reactivate.format('YYYY-MM-DD'),reactivateTime: reactivate.format('HH:mm'),} : {} 
           )
@@ -1373,7 +1390,7 @@ export default {
             severity: this.editedItem.severity,
             status: this.editedItem.status,
             channelId: this.editedItem.channelId,
-            advancedSeverity: this.editedItem.advancedSeverity,
+            advancedSeverity: this.editedItem.advancedSeverity.map(b => {return {...b, text: b.text !== null ? b.text.replace(/\{([\w\[\]\. ]*)\}/g, '%($1)s') : b.text}}),
             useAdvancedSeverity: this.editedItem.useAdvancedSeverity,
             reactivate:  this.editedItem.reactivateDate ? this.toISODate(
               this.editedItem.reactivateDate,
@@ -1389,7 +1406,8 @@ export default {
             startTime: sTimeStr,
             endTime: eTimeStr,
             delayTime: this.editedItem.timeObj.time ? `${this.editedItem.timeObj.time} ${this.editedItem.timeObj.interval}` : null,
-            text: this.editedItem.text.replace(/\{([\w\[\]\. ]*)\}/g, '%($1)s')
+            text: this.editedItem.text.replace(/\{([\w\[\]\. ]*)\}/g, '%($1)s'),
+            advancedSeverity: this.editedItem.advancedSeverity.map(b => {return {...b, text: b.text !== null ? b.text.replace(/\{([\w\[\]\. ]*)\}/g, '%($1)s') : b.text}}),
           })
         )
       }
