@@ -346,16 +346,16 @@
                   />
                 </v-flex>
                 <v-flex xs12>
-                  <v-card v-if="editedItem.useAdvancedSeverity">
+                  <v-card>
                     <v-toolbar>
-                      <v-toolbar-title>Advanced Severity</v-toolbar-title>
+                      <v-toolbar-title>Triggers</v-toolbar-title>
 
                       <v-spacer />
 
                       <v-btn
                         icon
                         @click="
-                          editedItem.advancedSeverity.push({ from: [], to: [], text: null })
+                          editedItem.triggers.push({ from_severity: [], to_severity: [],status: [], text: null })
                         "
                       >
                         add
@@ -365,7 +365,7 @@
 
                       <v-btn
                         icon
-                        @click="editedItem.advancedSeverity = []"
+                        @click="editedItem.triggers = []"
                       >
                         clear
                         <v-icon>
@@ -375,7 +375,7 @@
                     </v-toolbar>
                     <v-container>
                       <v-layout
-                        v-for="(item, index) in editedItem.advancedSeverity"
+                        v-for="(item, index) in editedItem.triggers"
                         :key="index"
                         wrap
                         xs12
@@ -384,18 +384,27 @@
                           <v-layout wrap>
                             <v-flex xs5>
                               <v-select
-                                v-model="item.from"
+                                v-model="item.from_severity"
                                 :items="severities"
-                                :label="$t('From')"
+                                :label="$t('From Severity')"
                                 chips
                                 multiple
                               />
                             </v-flex>
                             <v-flex xs5>
                               <v-select
-                                v-model="item.to"
+                                v-model="item.to_severity"
                                 :items="severities"
-                                :label="$t('To')"
+                                :label="$t('To Severity')"
+                                chips
+                                multiple
+                              />
+                            </v-flex>
+                            <v-flex xs10>
+                              <v-select
+                                v-model="item.status"
+                                :items="statuses"
+                                :label="$t('Status')"
                                 chips
                                 multiple
                               />
@@ -415,7 +424,7 @@
                           <v-btn
                             icon
                             @click="
-                              editedItem.advancedSeverity.splice(index, 1)
+                              editedItem.triggers.splice(index, 1)
                             "
                           >
                             <v-icon>delete</v-icon>
@@ -427,36 +436,6 @@
                       </v-layout>
                     </v-container>
                   </v-card>
-                </v-flex>
-                <v-flex
-                  v-if="!editedItem.useAdvancedSeverity"
-                  xs10
-                >
-                  <v-select
-                    v-model="editedItem.severity"
-                    :items="severities"
-                    :label="$t('Severity')"
-                    chips
-                    multiple
-                  />
-                </v-flex>
-
-                <v-flex xs2>
-                  <v-checkbox
-                    v-model="editedItem.useAdvancedSeverity"
-                    :label="$t('Advanced Severity')"
-                  />
-                </v-flex>
-                <v-flex
-                  xs12
-                >
-                  <v-select
-                    v-model="editedItem.status"
-                    :items="statuses"
-                    :label="$t('Status')"
-                    chips
-                    multiple
-                  />
                 </v-flex>
 
                 <v-flex xs12>
@@ -737,10 +716,10 @@
           <td v-if="$config.customer_views">
             {{ props.item.customer }}
           </td>
+          <td>{{ props.item.reactivateDate }} {{ props.item.reactivateTime }}</td>
           <td>{{ props.item.delayTime }}</td>
           <td>{{ props.item.name }}</td>
           <td>{{ props.item.environment }}</td>
-          <td>{{ props.item.reactivateDate }} {{ props.item.reactivateTime }}</td>
           <td>{{ props.item.channelId }}</td>
           <td>
             <v-chip
@@ -754,24 +733,116 @@
           </td>
           <td>{{ props.item.useOnCall }}</td>
           <td>
-            <v-chip
-              v-for="severity in props.item.severity"
-              :key="severity"
+            <div style="margin: auto;">
+              <v-container
+                v-for="(trigger, index) in props.item.triggers"
+                :key="trigger"
+                grid-list-md
+                style="padding: 1px;"
+              >
+                <v-layout>
+                  <!-- <v-flex xs12 v-if="!emptyArray(trigger.from_severity) || !emptyArray(trigger.to_severity) || !emptyArray(trigger.status)">
+                    Trigger{{ index }}
+                  </v-flex> -->
+                  <v-flex 
+                    v-if="!emptyArray(trigger.from_severity)"
+                    xs12
+                  >
+                    From:
+                    <v-chip
+                      v-for="severity in trigger.from_severity"
+                      :key="severity"
+                      outline
+                      small
+                    >
+                      {{ severity }}
+                    </v-chip>
+                  </v-flex>
+                  <v-flex 
+                    v-if="!emptyArray(trigger.to_severity)"
+                    xs12 
+                  >
+                    To:
+                    <v-chip
+                      v-for="severity in trigger.to_severity"
+                      :key="severity"
+                      outline
+                      small
+                    >
+                      {{ severity }}
+                    </v-chip>
+                  </v-flex>
+                  <v-flex 
+                    v-if="!emptyArray(trigger.status)"
+                    xs12
+                  >
+                    Status:
+                    <v-chip
+                      v-for="severity in trigger.status"
+                      :key="severity"
+                      outline
+                      small
+                    >
+                      {{ severity }}
+                    </v-chip>
+                  </v-flex>
+                </v-layout>
+                <v-layout v-if="trigger.text">
+                  <v-flex>
+                    Text: {{ trigger.text }}
+                  </v-flex>
+                </v-layout>
+                <v-divider v-if="index < props.item.triggers.length - 1"/>
+              </v-container>
+            </div>
+            <!-- <v-chip 
+              v-for="trigger in props.item.triggers"
+              :key="trigger"
               outline
-              small
             >
-              {{ severity }}
-            </v-chip>
-          </td>
-          <td>
-            <v-chip
-              v-for="status in props.item.status"
-              :key="status"
-              outline
-              small
-            >
-              {{ status }}
-            </v-chip>
+              <span v-if="!emptyArray(trigger.from_severity)">from</span>
+              <v-chip 
+                v-if="!emptyArray(trigger.from_severity)"
+                outline
+              >
+                <v-chip
+                  v-for="severity in trigger.from_severity"
+                  :key="severity"
+                  outline
+                  small
+                >
+                  {{ severity }}
+                </v-chip>
+              </v-chip>
+              <span v-if="!emptyArray(trigger.to_severity)">to</span>
+              <v-chip 
+                v-if="!emptyArray(trigger.to_severity)"
+                outline
+              >
+                <v-chip
+                  v-for="severity in trigger.to_severity"
+                  :key="severity"
+                  outline
+                  small
+                >
+                  {{ severity }}
+                </v-chip>
+              </v-chip>
+              <span v-if="!emptyArray(trigger.status)">status</span>
+              <v-chip 
+                v-if="!emptyArray(trigger.status)"
+                outline
+              >
+                <v-chip
+                  v-for="status in trigger.status"
+                  :key="status"
+                  outline
+                  small
+                >
+                  {{ status }}
+                </v-chip>
+              </v-chip>
+            </v-chip> -->
           </td>
           <td>
             <v-chip
@@ -919,16 +990,15 @@ export default {
     active_dialog: false,
     headers: [
       { text: i18n.t('Acitve'), value: 'active' },
+      { text: i18n.t('Reactivate'), value: 'reactivate' },
       { text: i18n.t('Customer'), value: 'customer' },
       { text: i18n.t('Delay'), value: 'delay' },
       { text: i18n.t('Name'), value: 'Name' },
       { text: i18n.t('Environment'), value: 'environment' },
-      { text: i18n.t('Reactivate'), value: 'reactivate' },
       { text: i18n.t('Channel'), value: 'channel' },
       { text: i18n.t('Receivers'), value: 'receivers' },
       { text: i18n.t('OnCall'), value: 'useOnCall' },
-      { text: i18n.t('Severity'), value: 'severity' },
-      { text: i18n.t('Status'), value: 'status' },
+      { text: i18n.t('Triggers'), value: 'triggers' },
       { text: i18n.t('Days'), value: 'days' },
       { text: i18n.t('Start'), value: 'startTime' },
       { text: i18n.t('End'), value: 'endTime' },
@@ -981,10 +1051,7 @@ export default {
       endTime: '',
       text: '',
       days: [],
-      severity: [],
-      status: [],
-      advancedSeverity: [],
-      useAdvancedSeverity: false,
+      triggers: [],
       channelId: null
     },
     menu1: false,
@@ -1017,10 +1084,7 @@ export default {
       endTime: '',
       text: '',
       days: [],
-      severity: [],
-      status: [],
-      advancedSeverity: [],
-      useAdvancedSeverity: false,
+      triggers: [],
       channelId: null
     },
     rules: {
@@ -1056,7 +1120,6 @@ export default {
           }
           let reactivate = b.reactivate ? moment(b.reactivate) : null
 
-          
           return Object.assign(
             { ...b },
             {
@@ -1069,7 +1132,7 @@ export default {
                 b.text === null
                   ? ''
                   : b.text.replace(/%\(([\w\[\]\. ]*)\)s/g, '{$1}'),
-              advancedSeverity:  b.advancedSeverity.map(a => {return {...a, text: a.text !== null ? a.text.replace(/%\(([\w\[\]\. ]*)\)s/g, '{$1}') : a.text}})
+              triggers:  b.triggers.map(a => {return {...a, text: a.text !== null ? a.text.replace(/%\(([\w\[\]\. ]*)\)s/g, '{$1}') : a.text}})
             },
             reactivate ? {reactivateDate: reactivate.format('YYYY-MM-DD'),reactivateTime: reactivate.format('HH:mm'),} : {} 
           )
@@ -1203,6 +1266,12 @@ export default {
     this.editedItem = Object.assign({}, this.defaultItem)
   },
   methods: {
+    emptyArray(arr) {
+      for (let t in arr) {
+        return false
+      }
+      return true
+    },
     setSearch(query) {
       this.$store.dispatch('notificationRules/updateQuery', {q: query})
       this.$router.push({query: {...this.$router.query, q: query}})
@@ -1387,11 +1456,8 @@ export default {
             endTime: eTimeStr,
             text: this.editedItem.text.replace(/\{([\w\[\]\. ]*)\}/g, '%($1)s'),
             days: this.editedItem.days,
-            severity: this.editedItem.severity,
-            status: this.editedItem.status,
             channelId: this.editedItem.channelId,
-            advancedSeverity: this.editedItem.advancedSeverity.map(b => {return {...b, text: b.text !== null ? b.text.replace(/\{([\w\[\]\. ]*)\}/g, '%($1)s') : b.text}}),
-            useAdvancedSeverity: this.editedItem.useAdvancedSeverity,
+            triggers: this.editedItem.triggers.map(b => {return {...b, text: b.text !== null ? b.text.replace(/\{([\w\[\]\. ]*)\}/g, '%($1)s') : b.text}}),
             reactivate:  this.editedItem.reactivateDate ? this.toISODate(
               this.editedItem.reactivateDate,
               this.editedItem.reactivateTime
@@ -1407,7 +1473,7 @@ export default {
             endTime: eTimeStr,
             delayTime: this.editedItem.timeObj.time ? `${this.editedItem.timeObj.time} ${this.editedItem.timeObj.interval}` : null,
             text: this.editedItem.text.replace(/\{([\w\[\]\. ]*)\}/g, '%($1)s'),
-            advancedSeverity: this.editedItem.advancedSeverity.map(b => {return {...b, text: b.text !== null ? b.text.replace(/\{([\w\[\]\. ]*)\}/g, '%($1)s') : b.text}}),
+            triggers: this.editedItem.triggers.map(b => {return {...b, text: b.text !== null ? b.text.replace(/\{([\w\[\]\. ]*)\}/g, '%($1)s') : b.text}}),
           })
         )
       }

@@ -68,16 +68,16 @@
                 </v-flex>
 
                 <v-flex xs12>
-                  <v-card v-if="editedItem.useAdvancedSeverity">
+                  <v-card>
                     <v-toolbar>
-                      <v-toolbar-title>Advanced Severity</v-toolbar-title>
+                      <v-toolbar-title>Triggers</v-toolbar-title>
 
                       <v-spacer />
 
                       <v-btn
                         icon
                         @click="
-                          editedItem.advancedSeverity.push({ from: [], to: [] })
+                          editedItem.triggers.push({ from_severity: [], to_severity: [] })
                         "
                       >
                         add
@@ -87,7 +87,7 @@
 
                       <v-btn
                         icon
-                        @click="editedItem.advancedSeverity = []"
+                        @click="editedItem.triggers = []"
                       >
                         clear
                         <v-icon>
@@ -97,14 +97,14 @@
                     </v-toolbar>
                     <v-container>
                       <v-layout
-                        v-for="(item, index) in editedItem.advancedSeverity"
+                        v-for="(item, index) in editedItem.triggers"
                         :key="index"
                         wrap
                         xs12
                       >
                         <v-flex xs5>
                           <v-select
-                            v-model="item.from"
+                            v-model="item.from_severity"
                             :items="severities"
                             :label="$t('From')"
                             chips
@@ -113,7 +113,7 @@
                         </v-flex>
                         <v-flex xs5>
                           <v-select
-                            v-model="item.to"
+                            v-model="item.to_severity"
                             :items="severities"
                             :label="$t('To')"
                             chips
@@ -124,7 +124,7 @@
                           <v-btn
                             icon
                             @click="
-                              editedItem.advancedSeverity.splice(index, 1)
+                              editedItem.triggers.splice(index, 1)
                             "
                           >
                             <v-icon>delete</v-icon>
@@ -133,25 +133,6 @@
                       </v-layout>
                     </v-container>
                   </v-card>
-                </v-flex>
-                <v-flex
-                  v-if="!editedItem.useAdvancedSeverity"
-                  xs10
-                >
-                  <v-select
-                    v-model="editedItem.severity"
-                    :items="severities"
-                    :label="$t('Severity')"
-                    chips
-                    multiple
-                  />
-                </v-flex>
-
-                <v-flex xs2>
-                  <v-checkbox
-                    v-model="editedItem.useAdvancedSeverity"
-                    :label="$t('Advanced Severity')"
-                  />
                 </v-flex>
 
                 <v-flex xs12>
@@ -344,14 +325,49 @@
           <td>{{ props.item.environment }}</td>
           <td>{{ props.item.time }}</td>
           <td>
-            <v-chip
-              v-for="severity in props.item.severity"
-              :key="severity"
-              outline
-              small
-            >
-              {{ severity }}
-            </v-chip>
+            <div style="margin: auto;">
+              <v-container
+                v-for="(trigger, index) in props.item.triggers"
+                :key="trigger"
+                grid-list-md
+                style="padding: 1px;"
+              >
+                <v-layout>
+                  <!-- <v-flex xs12 v-if="!emptyArray(trigger.from_severity) || !emptyArray(trigger.to_severity) || !emptyArray(trigger.status)">
+                    Trigger{{ index }}
+                  </v-flex> -->
+                  <v-flex 
+                    v-if="!emptyArray(trigger.from_severity)"
+                    xs12
+                  >
+                    From:
+                    <v-chip
+                      v-for="severity in trigger.from_severity"
+                      :key="severity"
+                      outline
+                      small
+                    >
+                      {{ severity }}
+                    </v-chip>
+                  </v-flex>
+                  <v-flex 
+                    v-if="!emptyArray(trigger.to_severity)"
+                    xs12 
+                  >
+                    To:
+                    <v-chip
+                      v-for="severity in trigger.to_severity"
+                      :key="severity"
+                      outline
+                      small
+                    >
+                      {{ severity }}
+                    </v-chip>
+                  </v-flex>
+                </v-layout>
+                <v-divider v-if="index < props.item.triggers.length - 1"/>
+              </v-container>
+            </div>
           </td>
           <td>
             <v-chip
@@ -489,7 +505,7 @@ export default {
       { text: i18n.t('Customer'), value: 'customer' },
       { text: i18n.t('Environment'), value: 'environment' },
       { text: i18n.t('Time'), value: 'time' },
-      { text: i18n.t('Severity'), value: 'severity' },
+      { text: i18n.t('Triggers'), value: 'triggers' },
       { text: i18n.t('Days'), value: 'days' },
       { text: i18n.t('Start'), value: 'startTime' },
       { text: i18n.t('End'), value: 'endTime' },
@@ -525,9 +541,7 @@ export default {
       startTime: '',
       endTime: '',
       days: [],
-      severity: [],
-      advancedSeverity: [],
-      useAdvancedSeverity: false,
+      triggers: []
     },
     menu1: false,
     menu2: false,
@@ -553,9 +567,7 @@ export default {
       startTime: '',
       endTime: '',
       days: [],
-      severity: [],
-      advancedSeverity: [],
-      useAdvancedSeverity: false,
+      triggers: []
     },
     rules: {
       required: v => !!v || i18n.t('Required')
@@ -699,6 +711,12 @@ export default {
     getEscalationRules() {
       this.$store.dispatch('escalationRules/getEscalationRules')
     },
+    emptyArray(arr) {
+      for (let t in arr) {
+        return false
+      }
+      return true
+    },
     getCustomers() {
       this.$store.dispatch('customers/getCustomers')
     },
@@ -791,9 +809,7 @@ export default {
             startTime: sTimeStr,
             endTime: eTimeStr,
             days: this.editedItem.days,
-            severity: this.editedItem.severity,
-            advancedSeverity: this.editedItem.advancedSeverity,
-            useAdvancedSeverity: this.editedItem.useAdvancedSeverity
+            triggers: this.editedItem.triggers
           }
         ])
       } else {
