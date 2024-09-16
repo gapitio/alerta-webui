@@ -355,7 +355,7 @@
                       <v-btn
                         icon
                         @click="
-                          editedItem.triggers.push({ from_severity: [], to_severity: [],status: [], text: null })
+                          editedItem.triggers.push({ from_severity: [], to_severity: [], status: [], text: null })
                         "
                       >
                         add
