@@ -365,7 +365,7 @@
                     </v-chip>
                   </v-flex>
                 </v-layout>
-                <v-divider v-if="index < props.item.triggers.length - 1"/>
+                <v-divider v-if="index < props.item.triggers.length - 1" />
               </v-container>
             </div>
           </td>
