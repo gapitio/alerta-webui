@@ -235,7 +235,7 @@
 
     <v-card>
       <v-card-title class="title">
-        {{ $t('notificationChannels') }}
+        {{ $t('Notification Channels') }}
         <v-spacer />
         <v-tooltip bottom>
           <template slot="activator">

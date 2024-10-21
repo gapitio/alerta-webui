@@ -587,7 +587,7 @@
 
     <v-card>
       <v-card-title class="title">
-        {{ $t('notificationRules') }}
+        {{ $t('Notification Rules') }}
         <v-spacer />
         <span 
           v-if="selectableRows"

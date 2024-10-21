@@ -248,7 +248,7 @@
 
     <v-card>
       <v-card-title class="title">
-        {{ $t('escalationRules') }}
+        {{ $t('Escalation Rules') }}
         <v-spacer />
         <v-btn-toggle
           v-model="status"
