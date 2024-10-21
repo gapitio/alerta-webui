@@ -28,6 +28,24 @@
                 </v-flex>
 
                 <v-flex xs12>
+                  <v-combobox
+                    v-model="editedItem.phoneNumbers"
+                    :label="$t('PhoneNumbers')"
+                    chips
+                    multiple
+                  />
+                </v-flex>
+
+                <v-flex xs12>
+                  <v-combobox
+                    v-model="editedItem.mails"
+                    :label="$t('Mails')"
+                    chips
+                    multiple
+                  />
+                </v-flex>
+
+                <v-flex xs12>
                   <v-text-field
                     v-model="editedItem.name"
                     :label="$t('Name')"
@@ -62,7 +80,7 @@
 
     <v-card>
       <v-card-title class="title">
-        {{ $t('notificationGroup') }}
+        {{ $t('Notification Groups') }}
       </v-card-title>
 
       <v-data-table
@@ -89,6 +107,26 @@
               small
             >
               {{ getName(users, user) }}
+            </v-chip>
+          </td>
+          <td>
+            <v-chip
+              v-for="number in props.item.phoneNumbers"
+              :key="number"
+              outline
+              small
+            >
+              {{ number }}
+            </v-chip>
+          </td>
+          <td>
+            <v-chip
+              v-for="mail in props.item.mails"
+              :key="mail"
+              outline
+              small
+            >
+              {{ mail }}
             </v-chip>
           </td>
           <td class="text-no-wrap">
@@ -182,6 +220,14 @@ export default {
         value: 'users'
       },
       {
+        text: i18n.t('Phone Numbers'),
+        value: 'phoneNumbers'
+      },
+      {
+        text: i18n.t('Mails'),
+        value: 'mails'
+      },
+      {
         text: i18n.t('Actions'),
         value: 'name',
         sortable: false
@@ -191,12 +237,16 @@ export default {
     editedItem: {
       name: null,
       users: [],
+      phoneNumbers: [],
+      mails: [],
     },
     menu1: false,
     menu2: false,
     defaultItem: {
       name: null,
       users: [],
+      phoneNumbers: [],
+      mails: [],
     },
     rules: {
       required: v => !!v || i18n.t('Required')
@@ -309,6 +359,8 @@ export default {
           {
             name: this.editedItem.name,
             users: this.editedItem.users,
+            phoneNumbers: this.editedItem.phoneNumbers,
+            mails: this.editedItem.mails
           }
         ])
       } else {
