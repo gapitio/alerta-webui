@@ -265,7 +265,7 @@
 
     <v-card>
       <v-card-title class="title">
-        {{ $t('onCalls') }}
+        {{ $t('On Call') }}
         <v-spacer />
         <v-btn-toggle
           v-model="status"
