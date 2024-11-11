@@ -795,54 +795,6 @@
                 <v-divider v-if="index < props.item.triggers.length - 1" />
               </v-container>
             </div>
-            <!-- <v-chip 
-              v-for="trigger in props.item.triggers"
-              :key="trigger"
-              outline
-            >
-              <span v-if="!emptyArray(trigger.from_severity)">from</span>
-              <v-chip 
-                v-if="!emptyArray(trigger.from_severity)"
-                outline
-              >
-                <v-chip
-                  v-for="severity in trigger.from_severity"
-                  :key="severity"
-                  outline
-                  small
-                >
-                  {{ severity }}
-                </v-chip>
-              </v-chip>
-              <span v-if="!emptyArray(trigger.to_severity)">to</span>
-              <v-chip 
-                v-if="!emptyArray(trigger.to_severity)"
-                outline
-              >
-                <v-chip
-                  v-for="severity in trigger.to_severity"
-                  :key="severity"
-                  outline
-                  small
-                >
-                  {{ severity }}
-                </v-chip>
-              </v-chip>
-              <span v-if="!emptyArray(trigger.status)">status</span>
-              <v-chip 
-                v-if="!emptyArray(trigger.status)"
-                outline
-              >
-                <v-chip
-                  v-for="status in trigger.status"
-                  :key="status"
-                  outline
-                  small
-                >
-                  {{ status }}
-                </v-chip>
-              </v-chip>
-            </v-chip> -->
           </td>
           <td>
             <v-chip
