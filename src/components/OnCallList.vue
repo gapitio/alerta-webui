@@ -186,16 +186,7 @@
                   </v-menu>
                 </v-flex>
 
-                <v-flex xs12>
-                  <v-select
-                    v-model="editedItem.repeatType"
-                    :items="repeatTypes"
-                    :label="$t('RepeatType')"
-                    clearable
-                  />
-                </v-flex>
                 <v-flex
-                  v-if="editedItem.repeatType === 'list'"
                   xs12
                 >
                   <v-select
@@ -357,7 +348,6 @@
           <td class="text-xs-left">
             {{ props.item.endTime }}
           </td>
-          <td>{{ props.item.repeatType }}</td>
           <td>
             <v-chip
               v-for="day in props.item.repeatDays"
@@ -484,7 +474,6 @@ export default {
       'Nov',
       'Dec'
     ],
-    repeatTypes: ['list'],
     search: '',
     dialog: false,
     sDateMenu: false,
@@ -517,10 +506,6 @@ export default {
         value: 'endTime'
       },
       {
-        text: i18n.t('repeatType'),
-        value: 'repeatType'
-      },
-      {
         text: i18n.t('repeatDays'),
         value: 'repeatDays'
       },
@@ -548,7 +533,7 @@ export default {
       startTime: null,
       endTime: null,
       fullDay: false,
-      repeatType: null,
+      repeatType: 'list',
       repeatDays: [],
       repeatWeeks: [],
       repeatMonths: []
@@ -564,7 +549,7 @@ export default {
       startTime: null,
       endTime: null,
       fullDay: false,
-      repeatType: null,
+      repeatType: 'list',
       repeatDays: [],
       repeatWeeks: [],
       repeatMonths: []
@@ -736,7 +721,7 @@ export default {
             startTime: this.fix_time(this.editedItem.startTime, true),
             endTime: this.fix_time(this.editedItem.endTime, true),
             fullDay: this.editedItem.fullDay,
-            repeatType: this.editedItem.repeatType,
+            repeatType: 'list',
             repeatDays: this.editedItem.repeatDays,
             repeatWeeks: this.editedItem.repeatWeeks,
             repeatMonths: this.editedItem.repeatMonths
