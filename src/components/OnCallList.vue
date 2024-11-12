@@ -238,7 +238,7 @@
             <v-btn
               color="blue darken-1"
               flat
-              @click="close"
+              @click="() => dialog = false"
             >
               {{ $t('Cancel') }}
             </v-btn>
@@ -646,8 +646,20 @@ export default {
     this.getUsers()
     this.getGroups()
     this.editedItem = Object.assign({}, this.defaultItem)
+    this.editedItemStart = Object.assign({}, this.defaultItem)
   },
   methods: {
+    compareDict(a, b) {
+      if (a === null) return true
+      for (const key in a) {
+        if (b[key] === undefined) return false
+        if (a[key] !== null && typeof a[key] === typeof({})) {
+          if (b[key] === null || a[key].length !== b[key].length || !this.compareDict(a[key], b[key])) return false
+        }
+        else if (a[key] !== b[key]) return false
+      } 
+      return true
+    },
     selectOdd(e) {
       const filtered_items = e.items.filter((value, index) => index % 2 == 0)
       e.internalValue = e.items.filter((value, index) => index % 2 == 0)
@@ -674,6 +686,7 @@ export default {
     editItem(item) {
       this.editedId = item.id
       this.editedItem = Object.assign({}, item)
+      this.editedItemStart = Object.assign({}, item)
       this.dialog = true
     },
     copyItem(item) {
@@ -686,12 +699,17 @@ export default {
         this.$store.dispatch('onCalls/deleteOnCall', item.id)
     },
     close() {
-      this.dialog = false
-      setTimeout(() => {
-        this.$refs.form.resetValidation()
-        this.editedItem = Object.assign({}, this.defaultItem)
-        this.editedId = null
-      }, 300)
+      let change = !this.compareDict(this.editedItem, this.editedItemStart)
+      if (this.saved || !change || confirm('Are you sure you want to close the dialog?')) {
+        setTimeout(() => {
+          this.$refs.form.resetValidation()
+          this.editedItem = Object.assign({}, this.defaultItem)
+          this.editedItemStart = Object.assign({}, this.defaultItem)
+          this.editedId = null
+          this.saved = false
+        }, 300)
+      }
+      else setTimeout(() => this.dialog = true, 0.1)
     },
     validate() {
       if (this.$refs.form.validate()) {
@@ -735,7 +753,8 @@ export default {
           })
         )
       }
-      this.close()
+      this.dialog = false
+      this.saved = true
     }
   }
 }
