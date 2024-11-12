@@ -355,7 +355,7 @@
                       <v-btn
                         icon
                         @click="
-                          editedItem.triggers.push({ from_severity: [], to_severity: [], status: [], text: null })
+                          editedItem.triggers = [...editedItem.triggers, { from_severity: [], to_severity: [], status: [], text: null}]
                         "
                       >
                         add
@@ -569,7 +569,7 @@
             <v-btn
               color="blue darken-1"
               flat
-              @click="close"
+              @click="dialog = false"
             >
               {{ $t('Cancel') }}
             </v-btn>
@@ -736,7 +736,7 @@
             <div style="margin: auto;">
               <v-container
                 v-for="(trigger, index) in props.item.triggers"
-                :key="trigger"
+                :key="index"
                 grid-list-md
                 style="padding: 1px;"
               >
@@ -795,54 +795,6 @@
                 <v-divider v-if="index < props.item.triggers.length - 1" />
               </v-container>
             </div>
-            <!-- <v-chip 
-              v-for="trigger in props.item.triggers"
-              :key="trigger"
-              outline
-            >
-              <span v-if="!emptyArray(trigger.from_severity)">from</span>
-              <v-chip 
-                v-if="!emptyArray(trigger.from_severity)"
-                outline
-              >
-                <v-chip
-                  v-for="severity in trigger.from_severity"
-                  :key="severity"
-                  outline
-                  small
-                >
-                  {{ severity }}
-                </v-chip>
-              </v-chip>
-              <span v-if="!emptyArray(trigger.to_severity)">to</span>
-              <v-chip 
-                v-if="!emptyArray(trigger.to_severity)"
-                outline
-              >
-                <v-chip
-                  v-for="severity in trigger.to_severity"
-                  :key="severity"
-                  outline
-                  small
-                >
-                  {{ severity }}
-                </v-chip>
-              </v-chip>
-              <span v-if="!emptyArray(trigger.status)">status</span>
-              <v-chip 
-                v-if="!emptyArray(trigger.status)"
-                outline
-              >
-                <v-chip
-                  v-for="status in trigger.status"
-                  :key="status"
-                  outline
-                  small
-                >
-                  {{ status }}
-                </v-chip>
-              </v-chip>
-            </v-chip> -->
           </td>
           <td>
             <v-chip
@@ -989,7 +941,7 @@ export default {
     dialog: false,
     active_dialog: false,
     headers: [
-      { text: i18n.t('Acitve'), value: 'active' },
+      { text: i18n.t('Active'), value: 'active' },
       { text: i18n.t('Reactivate'), value: 'reactivate' },
       { text: i18n.t('Customer'), value: 'customer' },
       { text: i18n.t('Delay'), value: 'delay' },
@@ -1263,9 +1215,21 @@ export default {
     this.getUsers()
     this.getGroups()
     this.getNotificaitonGroups()
-    this.editedItem = Object.assign({}, this.defaultItem)
+    this.editedItem = Object.assign({}, JSON.parse(JSON.stringify(this.defaultItem)))
+    this.editedItemStart = JSON.parse(JSON.stringify(this.defaultItem))
   },
   methods: {
+    compareDict(a, b) {
+      if (a === null) return true
+      for (const key in a) {
+        if (b[key] === undefined) return false
+        if (a[key] !== null && typeof a[key] === typeof({})) {
+          if (b[key] === null || a[key].length !== b[key].length || !this.compareDict(a[key], b[key])) return false
+        }
+        else if (a[key] !== b[key]) return false
+      } 
+      return true
+    },
     emptyArray(arr) {
       for (let t in arr) {
         return false
@@ -1329,6 +1293,7 @@ export default {
     editItem(item) {
       this.editedId = item.id
       this.editedItem = Object.assign({}, item)
+      this.editedItemStart = JSON.parse(JSON.stringify(item))
       this.dialog = true
     },
     copyItem(item) {
@@ -1344,17 +1309,22 @@ export default {
         )
     },
     close() {
-      this.dialog = false
-      setTimeout(() => {
-        this.$refs.form.resetValidation()
-        this.editedItem = Object.assign({}, this.defaultItem)
-        this.editedId = null
-      }, 300)
+      let change = !this.compareDict(this.editedItem, this.editedItemStart)
+      if (this.saved || !change || confirm('Are you sure you want to close the dialog?')) {
+        setTimeout(() => {
+          this.$refs.form.resetValidation()
+          this.editedItem = JSON.parse(JSON.stringify(this.defaultItem))
+          this.editedItemStart = JSON.parse(JSON.stringify(this.defaultItem))
+          this.editedId = null
+          this.saved = false
+        }, 300)
+      }
+      else setTimeout(() => this.dialog = true, 0.1)
     },
     close_active() {
       this.active_dialog = false
       setTimeout(() => {
-        this.editedItem = Object.assign({}, this.defaultItem)
+        this.editedItem = Object.assign({}, JSON.parse(JSON.stringify(this.defaultItem)))
         this.editedId = null
       }, 300)
     },
@@ -1477,7 +1447,8 @@ export default {
           })
         )
       }
-      this.close()
+      this.saved = true
+      this.dialog = false
     }
   }
 }

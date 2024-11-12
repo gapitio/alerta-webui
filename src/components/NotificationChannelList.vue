@@ -135,7 +135,7 @@
             <v-btn
               color="blue darken-1"
               flat
-              @click="close"
+              @click="() => dialog = false"
             >
               {{ $t('Cancel') }}
             </v-btn>
@@ -519,8 +519,20 @@ export default {
     this.getEncryptionKey()
     this.getCustomers()
     this.editedItem = Object.assign({}, this.defaultItem)
+    this.editedItemStart = Object.assign({}, this.defaultItem)
   },
   methods: {
+    compareDict(a, b) {
+      if (a === null) return true
+      for (const key in a) {
+        if (b[key] === undefined) return false
+        if (a[key] !== null && typeof a[key] === typeof({})) {
+          if (b[key] === null || a[key].length !== b[key].length || !this.compareDict(a[key], b[key])) return false
+        }
+        else if (a[key] !== b[key]) return false
+      } 
+      return true
+    },
     getEncryptionKey() {
       this.$store.dispatch('notificationChannels/getEncryptionKey')
     },
@@ -539,6 +551,7 @@ export default {
     editItem(item) {
       this.editedId = item.id
       this.editedItem = Object.assign({}, item)
+      this.editedItemStart = Object.assign({}, item)
       this.dialog = true
     },
     testItem(item) {
@@ -558,12 +571,17 @@ export default {
         )
     },
     close() {
-      this.dialog = false
-      setTimeout(() => {
-        this.$refs.form.resetValidation()
-        this.editedItem = Object.assign({}, this.defaultItem)
-        this.editedId = null
-      }, 300)
+      let change = !this.compareDict(this.editedItem, this.editedItemStart)
+      if (this.saved || !change || confirm('Are you sure you want to close the dialog?')) {
+        setTimeout(() => {
+          this.$refs.form.resetValidation()
+          this.editedItem = Object.assign({}, this.defaultItem)
+          this.editedItemStart = Object.assign({}, this.defaultItem)
+          this.editedId = null
+          this.saved = false
+        }, 300)
+      }
+      else setTimeout(() => this.dialog = true, 0.1)
     },
     closeTest() {
       this.testDialog = false
@@ -600,7 +618,8 @@ export default {
           this.editedItem
         )
       }
-      this.close()
+      this.dialog = false
+      this.saved = true
     }
   }
 }

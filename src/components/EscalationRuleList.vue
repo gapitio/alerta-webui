@@ -705,9 +705,21 @@ export default {
     this.getEnvironments()
     this.getServices()
     this.getTags()
-    this.editedItem = Object.assign({}, this.defaultItem)
+    this.editedItem = Object.assign({},  JSON.parse(JSON.stringify(this.defaultItem)))
+    this.editedItemStart = Object.assign({}, JSON.parse(JSON.stringify(this.defaultItem)))
   },
   methods: {
+    compareDict(a, b) {
+      if (a === null) return true
+      for (const key in a) {
+        if (b[key] === undefined) return false
+        if (a[key] !== null && typeof a[key] === typeof({})) {
+          if (b[key] === null || a[key].length !== b[key].length || !this.compareDict(a[key], b[key])) return false
+        }
+        else if (a[key] !== b[key]) return false
+      } 
+      return true
+    },
     getEscalationRules() {
       this.$store.dispatch('escalationRules/getEscalationRules')
     },
@@ -732,7 +744,8 @@ export default {
 
     editItem(item) {
       this.editedId = item.id
-      this.editedItem = Object.assign({}, item)
+      this.editedItem = Object.assign({}, JSON.parse(JSON.stringify(item)))
+      this.editedItemStart = JSON.parse(JSON.stringify(item))
       this.dialog = true
     },
     copyItem(item) {
@@ -748,12 +761,17 @@ export default {
         )
     },
     close() {
-      this.dialog = false
-      setTimeout(() => {
-        this.$refs.form.resetValidation()
-        this.editedItem = Object.assign({}, this.defaultItem)
-        this.editedId = null
-      }, 300)
+      let change = !this.compareDict(this.editedItem, this.editedItemStart)
+      if (this.saved || !change || confirm('Are you sure you want to close the dialog?')) {
+        setTimeout(() => {
+          this.$refs.form.resetValidation()
+          this.editedItem = JSON.parse(JSON.stringify(this.defaultItem))
+          this.editedItemStart = JSON.parse(JSON.stringify(this.defaultItem))
+          this.editedId = null
+          this.saved = false
+        }, 300)
+      }
+      else setTimeout(() => this.dialog = true, 0.1)
     },
     validate() {
       if (this.$refs.form.validate()) {
@@ -823,7 +841,8 @@ export default {
           })
         )
       }
-      this.close()
+      this.dialog = false
+      this.saved = true
     }
   }
 }
