@@ -713,8 +713,8 @@ export default {
       if (a === null) return true
       for (const key in a) {
         if (b[key] === undefined) return false
-        if (typeof a[key] === typeof({})) {
-          if (!this.compareDict(a[key], b[key])) return false
+        if (a[key] !== null && typeof a[key] === typeof({})) {
+          if (b[key] === null || a[key].length !== b[key].length || !this.compareDict(a[key], b[key])) return false
         }
         else if (a[key] !== b[key]) return false
       } 
