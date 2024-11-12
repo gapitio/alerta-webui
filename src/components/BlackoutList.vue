@@ -207,7 +207,7 @@
             <v-btn
               color="blue darken-1"
               flat
-              @click="close"
+              @click="() => dialog = false"
             >
               {{ $t('Cancel') }}
             </v-btn>
@@ -635,9 +635,22 @@ export default {
     this.getServices()
     this.getTags()
     this.editedItem = Object.assign({}, this.defaultItem)
+    this.editedItemStart = Object.assign({}, this.defaultItem)
     this.editedItem.period = this.defaultTimes()
+    this.editedItemStart.period = JSON.parse(JSON.stringify(this.editedItem.period))
   },
   methods: {
+    compareDict(a, b) {
+      if (a === null) return true
+      for (const key in a) {
+        if (b[key] === undefined) return false
+        if (a[key] !== null && typeof a[key] === typeof({})) {
+          if (b[key] === null || a[key].length !== b[key].length || !this.compareDict(a[key], b[key])) return false
+        }
+        else if (a[key] !== b[key]) return false
+      } 
+      return true
+    },
     getBlackouts() {
       this.$store.dispatch('blackouts/getBlackouts')
     },
@@ -696,6 +709,7 @@ export default {
     editItem(item) {
       this.editedId = item.id
       this.editedItem = Object.assign({}, item)
+      this.editedItemStart = JSON.parse(JSON.stringify(item))
       this.dialog = true
     },
     copyItem(item) {
@@ -709,13 +723,19 @@ export default {
         this.$store.dispatch('blackouts/deleteBlackout', item.id)
     },
     close() {
-      this.dialog = false
-      setTimeout(() => {
-        this.$refs.form.resetValidation()
-        this.editedItem = Object.assign({}, this.defaultItem)
-        this.editedItem.period = this.defaultTimes()
-        this.editedId = null
-      }, 300)
+      let change = !this.compareDict(this.editedItem, this.editedItemStart)
+      if (this.saved || !change || confirm('Are you sure you want to close the dialog?')) {
+        setTimeout(() => {
+          this.$refs.form.resetValidation()
+          this.editedItem = Object.assign({}, this.defaultItem)
+          this.editedItemStart = Object.assign({}, this.defaultItem)
+          this.editedItem.period = this.defaultTimes()
+          this.editedItemStart.period = JSON.parse(JSON.stringify(this.editedItem.period))
+          this.editedId = null
+          this.saved = false
+        }, 300)
+      }
+      else setTimeout(() => this.dialog = true, 0.1)
     },
     validate() {
       if (this.$refs.form.validate()) {
@@ -763,7 +783,8 @@ export default {
           })
         )
       }
-      this.close()
+      this.dialog = false
+      this.saved = true
     }
   }
 }
