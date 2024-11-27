@@ -749,7 +749,9 @@ export default {
         this.$store.dispatch(
           'onCalls/createOnCall',
           Object.assign(this.editedItem, {
-            id: null
+            id: null,
+            startTime: this.fix_time(this.editedItem.startTime, true),
+            endTime: this.fix_time(this.editedItem.endTime, true),
           })
         )
       }
