@@ -1,8 +1,201 @@
 <template>
   <div>
+    <v-dialog
+      v-model="infocard"
+      max-width="540px"      
+    >
+      <v-flex xs12>
+        <v-card>
+          <v-toolbar>
+            <v-toolbar-title>{{ $t('NotificationHistory') }}: {{ $t('NotificationHistoryInfo') }}</v-toolbar-title>
+          </v-toolbar>
+          <v-container>
+            <v-flex 
+              xs12
+              headerinfo
+            >
+              <v-layout wrap>
+                <v-flex 
+                  xs3 
+                  style="align-self: center;"
+                >
+                  {{ $t('Id') }}:
+                </v-flex>
+                <v-flex xs9>
+                  {{ $t('NotificationHistoryId') }}
+                </v-flex>
+              </v-layout>
+            </v-flex>
+            <v-divider />
+            <v-flex 
+              xs12
+              headerinfo
+            >
+              <v-layout wrap>
+                <v-flex 
+                  xs3 
+                  style="align-self: center;"
+                >
+                  {{ $t('Sent') }}:
+                </v-flex>
+                <v-flex xs9>
+                  <v-flex xs12>
+                    {{ $t('NotificationHistorySentTrue') }}
+                  </v-flex>
+                  <v-flex xs12>
+                    {{ $t('NotificationHistorySentFalse') }}
+                  </v-flex>
+                </v-flex>
+              </v-layout>
+            </v-flex>
+            <v-divider />
+            <v-flex 
+              xs12
+              headerinfo
+            >
+              <v-layout wrap>
+                <v-flex 
+                  xs3 
+                  style="align-self: center;"
+                >
+                  {{ $t('SentTime') }}:
+                </v-flex>
+                <v-flex xs9>
+                  {{ $t('NotificationHistorySentTime') }}
+                </v-flex>
+              </v-layout>
+            </v-flex>
+            <v-divider />
+            <v-flex 
+              xs12
+              headerinfo
+            >
+              <v-layout wrap>
+                <v-flex 
+                  xs3 
+                  style="align-self: center;"
+                >
+                  {{ $t('Message') }}:
+                </v-flex>
+                <v-flex xs9>
+                  {{ $t('NotificationHistoryMessage') }}
+                </v-flex>
+              </v-layout>
+            </v-flex>
+            <v-divider />
+            <v-flex 
+              xs12
+              headerinfo
+            >
+              <v-layout wrap>
+                <v-flex 
+                  xs3 
+                  style="align-self: center;"
+                >
+                  Receiver:
+                </v-flex>
+                <v-flex xs9>
+                  {{ $t('NotificationHistoryReceiver') }}
+                </v-flex>
+              </v-layout>
+            </v-flex>
+            <v-divider />
+            <v-flex 
+              xs12
+              headerinfo
+            >
+              <v-layout wrap>
+                <v-flex 
+                  xs3 
+                  style="align-self: center;"
+                >
+                  Sender:
+                </v-flex>
+                <v-flex xs9>
+                  {{ $t('SenderInfo') }}
+                </v-flex>
+              </v-layout>
+            </v-flex>
+            <v-divider />
+            <v-flex 
+              xs12
+              headerinfo
+            >
+              <v-layout wrap>
+                <v-flex 
+                  xs3 
+                  style="align-self: center;"
+                >
+                  Channel:
+                </v-flex>
+                <v-flex xs9>
+                  {{ $t('NotificationHistoryChannel') }}
+                </v-flex>
+              </v-layout>
+            </v-flex>
+            <v-divider />
+            <v-flex 
+              xs12
+              headerinfo
+            >
+              <v-layout wrap>
+                <v-flex 
+                  xs3 
+                  style="align-self: center;"
+                >
+                  {{ $t('NotificationRule') }}:
+                </v-flex>
+                <v-flex xs9>
+                  {{ $t('NotificationHistoryRule') }}
+                </v-flex>
+              </v-layout>
+            </v-flex>
+            <v-divider />
+            <v-flex 
+              xs12
+              headerinfo
+            >
+              <v-layout wrap>
+                <v-flex 
+                  xs3 
+                  style="align-self: center;"
+                >
+                  {{ $t('Alert') }}:
+                </v-flex>
+                <v-flex xs9>
+                  {{ $t('NotificationHistoryAlert') }}
+                </v-flex>
+              </v-layout>
+            </v-flex>
+            <v-divider />
+            <v-flex 
+              xs12
+              headerinfo
+            >
+              <v-layout wrap>
+                <v-flex 
+                  xs3 
+                  style="align-self: center;"
+                >
+                  {{ $t('Error') }}:
+                </v-flex>
+                <v-flex xs9>
+                  {{ $t('NotificationHistoryError') }}
+                </v-flex>
+              </v-layout>
+            </v-flex>
+          </v-container>
+        </v-card>
+      </v-flex>
+    </v-dialog>
     <v-card>
       <v-card-title class="title">
-        {{ $t('Notification History') }}
+        {{ $t('NotificationHistory') }}
+        <v-icon 
+          @click="() => infocard = true"
+        >
+          help_outline
+        </v-icon>
         <v-spacer />
         <v-btn-toggle
           v-model="sent"
@@ -83,8 +276,6 @@
               {{ props.item.alert }}
             </td>
             <td>{{ props.item.error }}</td>
-            <td>{{ props.item.confirmed }}</td>
-            <td>{{ props.item.confirmed_time }}</td>
           </tr>
         </template>
         <template slot="no-data">
@@ -116,8 +307,9 @@ import i18n from '@/plugins/i18n'
 export default {
   data: vm => ({
     search: '',
+    infocard: false,
     headers: [
-      { text: i18n.t('Id'), value: 'id', sortable: false },
+      { text: i18n.t('Id'), tooltip: 'test', value: 'id', sortable: false },
       { text: i18n.t('Sent'), value: 'sent', sortable: false },
       { text: i18n.t('SentTime'), value: 'sent_time', sortable: false },
       { text: i18n.t('Message'), value: 'message', sortable: false },
@@ -127,8 +319,6 @@ export default {
       { text: i18n.t('NotificationRule'), value: 'rule', sortable: false },
       { text: i18n.t('Alert'), value: 'alert', sortable: false },
       { text: i18n.t('Error'), value: 'error', sortable: false },
-      { text: i18n.t('Confirmed'), value: 'confirmed', sortable: false },
-      { text: i18n.t('ConfirmedTime'), value: 'confirmed_time', sortable: false },
     ],
     rules: {
       required: v => !!v || i18n.t('Required')
@@ -246,5 +436,11 @@ td.clickable {
   color: #3f51b5;
   font-weight: 400;
   text-decoration: underline;
+}
+.container {
+  padding-top: 0px;
+}
+.headerinfo {
+  padding: 10px 0px;
 }
 </style>
