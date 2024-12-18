@@ -64,7 +64,7 @@
                     <template v-slot:activator="{ on }">
                       <v-text-field
                         v-model="editedItem.startDate"
-                        label="Start Date"
+                        :label="$t('StartDate')"
                         prepend-icon="event"
                         readonly
                         clearable
@@ -94,7 +94,7 @@
                     <template v-slot:activator="{ on }">
                       <v-text-field
                         v-model="editedItem.endDate"
-                        label="End Date"
+                        :label="$t('EndDate')"
                         prepend-icon="event"
                         readonly
                         clearable
@@ -162,7 +162,7 @@
                     <template v-slot:activator="{ on }">
                       <v-text-field
                         v-model="editedItem.endTime"
-                        label="End Time"
+                        :label="$t('EndTime')"
                         prepend-icon="schedule"
                         readonly
                         clearable
@@ -209,12 +209,12 @@
                     <template v-slot:prepend-item>
                       <v-list-tile @click="selectOdd($refs.repeatWeeks)">
                         <v-list-tile-content>
-                          <v-list-tile-title>Select Odd</v-list-tile-title>
+                          <v-list-tile-title>{{ $t('SelectOdd') }}</v-list-tile-title>
                         </v-list-tile-content>
                       </v-list-tile>
                       <v-list-tile @click="selectEven($refs.repeatWeeks)">
                         <v-list-tile-content>
-                          <v-list-tile-title>Select Even</v-list-tile-title>
+                          <v-list-tile-title>{{ $t('SelectEven') }}</v-list-tile-title>
                         </v-list-tile-content>
                       </v-list-tile>
                       <v-divider class="mt-2" />
@@ -256,7 +256,16 @@
 
     <v-card>
       <v-card-title class="title">
-        {{ $t('On Call') }}
+        {{ $t('OnCall') }}
+        
+        <v-tooltip right>
+          <template v-slot:activator="{ on }">
+            <v-icon v-on="on">
+              info_outline
+            </v-icon>
+          </template>
+          <span>{{ $t('OnCallInfo') }}</span>
+        </v-tooltip>
         <v-spacer />
         <v-btn-toggle
           v-model="status"
@@ -271,7 +280,7 @@
               <v-icon slot="activator">
                 notifications_paused
               </v-icon>
-              <span>{{ $t('Active') }}</span>
+              <span>{{ status.includes('active') ? $t('HideActive') : $t('ShowActive') }}</span>
             </v-tooltip>
           </v-btn>
           <v-btn
@@ -282,7 +291,7 @@
               <v-icon slot="activator">
                 schedule
               </v-icon>
-              <span>{{ $t('Deactivated') }}</span>
+              <span>{{ status.includes('deactivated') ? $t('HideDeactivated') : $t('ShowDeactivated') }}</span>
             </v-tooltip>
           </v-btn>
         </v-btn-toggle>
@@ -490,31 +499,31 @@ export default {
         value: 'groups'
       },
       {
-        text: i18n.t('Start Date'),
+        text: i18n.t('StartDate'),
         value: 'startDate'
       },
       {
-        text: i18n.t('End Date'),
+        text: i18n.t('EndDate'),
         value: 'endDate'
       },
       {
-        text: i18n.t('Start Time'),
+        text: i18n.t('StartTime'),
         value: 'startTime'
       },
       {
-        text: i18n.t('End Time'),
+        text: i18n.t('EndTime'),
         value: 'endTime'
       },
       {
-        text: i18n.t('repeatDays'),
+        text: i18n.t('RepeatDays'),
         value: 'repeatDays'
       },
       {
-        text: i18n.t('repeatWeeks'),
+        text: i18n.t('RepeatWeeks'),
         value: 'repeatWeeks'
       },
       {
-        text: i18n.t('repeatMonths'),
+        text: i18n.t('RepeatMonths'),
         value: 'repeatMonths'
       },
       {

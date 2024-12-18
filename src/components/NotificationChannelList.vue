@@ -27,7 +27,7 @@
                   />
                 </v-flex>
 
-                <v-flex xs12>
+                <v-flex xs11>
                   <v-text-field
                     v-model="editedItem.id"
                     :label="$t('Id')"
@@ -36,7 +36,18 @@
                   />
                 </v-flex>
 
-                <v-flex xs12>
+                <v-flex xs1>
+                  <v-tooltip left>
+                    <template v-slot:activator="{ on }">
+                      <v-icon v-on="on">
+                        info_outline
+                      </v-icon>
+                    </template>
+                    <span>Name used in Notification Rules to refer to this channel</span>
+                  </v-tooltip>
+                </v-flex>
+
+                <v-flex xs11>
                   <v-text-field
                     v-model="editedItem.sender"
                     :label="$t('Sender')"
@@ -45,7 +56,19 @@
                   />
                 </v-flex>
 
-                <v-flex xs12>
+                
+                <v-flex xs1>
+                  <v-tooltip left>
+                    <template v-slot:activator="{ on }">
+                      <v-icon v-on="on">
+                        info_outline
+                      </v-icon>
+                    </template>
+                    <span>{{ $t('SenderInfo') }}</span>
+                  </v-tooltip>
+                </v-flex>
+
+                <v-flex xs11>
                   <v-select
                     v-model="editedItem.type"
                     :items="types"
@@ -54,6 +77,18 @@
                     required
                   />
                 </v-flex>
+
+                <v-flex xs1>
+                  <v-tooltip left>
+                    <template v-slot:activator="{ on }">
+                      <v-icon v-on="on">
+                        info_outline
+                      </v-icon>
+                    </template>
+                    <span>Supported SMS/Mail provider</span>
+                  </v-tooltip>
+                </v-flex>
+
                 <v-flex
                   v-if="(editedItem.type === 'smtp' || editedItem.type === 'link_mobility' || editedItem.type === 'link_mobility_xml')"
                   xs12
@@ -67,12 +102,25 @@
                 </v-flex>
                 <v-flex
                   v-if="(editedItem.type === 'smtp' || editedItem.type === 'link_mobility' || editedItem.type === 'link_mobility_xml')"
-                  xs12
+                  xs11
                 >
                   <v-text-field
                     v-model="editedItem.verify"
                     :label="$t('Verify')"
                   />
+                </v-flex>
+                <v-flex 
+                  v-if="(editedItem.type === 'smtp' || editedItem.type === 'link_mobility' || editedItem.type === 'link_mobility_xml')"
+                  xs1
+                >
+                  <v-tooltip left>
+                    <template v-slot:activator="{ on }">
+                      <v-icon v-on="on">
+                        info_outline
+                      </v-icon>
+                    </template>
+                    <span>Verify SSL certificates of host. True/False</span>
+                  </v-tooltip>
                 </v-flex>
                 <v-flex
                   v-if="editedId === null && editedItem.type !== 'sendgrid'"
@@ -236,6 +284,14 @@
     <v-card>
       <v-card-title class="title">
         {{ $t('Notification Channels') }}
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-icon v-on="on">
+              info_outline
+            </v-icon>
+          </template>
+          <span>Channels/Authentication for SMS/Mail providers</span>
+        </v-tooltip>
         <v-spacer />
         <v-tooltip bottom>
           <template slot="activator">
@@ -386,7 +442,7 @@ export default {
       { text: 'twilio (sms)', value: 'twilio_sms' },
       { text: 'twilio (call + sms)', value: 'twilio_call' },
       { text: 'link moblity xml (sms)', value: 'link_mobility_xml' },
-      { text: 'my link', value: 'my_link' }
+      { text: 'my link (sms)', value: 'my_link' }
     ],
     search: '',
     dialog: false,
