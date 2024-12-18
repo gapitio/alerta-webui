@@ -6,6 +6,8 @@ const state = {
   isLoading: false,
 
   notification_history: [],
+  
+  query: {},
   pagination: {
     page: 1,
     rowsPerPage: 20,
@@ -18,6 +20,9 @@ const state = {
 const mutations = {
   SET_LOADING(state) {
     state.isLoading = true
+  },
+  SET_SEARCH_QUERY(state, query): any {
+    state.query = query
   },
   SET_NOTIFICATION_HISTORY(state, [notificationHistory, total, pageSize]) {
     state.isLoading = false
@@ -51,6 +56,11 @@ const actions = {
         commit('SET_NOTIFICATION_HISTORY', [notificationHistory, total, pageSize])
       )
       .catch(() => commit('RESET_LOADING'))
+  },
+  
+  updateQuery({commit}, query) {
+    console.log(query)
+    commit('SET_SEARCH_QUERY', query)
   },
 
   setPagination({commit}, pagination) {

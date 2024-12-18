@@ -97,6 +97,9 @@ export function createRouter(basePath): VueRouter {
       {
         path: '/notificationhistory',
         name: 'notificationhistory',
+        props: route => ({
+          query: route.query
+        }),
         component: () => import(/* webpackChunkName: 'user' */ './views/NotificationHistory.vue'),
         meta: {title: 'NotificationHistory', requiresAuth: true}
       },
