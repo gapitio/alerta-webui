@@ -4,12 +4,44 @@
       <v-card-title class="title">
         {{ $t('Notification History') }}
         <v-spacer />
+        <v-btn-toggle
+          v-model="sent"
+          class="transparent"
+          multiple
+        >
+          <v-btn
+            :value="true"
+            flat
+          >
+            <v-tooltip bottom>
+              <v-icon slot="activator">
+                check
+              </v-icon>
+              <span>{{ $t('Sent') }}</span>
+            </v-tooltip>
+          </v-btn>
+          <v-btn
+            :value="false"
+            flat
+          >
+            <v-tooltip bottom>
+              <v-icon slot="activator">
+                cancel
+              </v-icon>
+              <span>{{ $t('NotSent') }}</span>
+            </v-tooltip>
+          </v-btn>
+        </v-btn-toggle>
+        <v-spacer />
         <v-text-field
-          v-model="search"
+          v-model="query"
           append-icon="search"
-          :label="$t('Search')"
+          clearable
           single-line
           hide-details
+          :label="$t('Search')"
+          @change="setSearch"
+          @click:clear="clearSearch"
         />
       </v-card-title>
 
@@ -119,12 +151,32 @@ export default {
           return { ...b, sent_time, confirmed_time }
         })
     },
+    
+    sent: {
+      get() {
+        return this.$store.getters['notificationHistory/sent']
+      },
+      set(value) {
+        this.$store.dispatch('notificationHistory/setShownSentStatus', value)
+        this.getNotificationsHistory()
+      }
+    },
     pagination: {
       get() {
         return this.$store.getters['notificationHistory/pagination']
       },
       set(value) {
         this.$store.dispatch('notificationHistory/setPagination', value)
+      }
+    },
+    query: {
+      get() {
+        return this.$store.state.notificationHistory.query
+          ? this.$store.state.notificationHistory.query.q
+          : null
+      },
+      set(value) {
+        // FIXME: offer query suggestions to user here, in future
       }
     },
     computedHeaders() {
@@ -144,6 +196,11 @@ export default {
       if (!val) return
       this.getNotificationsHistory()
     },
+    sent: {
+      handler() {
+        this.getNotificationsHistory()
+      }
+    },
     pagination: {
       handler() {
         this.getNotificationsHistory()
@@ -158,9 +215,20 @@ export default {
     getNotificationsHistory() {
       this.$store.dispatch('notificationHistory/getNotificationHistory')
     },
+    setSearch(query) {
+      this.$store.dispatch('notificationHistory/updateQuery', {q: query})
+      this.$router.push({query: {...this.$router.query, q: query}})
+      this.getNotificationsHistory()
+    },
     severityColor(confirmed, sent) {
       const config = this.$store.getters.getConfig('colors')
       return config.severity[confirmed ? 'ok' : sent ? 'normal' : 'critical'] || 'white'
+    },
+    clearSearch() {
+      this.query = null
+      this.$store.dispatch('notificationHistory/updateQuery', {})
+      this.$router.push({query: {...this.$router.query, q: undefined}})
+      this.getNotificationsHistory()
     },
     findAlert(id){
       this.$router.push({ path: `/alerts?q=id:"${id}"` })
