@@ -4,6 +4,35 @@
       <v-card-title class="title">
         {{ $t('Notification History') }}
         <v-spacer />
+        <v-btn-toggle
+          v-model="sent"
+          class="transparent"
+          multiple
+        >
+          <v-btn
+            :value="true"
+            flat
+          >
+            <v-tooltip bottom>
+              <v-icon slot="activator">
+                check
+              </v-icon>
+              <span>{{ $t('Sent') }}</span>
+            </v-tooltip>
+          </v-btn>
+          <v-btn
+            :value="false"
+            flat
+          >
+            <v-tooltip bottom>
+              <v-icon slot="activator">
+                cancel
+              </v-icon>
+              <span>{{ $t('NotSent') }}</span>
+            </v-tooltip>
+          </v-btn>
+        </v-btn-toggle>
+        <v-spacer />
         <v-text-field
           v-model="query"
           append-icon="search"
@@ -122,6 +151,16 @@ export default {
           return { ...b, sent_time, confirmed_time }
         })
     },
+    
+    sent: {
+      get() {
+        return this.$store.getters['notificationHistory/sent']
+      },
+      set(value) {
+        this.$store.dispatch('notificationHistory/setShownSentStatus', value)
+        this.getNotificationsHistory()
+      }
+    },
     pagination: {
       get() {
         return this.$store.getters['notificationHistory/pagination']
@@ -156,6 +195,11 @@ export default {
     refresh(val) {
       if (!val) return
       this.getNotificationsHistory()
+    },
+    sent: {
+      handler() {
+        this.getNotificationsHistory()
+      }
     },
     pagination: {
       handler() {

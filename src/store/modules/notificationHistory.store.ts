@@ -6,7 +6,8 @@ const state = {
   isLoading: false,
 
   notification_history: [],
-  
+
+  sent: [true, false],
   query: {},
   pagination: {
     page: 1,
@@ -24,6 +25,11 @@ const mutations = {
   SET_SEARCH_QUERY(state, query): any {
     state.query = query
   },
+
+  SET_SHOWN_SENT_STATUS(state, sent): any {
+    state.sent = sent
+  },
+
   SET_NOTIFICATION_HISTORY(state, [notificationHistory, total, pageSize]) {
     state.isLoading = false
     state.notification_history = notificationHistory
@@ -43,6 +49,9 @@ const actions = {
     commit('SET_LOADING')
 
     let params = new URLSearchParams(state.query)
+    
+    //add server-side sent status
+    params.append('sent', state.sent)
 
     // add server-side paging
     params.append('page', state.pagination.page)
@@ -57,10 +66,13 @@ const actions = {
       )
       .catch(() => commit('RESET_LOADING'))
   },
-  
+
   updateQuery({commit}, query) {
-    console.log(query)
     commit('SET_SEARCH_QUERY', query)
+  },
+
+  setShownSentStatus({commit}, status) {
+    commit('SET_SHOWN_SENT_STATUS', status)
   },
 
   setPagination({commit}, pagination) {
@@ -71,6 +83,10 @@ const actions = {
 const getters = {
   pagination: state => {
     return state.pagination
+  },
+  sent: state => {
+    console.log(state)
+    return state.sent
   }
 }
 
