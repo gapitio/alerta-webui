@@ -104,7 +104,7 @@ const actions = {
   },
   getReport({commit, state}) {
     let params = getParams(state)
-    return AlertsApi.getReport(params).then((file) => commit('SET_REPORT', file))
+    return AlertsApi.getReport(params).then(file => commit('SET_REPORT', file))
   },
 
   setFilter({commit}, filter) {
