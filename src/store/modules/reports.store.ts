@@ -8,6 +8,7 @@ const state = {
   offenders: [],
   flapping: [],
   standing: [],
+  report: '',
 
   filter: {
     environment: null,
@@ -40,6 +41,9 @@ const mutations = {
   },
   SET_PAGE_SIZE(state, rowsPerPage) {
     state.pagination.rowsPerPage = rowsPerPage
+  },
+  SET_REPORT(state, file): any {
+    state.report = file
   }
 }
 
@@ -97,6 +101,10 @@ const actions = {
   getTopStanding({commit, state}) {
     let params = getParams(state)
     return AlertsApi.getTop10Standing(params).then(({top10}) => commit('SET_TOP_STANDING', top10))
+  },
+  getReport({commit, state}) {
+    let params = getParams(state)
+    return AlertsApi.getReport(params).then((file) => commit('SET_REPORT', file))
   },
 
   setFilter({commit}, filter) {

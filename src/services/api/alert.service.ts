@@ -106,5 +106,11 @@ export default {
       params: query
     }
     return api.get('/alerts/tags', config)
+  },
+  getReport(query: object) {
+    let config = {
+      params: query
+    }
+    return api.get('/alerts/reports/download', config)
   }
 }
