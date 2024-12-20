@@ -49,7 +49,7 @@ const actions = {
     commit('SET_LOADING')
 
     let params = new URLSearchParams(state.query)
-    
+
     //add server-side sent status
     params.append('sent', state.sent)
 
@@ -85,7 +85,6 @@ const getters = {
     return state.pagination
   },
   sent: state => {
-    console.log(state)
     return state.sent
   }
 }
