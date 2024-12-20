@@ -17,7 +17,8 @@
 
         <v-btn
           flat
-          :href="export_reports()"
+          :href="'data:text/csv;,' + report"
+          type="text/csv"
           download
         >
           Export
@@ -67,6 +68,9 @@ export default {
     filter() {
       return this.$store.state.reports.filter
     },
+    report() {
+      return this.$store.state.reports.report
+    },
     isActive() {
       return this.filter.text || this.filter.environment || this.filter.severity
         || this.filter.status || this.filter.customer || this.filter.service
@@ -78,14 +82,17 @@ export default {
       },
       set(value) {
         this.$store.dispatch('reports/setPageSize', value)
+        this.$store.dispatch('reports/getReport')
       }
     },
   },
+  created() {
+    this.getReports()
+  },
   methods: {
-    export_reports () {
-      const pagination = this.$store.state.reports.pagination
-      return `${this.$config.endpoint}/alerts/reports/download?page-size=${pagination.rowsPerPage}`
-    }
+    getReports() {
+      this.$store.dispatch('reports/getReport')
+    },
   }
 }
 
