@@ -12,9 +12,10 @@
           <v-container>
             <div 
               v-for="(i, index) in info"
-              :key="i"
+              :key="i.text"
             >
               <v-flex
+                v-if="i.info !== undefined"
                 xs12
                 headerinfo
               >
@@ -28,6 +29,7 @@
                   <v-flex 
                     v-if="typeof i.info === 'string'"
                     xs9
+                    style="align-self: center;"
                   >
                     {{ i.info }}
                   </v-flex>
@@ -65,7 +67,7 @@ export default {
   
   props: {
     info: {
-      type: Object,
+      type: Array,
       required: true,
     },
     title: {
