@@ -1,201 +1,12 @@
 <template>
   <div>
-    <v-dialog
-      v-model="infocard"
-      max-width="540px"      
-    >
-      <v-flex xs12>
-        <v-card>
-          <v-toolbar>
-            <v-toolbar-title>{{ $t('NotificationHistory') }}: {{ $t('NotificationHistoryInfo') }}</v-toolbar-title>
-          </v-toolbar>
-          <v-container>
-            <v-flex 
-              xs12
-              headerinfo
-            >
-              <v-layout wrap>
-                <v-flex 
-                  xs3 
-                  style="align-self: center;"
-                >
-                  {{ $t('Id') }}:
-                </v-flex>
-                <v-flex xs9>
-                  {{ $t('NotificationHistoryId') }}
-                </v-flex>
-              </v-layout>
-            </v-flex>
-            <v-divider />
-            <v-flex 
-              xs12
-              headerinfo
-            >
-              <v-layout wrap>
-                <v-flex 
-                  xs3 
-                  style="align-self: center;"
-                >
-                  {{ $t('Sent') }}:
-                </v-flex>
-                <v-flex xs9>
-                  <v-flex xs12>
-                    {{ $t('NotificationHistorySentTrue') }}
-                  </v-flex>
-                  <v-flex xs12>
-                    {{ $t('NotificationHistorySentFalse') }}
-                  </v-flex>
-                </v-flex>
-              </v-layout>
-            </v-flex>
-            <v-divider />
-            <v-flex 
-              xs12
-              headerinfo
-            >
-              <v-layout wrap>
-                <v-flex 
-                  xs3 
-                  style="align-self: center;"
-                >
-                  {{ $t('SentTime') }}:
-                </v-flex>
-                <v-flex xs9>
-                  {{ $t('NotificationHistorySentTime') }}
-                </v-flex>
-              </v-layout>
-            </v-flex>
-            <v-divider />
-            <v-flex 
-              xs12
-              headerinfo
-            >
-              <v-layout wrap>
-                <v-flex 
-                  xs3 
-                  style="align-self: center;"
-                >
-                  {{ $t('Message') }}:
-                </v-flex>
-                <v-flex xs9>
-                  {{ $t('NotificationHistoryMessage') }}
-                </v-flex>
-              </v-layout>
-            </v-flex>
-            <v-divider />
-            <v-flex 
-              xs12
-              headerinfo
-            >
-              <v-layout wrap>
-                <v-flex 
-                  xs3 
-                  style="align-self: center;"
-                >
-                  Receiver:
-                </v-flex>
-                <v-flex xs9>
-                  {{ $t('NotificationHistoryReceiver') }}
-                </v-flex>
-              </v-layout>
-            </v-flex>
-            <v-divider />
-            <v-flex 
-              xs12
-              headerinfo
-            >
-              <v-layout wrap>
-                <v-flex 
-                  xs3 
-                  style="align-self: center;"
-                >
-                  Sender:
-                </v-flex>
-                <v-flex xs9>
-                  {{ $t('SenderInfo') }}
-                </v-flex>
-              </v-layout>
-            </v-flex>
-            <v-divider />
-            <v-flex 
-              xs12
-              headerinfo
-            >
-              <v-layout wrap>
-                <v-flex 
-                  xs3 
-                  style="align-self: center;"
-                >
-                  Channel:
-                </v-flex>
-                <v-flex xs9>
-                  {{ $t('NotificationHistoryChannel') }}
-                </v-flex>
-              </v-layout>
-            </v-flex>
-            <v-divider />
-            <v-flex 
-              xs12
-              headerinfo
-            >
-              <v-layout wrap>
-                <v-flex 
-                  xs3 
-                  style="align-self: center;"
-                >
-                  {{ $t('NotificationRule') }}:
-                </v-flex>
-                <v-flex xs9>
-                  {{ $t('NotificationHistoryRule') }}
-                </v-flex>
-              </v-layout>
-            </v-flex>
-            <v-divider />
-            <v-flex 
-              xs12
-              headerinfo
-            >
-              <v-layout wrap>
-                <v-flex 
-                  xs3 
-                  style="align-self: center;"
-                >
-                  {{ $t('Alert') }}:
-                </v-flex>
-                <v-flex xs9>
-                  {{ $t('NotificationHistoryAlert') }}
-                </v-flex>
-              </v-layout>
-            </v-flex>
-            <v-divider />
-            <v-flex 
-              xs12
-              headerinfo
-            >
-              <v-layout wrap>
-                <v-flex 
-                  xs3 
-                  style="align-self: center;"
-                >
-                  {{ $t('Error') }}:
-                </v-flex>
-                <v-flex xs9>
-                  {{ $t('NotificationHistoryError') }}
-                </v-flex>
-              </v-layout>
-            </v-flex>
-          </v-container>
-        </v-card>
-      </v-flex>
-    </v-dialog>
     <v-card>
       <v-card-title class="title">
         {{ $t('NotificationHistory') }}
-        <v-icon 
-          @click="() => infocard = true"
-        >
-          help_outline
-        </v-icon>
+        <information-dialog 
+          :title="$t('NotificationHistory') + ': ' + $t('NotificationHistoryInfo')" 
+          :info="headers"
+        />
         <v-spacer />
         <v-btn-toggle
           v-model="sent"
@@ -299,26 +110,28 @@
     </v-card>
   </div>
 </template>
-
 <script>
 import moment from 'moment'
 import i18n from '@/plugins/i18n'
+import InformationDialog from '@/components/notification/InformationDialog'
 
 export default {
+  components: {
+    InformationDialog,
+  },
   data: vm => ({
     search: '',
-    infocard: false,
     headers: [
-      { text: i18n.t('Id'), tooltip: 'test', value: 'id', sortable: false },
-      { text: i18n.t('Sent'), value: 'sent', sortable: false },
-      { text: i18n.t('SentTime'), value: 'sent_time', sortable: false },
-      { text: i18n.t('Message'), value: 'message', sortable: false },
-      { text: i18n.t('Receiver'), value: 'receiver', sortable: false },
-      { text: i18n.t('Sender'), value: 'sender', sortable: false },
-      { text: i18n.t('Channel'), value: 'channel', sortable: false },
-      { text: i18n.t('NotificationRule'), value: 'rule', sortable: false },
-      { text: i18n.t('Alert'), value: 'alert', sortable: false },
-      { text: i18n.t('Error'), value: 'error', sortable: false },
+      { text: i18n.t('Id'), value: 'id', sortable: false, info: i18n.t('NotificationHistoryId') },
+      { text: i18n.t('Sent'), value: 'sent', sortable: false, info: [i18n.t('NotificationHistorySentTrue'), i18n.t('NotificationHistorySentFalse')]},
+      { text: i18n.t('SentTime'), value: 'sent_time', sortable: false, info: i18n.t('NotificationHistorySentTime') },
+      { text: i18n.t('Message'), value: 'message', sortable: false, info: i18n.t('NotificationHistoryMessage') },
+      { text: i18n.t('Receiver'), value: 'receiver', sortable: false, info: i18n.t('NotificationHistoryReceiver') },
+      { text: i18n.t('Sender'), value: 'sender', sortable: false, info: i18n.t('SenderInfo') },
+      { text: i18n.t('Channel'), value: 'channel', sortable: false, info: i18n.t('NotificationHistoryChannel') },
+      { text: i18n.t('NotificationRule'), value: 'rule', sortable: false, info: i18n.t('NotificationHistoryRule') },
+      { text: i18n.t('Alert'), value: 'alert', sortable: false, info: i18n.t('NotificationHistoryAlert') },
+      { text: i18n.t('Error'), value: 'error', sortable: false, info: i18n.t('NotificationHistoryError') },
     ],
     rules: {
       required: v => !!v || i18n.t('Required')
@@ -436,11 +249,5 @@ td.clickable {
   color: #3f51b5;
   font-weight: 400;
   text-decoration: underline;
-}
-.container {
-  padding-top: 0px;
-}
-.headerinfo {
-  padding: 10px 0px;
 }
 </style>
