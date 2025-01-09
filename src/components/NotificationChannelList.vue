@@ -102,20 +102,18 @@
                   xs1
                 >
                   <information-tooltip
-                    :info="$t('Verify')"
+                    :info="$t('VerifyInfo')"
                     position="left"
                   />
                 </v-flex>
                 <v-flex
-                  v-if="editedId === null && editedItem.type !== 'sendgrid'"
+                  v-if="editedId === null && labels[editedItem.type].username !== undefined"
                   xs12
                 >
                   <v-text-field
                     v-model="editedItem.apiSid"
                     :type="editedItem.type !== 'smtp' && editedItem.type !== 'jira' ? 'password' : 'text'"
-                    :label="
-                      (editedItem.type !== 'smtp' && editedItem.type !== 'link_mobility' && editedItem.type !== 'jira') ? $t('ApiSid') : $t('Username')
-                    "
+                    :label="labels[editedItem.type].username"
                     :rules="[rules.required]"
                     required
                   />
@@ -127,11 +125,7 @@
                   <v-text-field
                     v-model="editedItem.apiToken"
                     :type="'password'"
-                    :label="
-                      (editedItem.type !== 'smtp' && editedItem.type !== 'link_mobility')
-                        ? $t('ApiToken')
-                        : $t('Password')
-                    "
+                    :label="labels[editedItem.type].password"
                     :rules="[rules.required]"
                     required
                   />
@@ -269,7 +263,10 @@
       <v-card-title class="title">
         {{ $t('Notification Channels') }}
         
-        <information-tooltip :info="$t('NotificationChannelsInfo')" />
+        <information-dialog 
+          :info="info"
+          :title="$t('NotificationChannelsInfo') "
+        />
         <v-spacer />
         <v-tooltip bottom>
           <template slot="activator">
@@ -401,12 +398,14 @@
 <script>
 import ListButtonAdd from './lib/ListButtonAdd'
 import InformationTooltip from '@/components/notification/InformationTooltip'
+import InformationDialog from '@/components/notification/InformationDialog'
 import i18n from '@/plugins/i18n'
 
 export default {
   components: {
     ListButtonAdd,
-    InformationTooltip
+    InformationTooltip,
+    InformationDialog
   },
   data: vm => ({
     types: [
@@ -417,9 +416,24 @@ export default {
       { text: 'link moblity xml (sms)', value: 'link_mobility_xml' },
       { text: 'my link (sms)', value: 'my_link' }
     ],
+    labels: {
+      sendgrid: {password: 'API Key'},
+      smtp: {password: 'Password', username: 'Username'},
+      twilio_sms: {password: 'ApiToken', username: 'ApiSid'},
+      twilio_call: {password: 'ApiToken', username: 'ApiSid'},
+      link_mobility_xml: {password: 'Password', username: 'Username'},
+      my_link: {password: 'Client Secret', username: 'Client ID'},
+    },
     search: '',
     dialog: false,
     testDialog: false,
+    info: [
+      { text: i18n.t('Id'), info: i18n.t('NotificationChannelId') },
+      { text: i18n.t('Sender'), info: i18n.t('SenderInfo') },
+      { text: i18n.t('Type'), info: i18n.t('NotificationChannelType') },
+      { text: i18n.t('Host'), info: i18n.t('HostInfo') },
+      { text: i18n.t('Verify'), info: i18n.t('VerifyInfo') },
+    ],
     headers: [
       { text: i18n.t('Customer'), value: 'customer' },
       { text: i18n.t('Id'), value: 'id' },
