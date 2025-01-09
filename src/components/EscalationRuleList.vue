@@ -57,14 +57,10 @@
                     :label="$t('Interval')"
                   />
                 </v-flex>
-                <v-tooltip left>
-                  <template v-slot:activator="{ on }">
-                    <v-icon v-on="on">
-                      info_outline
-                    </v-icon>
-                  </template>
-                  <span>{{ $t('EscalationTimeInfo') }}</span>
-                </v-tooltip>
+                <information-tooltip
+                  :info="$t('EscalationTimeInfo')"
+                  position="left"
+                />
 
                 <v-flex xs12>
                   <v-select
@@ -96,14 +92,10 @@
                     <v-toolbar>
                       <v-toolbar-title>{{ $t('Triggers') }}</v-toolbar-title>
 
-                      <v-tooltip right>
-                        <template v-slot:activator="{ on }">
-                          <v-icon v-on="on">
-                            info_outline
-                          </v-icon>
-                        </template>
-                        <span>{{ $t('EscalationTriggerInfo') }}</span>
-                      </v-tooltip>
+                      <information-tooltip
+                        :info="$t('EscalationTriggerInfo')"
+                        position="right"
+                      />
                       <v-spacer />
 
                       <v-btn
@@ -180,14 +172,10 @@
                 <v-card>
                   <v-toolbar>
                     <v-toolbar-title>{{ $t('AlertFields') }}</v-toolbar-title>
-                    <v-tooltip right>
-                      <template v-slot:activator="{ on }">
-                        <v-icon v-on="on">
-                          info_outline
-                        </v-icon>
-                      </template>
-                      <span>{{ $t('AlertFieldsInfo') }}</span>
-                    </v-tooltip>
+                    <information-tooltip
+                      :info="$t('AlertFieldsInfo')"
+                      position="right"
+                    />
                   </v-toolbar>
                   <v-container>
                     <v-layout
@@ -216,14 +204,10 @@
                           persistent-hint
                         />
                       </v-flex>
-                      <v-tooltip left>
-                        <template v-slot:activator="{ on }">
-                          <v-icon v-on="on">
-                            info_outline
-                          </v-icon>
-                        </template>
-                        <span>{{ $t('ServiceInfo') }}</span>
-                      </v-tooltip>
+                      <information-tooltip
+                        :info="$t('ServiceInfo')"
+                        position="left"
+                      />
 
                       <v-flex xs12>
                         <v-text-field
@@ -438,14 +422,10 @@
     <v-card>
       <v-card-title class="title">
         {{ $t('EscalationRules') }}
-        <v-tooltip right>
-          <template v-slot:activator="{ on }">
-            <v-icon v-on="on">
-              info_outline
-            </v-icon>
-          </template>
-          <span>{{ $t('EscalationRuleInfo') }}</span>
-        </v-tooltip>
+        <information-tooltip
+          :info="$t('EscalationRuleInfo')"
+          position="right"
+        />
         <v-spacer />
         <v-btn-toggle
           v-model="status"
@@ -456,23 +436,19 @@
             value="true"
             flat
           >
-            <v-tooltip bottom>
-              <v-icon slot="activator">
-                notifications
-              </v-icon>
-              <span>{{ $t('Active') }}</span>
-            </v-tooltip>
+            <information-tooltip
+              :info="status.includes('true') ? $t('HideActive') : $t('ShowActive')"
+              icon="notifications"
+            />
           </v-btn>
           <v-btn
             value="false"
             flat
           >
-            <v-tooltip bottom>
-              <v-icon slot="activator">
-                notifications_paused
-              </v-icon>
-              <span>{{ $t('Deactivated') }}</span>
-            </v-tooltip>
+            <information-tooltip
+              :info="status.includes('false') ? $t('HideDeactivated') : $t('ShowDeactivated')"
+              icon="notifications_paused"
+            />
           </v-btn>
         </v-btn-toggle>
         <v-spacer />
@@ -756,12 +732,13 @@
 
 <script>
 import ListButtonAdd from './lib/ListButtonAdd'
-import moment from 'moment'
+import InformationTooltip from '@/components/notification/InformationTooltip'
 import i18n from '@/plugins/i18n'
 
 export default {
   components: {
-    ListButtonAdd
+    ListButtonAdd,
+    InformationTooltip
   },
   data: vm => ({
     status: ['true', 'false'],

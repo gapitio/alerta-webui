@@ -37,14 +37,10 @@
                 </v-flex>
 
                 <v-flex xs1>
-                  <v-tooltip left>
-                    <template v-slot:activator="{ on }">
-                      <v-icon v-on="on">
-                        info_outline
-                      </v-icon>
-                    </template>
-                    <span>Name used in Notification Rules to refer to this channel</span>
-                  </v-tooltip>
+                  <information-tooltip
+                    :info="$t('NotificationChannelId')"
+                    position="left"
+                  />
                 </v-flex>
 
                 <v-flex xs11>
@@ -58,14 +54,10 @@
 
                 
                 <v-flex xs1>
-                  <v-tooltip left>
-                    <template v-slot:activator="{ on }">
-                      <v-icon v-on="on">
-                        info_outline
-                      </v-icon>
-                    </template>
-                    <span>{{ $t('SenderInfo') }}</span>
-                  </v-tooltip>
+                  <information-tooltip
+                    :info="$t('SenderInfo')"
+                    position="left"
+                  />
                 </v-flex>
 
                 <v-flex xs11>
@@ -79,14 +71,10 @@
                 </v-flex>
 
                 <v-flex xs1>
-                  <v-tooltip left>
-                    <template v-slot:activator="{ on }">
-                      <v-icon v-on="on">
-                        info_outline
-                      </v-icon>
-                    </template>
-                    <span>Supported SMS/Mail provider</span>
-                  </v-tooltip>
+                  <information-tooltip
+                    :info="$t('NotificationChannelType')"
+                    position="left"
+                  />
                 </v-flex>
 
                 <v-flex
@@ -113,14 +101,10 @@
                   v-if="(editedItem.type === 'smtp' || editedItem.type === 'link_mobility' || editedItem.type === 'link_mobility_xml')"
                   xs1
                 >
-                  <v-tooltip left>
-                    <template v-slot:activator="{ on }">
-                      <v-icon v-on="on">
-                        info_outline
-                      </v-icon>
-                    </template>
-                    <span>Verify SSL certificates of host. True/False</span>
-                  </v-tooltip>
+                  <information-tooltip
+                    :info="$t('Verify')"
+                    position="left"
+                  />
                 </v-flex>
                 <v-flex
                   v-if="editedId === null && editedItem.type !== 'sendgrid'"
@@ -284,14 +268,8 @@
     <v-card>
       <v-card-title class="title">
         {{ $t('Notification Channels') }}
-        <v-tooltip bottom>
-          <template v-slot:activator="{ on }">
-            <v-icon v-on="on">
-              info_outline
-            </v-icon>
-          </template>
-          <span>Channels/Authentication for SMS/Mail providers</span>
-        </v-tooltip>
+        
+        <information-tooltip :info="$t('NotificationChannelsInfo')" />
         <v-spacer />
         <v-tooltip bottom>
           <template slot="activator">
@@ -299,15 +277,9 @@
               Get New Encryption Key
             </v-btn>
           </template>
-          <span>{{
-            $t('Genereates New Encryption Key And Copies It To Clipboard')
-          }}</span>
+          <span>{{ $t('NotificationKeyGenerate') }}</span>
           <br>
-          <span>{{
-            $t(
-              'Set NOTIFICATION_KEY="{New Key}" In Config To Use Generated Key'
-            )
-          }}</span>
+          <span>{{ $t('NotificationKey') }}</span>
         </v-tooltip>
         <v-spacer />
         <v-spacer />
@@ -428,12 +400,13 @@
 
 <script>
 import ListButtonAdd from './lib/ListButtonAdd'
-import moment from 'moment'
+import InformationTooltip from '@/components/notification/InformationTooltip'
 import i18n from '@/plugins/i18n'
 
 export default {
   components: {
-    ListButtonAdd
+    ListButtonAdd,
+    InformationTooltip
   },
   data: vm => ({
     types: [

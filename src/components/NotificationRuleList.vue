@@ -347,28 +347,16 @@
                     :label="$t('Interval')"
                   />
                 </v-flex>
-
-                <v-tooltip left>
-                  <template v-slot:activator="{ on }">
-                    <v-icon v-on="on">
-                      info_outline
-                    </v-icon>
-                  </template>
-                  <span>{{ $t('DelayTimeInfo') }}</span>
-                </v-tooltip>
+                <information-tooltip 
+                  :info="$t('DelayTimeInfo')"
+                  position="left"
+                />
 
                 <v-flex xs12>
                   <v-card>
                     <v-toolbar>
                       <v-toolbar-title>{{ $t('Receivers') }}</v-toolbar-title>
-                      <v-tooltip bottom>
-                        <template v-slot:activator="{ on }">
-                          <v-icon v-on="on">
-                            info_outline
-                          </v-icon>
-                        </template>
-                        <span>{{ $t('ReceiversAllInfo') }}</span>
-                      </v-tooltip>
+                      <information-tooltip :info="$t('ReceiversAllInfo')" />
                       <v-spacer />
                       <v-spacer />
                       <v-spacer />
@@ -432,14 +420,7 @@
                   <v-card>
                     <v-toolbar>
                       <v-toolbar-title>{{ $t('Triggers') }}</v-toolbar-title>
-                      <v-tooltip bottom>
-                        <template v-slot:activator="{ on }">
-                          <v-icon v-on="on">
-                            info_outline
-                          </v-icon>
-                        </template>
-                        <span>{{ $t('TriggerInfo') }}</span>
-                      </v-tooltip>
+                      <information-tooltip :info="$t('TriggerInfo')" />
                       <v-spacer />
 
                       <v-btn
@@ -554,14 +535,7 @@
                 <v-card>
                   <v-toolbar>
                     <v-toolbar-title>{{ $t('AlertFields') }}</v-toolbar-title>
-                    <v-tooltip bottom>
-                      <template v-slot:activator="{ on }">
-                        <v-icon v-on="on">
-                          info_outline
-                        </v-icon>
-                      </template>
-                      <span>{{ $t('AlertFieldsInfo') }}</span>
-                    </v-tooltip>
+                    <information-tooltip :info="$t('AlertFieldsInfo')" />
                   </v-toolbar>
                   <v-container>
                     <v-layout
@@ -604,14 +578,10 @@
                           persistent-hint
                         />
                       </v-flex>
-                      <v-tooltip left>
-                        <template v-slot:activator="{ on }">
-                          <v-icon v-on="on">
-                            info_outline
-                          </v-icon>
-                        </template>
-                        <span>{{ $t('ServiceInfo') }}</span>
-                      </v-tooltip>
+                      <information-tooltip 
+                        :info="$t('ServiceInfo')" 
+                        position="left"
+                      />
 
                       <v-flex xs12>
                         <v-combobox
@@ -662,23 +632,17 @@
                                   <v-flex xs11>
                                     <v-combobox
                                       v-model="tag.all"
-                                      v-tooltip="'start'"
                                       :items="currentTags"
                                       :label="$t('AND')"
-                                      tooltip="test"
                                       chips
                                       multiple
                                       xs4
                                     />
-                                  </v-flex>
-                                  <v-tooltip left>
-                                    <template v-slot:activator="{ on }">
-                                      <v-icon v-on="on">
-                                        info_outline
-                                      </v-icon>
-                                    </template>
-                                    <span>{{ $t('TagsAnd') }}</span>
-                                  </v-tooltip>
+                                  </v-flex>            
+                                  <information-tooltip 
+                                    :info="$t('TagsAnd')" 
+                                    position="left"
+                                  />
                                   <v-flex xs11>
                                     <v-combobox
                                       v-model="tag.any"
@@ -687,15 +651,11 @@
                                       chips
                                       multiple
                                     />
-                                  </v-flex>
-                                  <v-tooltip left>
-                                    <template v-slot:activator="{ on }">
-                                      <v-icon v-on="on">
-                                        info_outline
-                                      </v-icon>
-                                    </template>
-                                    <span>{{ $t('TagsOr') }}</span>
-                                  </v-tooltip>
+                                  </v-flex>   
+                                  <information-tooltip 
+                                    :info="$t('TagsOr')" 
+                                    position="left"
+                                  />
                                 </v-layout>
                               </v-flex>
                               <v-flex
@@ -759,23 +719,17 @@
                                   <v-flex xs11>
                                     <v-combobox
                                       v-model="tag.all"
-                                      v-tooltip="'start'"
                                       :items="currentTags"
                                       :label="$t('AND')"
-                                      tooltip="test"
                                       chips
                                       multiple
                                       xs4
                                     />
                                   </v-flex>
-                                  <v-tooltip left>
-                                    <template v-slot:activator="{ on }">
-                                      <v-icon v-on="on">
-                                        info_outline
-                                      </v-icon>
-                                    </template>
-                                    <span>{{ $t('TagsExcludeAnd') }}</span>
-                                  </v-tooltip>
+                                  <information-tooltip 
+                                    :info="$t('TagsExcludeAnd')" 
+                                    position="left"
+                                  />
                                   <v-flex xs11>
                                     <v-combobox
                                       v-model="tag.any"
@@ -785,14 +739,10 @@
                                       multiple
                                     />
                                   </v-flex>
-                                  <v-tooltip left>
-                                    <template v-slot:activator="{ on }">
-                                      <v-icon v-on="on">
-                                        info_outline
-                                      </v-icon>
-                                    </template>
-                                    <span>{{ $t('TagsExcludeOr') }}</span>
-                                  </v-tooltip>
+                                  <information-tooltip 
+                                    :info="$t('TagsExcludeOr')" 
+                                    position="left"
+                                  />
                                 </v-layout>
                               </v-flex>
                               <v-flex
@@ -853,14 +803,7 @@
     <v-card>
       <v-card-title class="title">
         {{ $t('Notification Rules') }}
-        <v-tooltip bottom>
-          <template v-slot:activator="{ on }">
-            <v-icon v-on="on">
-              info_outline
-            </v-icon>
-          </template>
-          <span>Rules for sending out sms and mail through Notification Channels</span>
-        </v-tooltip>
+        <information-tooltip :info="$t('NotificationRulesInfo')" />
         <v-spacer />
         <span
           v-if="selectableRows"
@@ -911,23 +854,19 @@
             value="true"
             flat
           >
-            <v-tooltip bottom>
-              <v-icon slot="activator">
-                notifications
-              </v-icon>
-              <span>{{ status.includes('true') ? $t('HideActive') : $t('ShowActive') }}</span>
-            </v-tooltip>
+            <information-tooltip
+              :info="status.includes('true') ? $t('HideActive') : $t('ShowActive')"
+              icon="notifications"
+            />
           </v-btn>
           <v-btn
             value="false"
             flat
           >
-            <v-tooltip bottom>
-              <v-icon slot="activator">
-                notifications_paused
-              </v-icon>
-              <span>{{ status.includes('false') ? $t('HideDeactivated') : $t('ShowDeactivated') }}</span>
-            </v-tooltip>
+            <information-tooltip
+              :info="status.includes('false') ? $t('HideDeactivated') : $t('ShowDeactivated')"
+              icon="notifications_paused"
+            />
           </v-btn>
         </v-btn-toggle>
         <v-spacer />
@@ -1259,12 +1198,14 @@
 
 <script>
 import ListButtonAdd from './lib/ListButtonAdd'
+import InformationTooltip from '@/components/notification/InformationTooltip'
 import moment from 'moment'
 import i18n from '@/plugins/i18n'
 
 export default {
   components: {
-    ListButtonAdd
+    ListButtonAdd,
+    InformationTooltip
   },
   data: vm => ({
     status: ['true', 'false'],
