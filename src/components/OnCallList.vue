@@ -257,15 +257,10 @@
     <v-card>
       <v-card-title class="title">
         {{ $t('OnCall') }}
-        
-        <v-tooltip right>
-          <template v-slot:activator="{ on }">
-            <v-icon v-on="on">
-              info_outline
-            </v-icon>
-          </template>
-          <span>{{ $t('OnCallInfo') }}</span>
-        </v-tooltip>
+        <information-tooltip
+          :info="$t('OnCallInfo')"
+          position="right"
+        />
         <v-spacer />
         <v-btn-toggle
           v-model="status"
@@ -276,23 +271,19 @@
             value="active"
             flat
           >
-            <v-tooltip bottom>
-              <v-icon slot="activator">
-                notifications_paused
-              </v-icon>
-              <span>{{ status.includes('active') ? $t('HideActive') : $t('ShowActive') }}</span>
-            </v-tooltip>
+            <information-tooltip
+              :info="status.includes('active') ? $t('HideActive') : $t('ShowActive')"
+              icon="notifications_paused"
+            />
           </v-btn>
           <v-btn
             value="deactivated"
             flat
           >
-            <v-tooltip bottom>
-              <v-icon slot="activator">
-                schedule
-              </v-icon>
-              <span>{{ status.includes('deactivated') ? $t('HideDeactivated') : $t('ShowDeactivated') }}</span>
-            </v-tooltip>
+            <information-tooltip
+              :info="status.includes('deactivated') ? $t('HideDeactivated') : $t('ShowDeactivated')"
+              icon="schedule"
+            />
           </v-btn>
         </v-btn-toggle>
         <v-spacer />
@@ -458,12 +449,13 @@
 
 <script>
 import ListButtonAdd from './lib/ListButtonAdd'
-import moment from 'moment'
+import InformationTooltip from '@/components/notification/InformationTooltip'
 import i18n from '@/plugins/i18n'
 
 export default {
   components: {
-    ListButtonAdd
+    ListButtonAdd,
+    InformationTooltip
   },
   data: vm => ({
     status: ['active', 'deactivated'],
