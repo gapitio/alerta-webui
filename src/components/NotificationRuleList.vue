@@ -421,6 +421,7 @@
                     <v-toolbar>
                       <v-toolbar-title>{{ $t('Triggers') }}</v-toolbar-title>
                       <information-tooltip :info="$t('TriggerInfo')" />
+                      <triggers-information-dialog />
                       <v-spacer />
 
                       <v-btn
@@ -457,7 +458,7 @@
                               <v-select
                                 v-model="item.from_severity"
                                 :items="severities"
-                                :label="$t('From Severity')"
+                                :label="$t('FromSeverity')"
                                 chips
                                 multiple
                               />
@@ -466,7 +467,7 @@
                               <v-select
                                 v-model="item.to_severity"
                                 :items="severities"
-                                :label="$t('To Severity')"
+                                :label="$t('ToSeverity')"
                                 chips
                                 multiple
                               />
@@ -1201,6 +1202,7 @@
 import ListButtonAdd from './lib/ListButtonAdd'
 import InformationTooltip from '@/components/notification/InformationTooltip'
 import TagsInformationDialog from '@/components/notification/TagsInformationDialog'
+import TriggersInformationDialog from '@/components/notification/TriggersInformationDialog'
 import moment from 'moment'
 import i18n from '@/plugins/i18n'
 
@@ -1208,7 +1210,8 @@ export default {
   components: {
     ListButtonAdd,
     InformationTooltip,
-    TagsInformationDialog
+    TagsInformationDialog,
+    TriggersInformationDialog
   },
   data: vm => ({
     status: ['true', 'false'],
