@@ -595,7 +595,8 @@
                       <v-flex xs12>
                         <v-card>
                           <v-toolbar>
-                            <v-toolbar-title>Tags</v-toolbar-title>
+                            <v-toolbar-title>{{ $t('Tags') }}</v-toolbar-title>
+                            <tags-information-dialog />
 
                             <v-spacer />
 
@@ -1199,13 +1200,15 @@
 <script>
 import ListButtonAdd from './lib/ListButtonAdd'
 import InformationTooltip from '@/components/notification/InformationTooltip'
+import TagsInformationDialog from '@/components/notification/TagsInformationDialog'
 import moment from 'moment'
 import i18n from '@/plugins/i18n'
 
 export default {
   components: {
     ListButtonAdd,
-    InformationTooltip
+    InformationTooltip,
+    TagsInformationDialog
   },
   data: vm => ({
     status: ['true', 'false'],
