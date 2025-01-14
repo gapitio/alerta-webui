@@ -805,7 +805,14 @@
     <v-card>
       <v-card-title class="title">
         {{ $t('Notification Rules') }}
-        <information-tooltip :info="$t('NotificationRulesInfo')" />
+        <information-dialog 
+          :info="headers" 
+          :title="$t('NotificationRulesInfo')"
+        >
+          <triggers-information-dialog :slot="$t('Triggers')" />
+          <tags-information-dialog :slot="$t('Tags')" />
+          <tags-information-dialog :slot="$t('ExcludedTags')" />
+        </information-dialog>
         <v-spacer />
         <span
           v-if="selectableRows"
@@ -1203,6 +1210,7 @@ import ListButtonAdd from './lib/ListButtonAdd'
 import InformationTooltip from '@/components/notification/InformationTooltip'
 import TagsInformationDialog from '@/components/notification/TagsInformationDialog'
 import TriggersInformationDialog from '@/components/notification/TriggersInformationDialog'
+import InformationDialog from '@/components/notification/InformationDialog'
 import moment from 'moment'
 import i18n from '@/plugins/i18n'
 
@@ -1211,7 +1219,8 @@ export default {
     ListButtonAdd,
     InformationTooltip,
     TagsInformationDialog,
-    TriggersInformationDialog
+    TriggersInformationDialog,
+    InformationDialog
   },
   data: vm => ({
     status: ['true', 'false'],
@@ -1221,27 +1230,27 @@ export default {
     dialog: false,
     active_dialog: false,
     headers: [
-      { text: i18n.t('Active'), value: 'active' },
-      { text: i18n.t('Reactivate'), value: 'reactivate' },
+      { text: i18n.t('Active'), value: 'active', info: [i18n.t('ActiveInfoTrue'), i18n.t('ActiveInfoFalse') ] },
+      { text: i18n.t('Reactivate'), value: 'reactivate', info: i18n.t('ReactivateDateInfo')},
       { text: i18n.t('Customer'), value: 'customer' },
-      { text: i18n.t('Delay'), value: 'delay' },
-      { text: i18n.t('Name'), value: 'Name' },
-      { text: i18n.t('Environment'), value: 'environment' },
-      { text: i18n.t('Channel'), value: 'channel' },
-      { text: i18n.t('Receivers'), value: 'receivers' },
-      { text: i18n.t('OnCall'), value: 'useOnCall' },
-      { text: i18n.t('Triggers'), value: 'triggers' },
-      { text: i18n.t('Days'), value: 'days' },
-      { text: i18n.t('Start'), value: 'startTime' },
-      { text: i18n.t('End'), value: 'endTime' },
-      { text: i18n.t('Service'), value: 'service' },
-      { text: i18n.t('Resource'), value: 'resource' },
-      { text: i18n.t('Event'), value: 'event' },
-      { text: i18n.t('Group'), value: 'group' },
+      { text: i18n.t('Delay'), value: 'delay', info: i18n.t('DelayTimeInfo') },
+      { text: i18n.t('Name'), value: 'Name', info: i18n.t('NameInfo') },
+      { text: i18n.t('Environment'), value: 'environment', info: i18n.t('ActiveInfoTrue') },
+      { text: i18n.t('Channel'), value: 'channel', info: i18n.t('NotificationHistoryChannel') },
+      { text: i18n.t('Receivers'), value: 'receivers', info: i18n.t('ReceiversInfo') },
+      { text: i18n.t('OnCall'), value: 'useOnCall', info: [i18n.t('UseOnCallInfoTrue'), i18n.t('UseOnCallInfoFalse')]  },
+      { text: i18n.t('Triggers'), value: 'triggers'  },
+      { text: i18n.t('Days'), value: 'days', info: i18n.t('DaysInfo') },
+      { text: i18n.t('Start'), value: 'startTime', info: i18n.t('StartTimeInfo') },
+      { text: i18n.t('End'), value: 'endTime', info: i18n.t('EndTimeInfo') },
+      { text: i18n.t('Service'), value: 'service', info: i18n.t('ServicesInfo') },
+      { text: i18n.t('Resource'), value: 'resource', info: i18n.t('ResourceInfo') },
+      { text: i18n.t('Event'), value: 'event', info: i18n.t('EventInfo') },
+      { text: i18n.t('Group'), value: 'group', info: i18n.t('GroupInfo') },
       { text: i18n.t('Tags'), value: 'tags' },
-      { text: i18n.t('Excluded Tags'), value: 'excludedTags' },
-      { text: i18n.t('User'), value: 'user' },
-      { text: 'Text', value: 'text' },
+      { text: i18n.t('ExcludedTags'), value: 'excludedTags', info: i18n.t('') },
+      { text: i18n.t('User'), value: 'user'},
+      { text: 'Text', value: 'text', info: i18n.t('TextInfo') },
       { text: i18n.t('Actions'), value: 'name', sortable: false }
     ],
     editedId: null,
