@@ -2,56 +2,61 @@
   <div>
     <v-dialog
       v-model="show"
-      max-width="540px"     
+      max-width="540px"
+      scrollable
     >
-      <v-flex xs12>
-        <v-card>
-          <v-toolbar>
-            <v-toolbar-title>{{ title }}</v-toolbar-title>
-          </v-toolbar>
-          <v-container>
-            <div 
-              v-for="(i, index) in info"
-              :key="i.text"
-            >
-              <v-flex
-                v-if="i.info !== undefined"
-                xs12
-                headerinfo
+      <v-card>
+        <v-card-title class="infotitle title">
+          {{ title }}
+        </v-card-title>
+        <v-card-text>
+          <v-flex xs12>          
+            <v-container>
+              <div 
+                v-for="(i, index) in info"
+                :key="i.text"
               >
-                <v-layout wrap>
-                  <v-flex 
-                    xs3 
-                    style="align-self: center;"
-                  >
-                    {{ i.text }}:
-                  </v-flex>
-                  <v-flex 
-                    v-if="typeof i.info === 'string'"
-                    xs9
-                    style="align-self: center;"
-                  >
-                    {{ i.info }}
-                  </v-flex>
-                  <v-flex 
-                    v-if="typeof i.info === 'object'"
-                    xs9
-                  >
-                    <v-flex
-                      v-for="value in i.info"
-                      :key="value"
-                      xs12
+                <v-flex
+                  v-if="i.info !== undefined || $slots[i.text] !== undefined"
+                  xs12
+                  headerinfo
+                >
+                  <v-layout wrap>
+                    <v-flex 
+                      xs3 
+                      style="align-self: center;"
                     >
-                      {{ value }}
+                      {{ i.text }}:
                     </v-flex>
-                  </v-flex>
-                </v-layout>
-              </v-flex>
-              <v-divider v-if="index + 1 !== info.length" />
-            </div>
-          </v-container>
-        </v-card>
-      </v-flex>
+                    <slot :name="i.text">
+                      <v-flex 
+                        v-if="typeof i.info === 'string'"
+                        xs9
+                        style="align-self: center;"
+                      >
+                        {{ i.info }}
+                      </v-flex>
+                      <v-flex 
+                        v-if="typeof i.info === 'object'"
+                        xs9
+                      >
+                        <v-flex
+                          v-for="value in i.info"
+                          :key="value"
+                          xs12
+                        >
+                          {{ value }}
+                        </v-flex>
+                      </v-flex>
+                    </slot>
+                  </v-layout>
+                </v-flex>
+                <v-divider v-if="index + 1 !== info.length" />
+              </div>
+            </v-container>
+          </v-flex>
+        </v-card-text>
+      </v-card>
     </v-dialog>
     <v-icon 
       @click="() => show = true"
@@ -82,6 +87,10 @@ export default {
 </script>
 
 <style>
+.infotitle {
+  background-color: rgb(238, 238, 238);
+  padding: 10px;
+}
 .container {
   padding-top: 0px;
   /* padding-bottom: 0px; */
