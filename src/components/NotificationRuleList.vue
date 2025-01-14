@@ -684,8 +684,8 @@
                       <v-flex xs12>
                         <v-card>
                           <v-toolbar>
-                            <v-toolbar-title>Excluded Tags</v-toolbar-title>
-
+                            <v-toolbar-title>{{ $t('ExcludedTags') }}</v-toolbar-title>
+                            <excluded-tags-information-dialog />
                             <v-spacer />
 
                             <v-btn
@@ -811,7 +811,7 @@
         >
           <triggers-information-dialog :slot="$t('Triggers')" />
           <tags-information-dialog :slot="$t('Tags')" />
-          <tags-information-dialog :slot="$t('ExcludedTags')" />
+          <excluded-tags-information-dialog :slot="$t('ExcludedTags')" />
         </information-dialog>
         <v-spacer />
         <span
@@ -1209,6 +1209,7 @@
 import ListButtonAdd from './lib/ListButtonAdd'
 import InformationTooltip from '@/components/notification/InformationTooltip'
 import TagsInformationDialog from '@/components/notification/TagsInformationDialog'
+import ExcludedTagsInformationDialog from './notification/ExcludedTagsInformationDialog'
 import TriggersInformationDialog from '@/components/notification/TriggersInformationDialog'
 import InformationDialog from '@/components/notification/InformationDialog'
 import moment from 'moment'
@@ -1219,6 +1220,7 @@ export default {
     ListButtonAdd,
     InformationTooltip,
     TagsInformationDialog,
+    ExcludedTagsInformationDialog,
     TriggersInformationDialog,
     InformationDialog
   },
