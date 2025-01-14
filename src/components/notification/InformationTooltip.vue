@@ -30,10 +30,7 @@ export default {
       type: String,
       default: 'info_outline',
     },
-  },
-  data: vm => ({
-    show: false
-  })
+  }
 }
 </script>
   
