@@ -194,32 +194,165 @@
                 </v-flex>
 
                 <v-flex xs12>
-                  <v-combobox
-                    v-model="editedItem.tags"
-                    :items="currentTags"
-                    :label="$t('Tags')"
-                    multiple
-                    chips
-                  >
-                    <template
-                      slot="selection"
-                      slot-scope="data"
-                    >
-                      <v-chip
-                        :key="JSON.stringify(data.item)"
-                        :selected="data.selected"
-                        :disabled="data.disabled"
-                        class="v-chip--select-multi"
-                        label
-                        small
-                        @input="data.parent.selectItem(data.item)"
+                  <v-card>
+                    <v-toolbar>
+                      <v-toolbar-title>Tags</v-toolbar-title>
+
+                      <v-spacer />
+
+                      <v-btn
+                        icon
+                        @click="
+                          editedItem.tags = [...editedItem.tags, { all: [], any: []}]
+                        "
                       >
-                        <v-icon left>
-                          label
-                        </v-icon>{{ data.item }}
-                      </v-chip>
-                    </template>
-                  </v-combobox>
+                        add
+                        <v-icon>add</v-icon>
+                      </v-btn>
+                      <v-spacer />
+
+                      <v-btn
+                        icon
+                        @click="editedItem.tags = []"
+                      >
+                        clear
+                        <v-icon>
+                          clear
+                        </v-icon>
+                      </v-btn>
+                    </v-toolbar>
+                    <v-container>
+                      <v-layout
+                        v-for="(tag, index) in editedItem.tags"
+                        :key="index"
+                        wrap
+                        xs12
+                      >
+                        <v-flex xs10>
+                          <v-layout> 
+                            <v-flex xs6>
+                              <v-combobox 
+                                v-model="tag.all"
+                                v-tooltip="'start'"
+                                :items="currentTags"
+                                :label="$t('AND')"
+                                tooltip="test"
+                                chips
+                                multiple
+                                xs4
+                              />
+                            </v-flex>
+                            <v-flex xs6>
+                              <v-combobox
+                                v-model="tag.any"
+                                :items="currentTags"
+                                :label="$t('OR')"
+                                chips
+                                multiple
+                              />
+                            </v-flex>         
+                          </v-layout>
+                        </v-flex>                                                 
+                        <v-flex 
+                          xs2
+                          align-self-center
+                        >
+                          <v-btn
+                            icon
+                            @click="
+                              editedItem.tags.splice(index, 1)
+                            "
+                          >
+                            <v-icon>delete</v-icon>
+                          </v-btn>
+                        </v-flex>
+                        <v-flex>
+                          <v-divider />
+                        </v-flex>
+                      </v-layout>
+                    </v-container>
+                  </v-card>
+                </v-flex>
+
+                <v-flex xs12>
+                  <v-card>
+                    <v-toolbar>
+                      <v-toolbar-title>Excluded Tags</v-toolbar-title>
+
+                      <v-spacer />
+
+                      <v-btn
+                        icon
+                        @click="
+                          editedItem.excludedTags = [...editedItem.excludedTags, { all: [], any: []}]
+                        "
+                      >
+                        add
+                        <v-icon>add</v-icon>
+                      </v-btn>
+                      <v-spacer />
+
+                      <v-btn
+                        icon
+                        @click="editedItem.excludedTags = []"
+                      >
+                        clear
+                        <v-icon>
+                          clear
+                        </v-icon>
+                      </v-btn>
+                    </v-toolbar>
+                    <v-container>
+                      <v-layout
+                        v-for="(tag, index) in editedItem.excludedTags"
+                        :key="index"
+                        wrap
+                        xs12
+                      >
+                        <v-flex xs10>
+                          <v-layout> 
+                            <v-flex xs6>
+                              <v-combobox 
+                                v-model="tag.all"
+                                v-tooltip="'start'"
+                                :items="currentTags"
+                                :label="$t('AND')"
+                                tooltip="test"
+                                chips
+                                multiple
+                                xs4
+                              />
+                            </v-flex>
+                            <v-flex xs6>
+                              <v-combobox
+                                v-model="tag.any"
+                                :items="currentTags"
+                                :label="$t('OR')"
+                                chips
+                                multiple
+                              />
+                            </v-flex>         
+                          </v-layout>
+                        </v-flex>                                                 
+                        <v-flex 
+                          xs2
+                          align-self-center
+                        >
+                          <v-btn
+                            icon
+                            @click="
+                              editedItem.excludedTags.splice(index, 1)
+                            "
+                          >
+                            <v-icon>delete</v-icon>
+                          </v-btn>
+                        </v-flex>
+                        <v-flex>
+                          <v-divider />
+                        </v-flex>
+                      </v-layout>
+                    </v-container>
+                  </v-card>
                 </v-flex>
               </v-layout>
             </v-container>
@@ -399,16 +532,88 @@
           <td>{{ props.item.event }}</td>
           <td>{{ props.item.group }}</td>
           <td>
-            <v-chip
-              v-for="tag in props.item.tags"
-              :key="tag"
-              label
-              small
-            >
-              <v-icon left>
-                label
-              </v-icon>{{ tag }}
-            </v-chip>
+            <div style="margin: auto;">
+              <v-container
+                v-for="(tag, index) in props.item.tags"
+                :key="index"
+                grid-list-md
+                style="padding: 1px;"
+              >
+                <v-layout>
+                  <v-flex 
+                    v-if="!emptyArray(tag.all)"
+                    xs12
+                  >
+                    AND:
+                    <v-chip
+                      v-for="t in tag.all"
+                      :key="t"
+                      outline
+                      small
+                    >
+                      {{ t }}
+                    </v-chip>
+                  </v-flex>
+                  <v-flex 
+                    v-if="!emptyArray(tag.any)"
+                    xs12 
+                  >
+                    OR:
+                    <v-chip
+                      v-for="t in tag.any"
+                      :key="t"
+                      outline
+                      small
+                    >
+                      {{ t }}
+                    </v-chip>
+                  </v-flex>
+                </v-layout>
+                <v-divider v-if="index < props.item.tags.length - 1" />
+              </v-container>
+            </div>
+          </td>
+          <td>
+            <div style="margin: auto;">
+              <v-container
+                v-for="(tag, index) in props.item.excludedTags"
+                :key="index"
+                grid-list-md
+                style="padding: 1px;"
+              >
+                <v-layout>
+                  <v-flex 
+                    v-if="!emptyArray(tag.all)"
+                    xs12
+                  >
+                    AND:
+                    <v-chip
+                      v-for="t in tag.all"
+                      :key="t"
+                      outline
+                      small
+                    >
+                      {{ t }}
+                    </v-chip>
+                  </v-flex>
+                  <v-flex 
+                    v-if="!emptyArray(tag.any)"
+                    xs12 
+                  >
+                    OR:
+                    <v-chip
+                      v-for="t in tag.any"
+                      :key="t"
+                      outline
+                      small
+                    >
+                      {{ t }}
+                    </v-chip>
+                  </v-flex>
+                </v-layout>
+                <v-divider v-if="index < props.item.excludedTags.length - 1" />
+              </v-container>
+            </div>
           </td>
           <td class="text-xs-left">
             {{ props.item.user }}
@@ -514,6 +719,7 @@ export default {
       { text: i18n.t('Event'), value: 'event' },
       { text: i18n.t('Group'), value: 'group' },
       { text: i18n.t('Tags'), value: 'tags' },
+      { text: i18n.t('ExcludedTags'), value: 'excludedTags' },
       { text: i18n.t('User'), value: 'user' },
       { text: 'Text', value: 'text' },
       { text: i18n.t('Actions'), value: 'name', sortable: false }
@@ -541,7 +747,8 @@ export default {
       startTime: '',
       endTime: '',
       days: [],
-      triggers: []
+      triggers: [],
+      excludedTags: [],
     },
     menu1: false,
     menu2: false,
@@ -567,7 +774,8 @@ export default {
       startTime: '',
       endTime: '',
       days: [],
-      triggers: []
+      triggers: [],
+      excludedTags: [],
     },
     rules: {
       required: v => !!v || i18n.t('Required')
@@ -824,6 +1032,7 @@ export default {
             event: this.editedItem.event,
             group: this.editedItem.group,
             tags: this.editedItem.tags,
+            excludedTags: this.editedItem.excludedTags,
             startTime: sTimeStr,
             endTime: eTimeStr,
             days: this.editedItem.days,
