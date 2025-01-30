@@ -360,7 +360,6 @@
                   <v-card>
                     <v-toolbar>
                       <v-toolbar-title>{{ $t('Triggers') }}</v-toolbar-title>
-                      <information-tooltip :info="$t('TriggerInfo')" />
                       <triggers-information-dialog />
                       <v-spacer />
 
