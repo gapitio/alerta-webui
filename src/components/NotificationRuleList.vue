@@ -1237,7 +1237,7 @@ export default {
       { text: i18n.t('Customer'), value: 'customer' },
       { text: i18n.t('Delay'), value: 'delay', info: i18n.t('DelayTimeInfo') },
       { text: i18n.t('Name'), value: 'Name', info: i18n.t('NameInfo') },
-      { text: i18n.t('Environment'), value: 'environment', info: i18n.t('ActiveInfoTrue') },
+      { text: i18n.t('Environment'), value: 'environment', info: i18n.t('EnvironmentInfo') },
       { text: i18n.t('Channel'), value: 'channel', info: i18n.t('NotificationHistoryChannel') },
       { text: i18n.t('Receivers'), value: 'receivers', info: i18n.t('ReceiversInfo') },
       { text: i18n.t('OnCall'), value: 'useOnCall', info: [i18n.t('UseOnCallInfoTrue'), i18n.t('UseOnCallInfoFalse')]  },
