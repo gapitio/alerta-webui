@@ -129,7 +129,10 @@
                               />
                             </v-flex>
                             <v-flex x1 />
-                            <v-flex xs12 triggerfield>
+                            <v-flex
+                              xs12
+                              triggerfield
+                            >
                               <v-combobox
                                 v-model="trigger.status"
                                 :label="$t('Status')"
@@ -138,7 +141,10 @@
                                 disabled
                               />
                             </v-flex>
-                            <v-flex xs12 triggerfield>
+                            <v-flex
+                              xs12
+                              triggerfield
+                            >
                               <v-text-field
                                 v-model="trigger.text"
                                 :label="$t('Text')"
