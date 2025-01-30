@@ -92,10 +92,7 @@
                     <v-toolbar>
                       <v-toolbar-title>{{ $t('Triggers') }}</v-toolbar-title>
 
-                      <information-tooltip
-                        :info="$t('EscalationTriggerInfo')"
-                        position="right"
-                      />
+                      <escalation-triggers-information-dialog />
                       <v-spacer />
 
                       <v-btn
@@ -188,6 +185,7 @@
                           :items="allowedEnvironments"
                           :label="$t('Environment')+'*'"
                           :rules="[rules.required]"
+                          :hint="$t('ChooseService')"
                           required
                         />
                       </v-flex>
@@ -200,12 +198,11 @@
                           :label="$t('Service')"
                           chips
                           multiple
-                          :hint="$t('ChooseService')"
                           persistent-hint
                         />
                       </v-flex>
                       <information-tooltip
-                        :info="$t('ServiceInfo')"
+                        :info="$t('EscalationServicesInfo')"
                         position="left"
                       />
 
@@ -234,6 +231,7 @@
                         <v-card>
                           <v-toolbar>
                             <v-toolbar-title>Tags</v-toolbar-title>
+                            <tags-information-dialog />
 
                             <v-spacer />
 
@@ -315,6 +313,7 @@
                         <v-card>
                           <v-toolbar>
                             <v-toolbar-title>Excluded Tags</v-toolbar-title>
+                            <excluded-tags-information-dialog />
 
                             <v-spacer />
 
@@ -422,10 +421,14 @@
     <v-card>
       <v-card-title class="title">
         {{ $t('EscalationRules') }}
-        <information-tooltip
-          :info="$t('EscalationRuleInfo')"
-          position="right"
-        />
+        <information-dialog 
+          :info="headers" 
+          :title="$t('EscalationRuleInfo')"
+        >
+          <escalation-triggers-information-dialog :slot="$t('Triggers')" />
+          <tags-information-dialog :slot="$t('Tags')" />
+          <excluded-tags-information-dialog :slot="$t('ExcludedTags')" />
+        </information-dialog>
         <v-spacer />
         <v-btn-toggle
           v-model="status"
@@ -733,12 +736,20 @@
 <script>
 import ListButtonAdd from './lib/ListButtonAdd'
 import InformationTooltip from '@/components/notification/InformationTooltip'
+import InformationDialog from '@/components/notification/InformationDialog'
+import EscalationTriggersInformationDialog from '@/components/notification/EscalationTriggersInformationDialog'
+import TagsInformationDialog from '@/components/notification/TagsInformationDialog'
+import ExcludedTagsInformationDialog from './notification/ExcludedTagsInformationDialog'
 import i18n from '@/plugins/i18n'
 
 export default {
   components: {
     ListButtonAdd,
-    InformationTooltip
+    InformationTooltip,
+    InformationDialog,
+    EscalationTriggersInformationDialog,
+    TagsInformationDialog,
+    ExcludedTagsInformationDialog
   },
   data: vm => ({
     status: ['true', 'false'],
@@ -747,18 +758,18 @@ export default {
     search: '',
     dialog: false,
     headers: [
-      { text: i18n.t('Active'), value: 'active' },
+      { text: i18n.t('Active'), value: 'active', info: [i18n.t('ActiveInfoTrue'), i18n.t('ActiveInfoFalse') ] },
       { text: i18n.t('Customer'), value: 'customer' },
-      { text: i18n.t('Environment'), value: 'environment' },
-      { text: i18n.t('Time'), value: 'time' },
+      { text: i18n.t('Environment'), value: 'environment', info: i18n.t('EscalationEnvironmentInfo') },
+      { text: i18n.t('Time'), value: 'time', info: i18n.t('EscalationTimeInfo') },
       { text: i18n.t('Triggers'), value: 'triggers' },
-      { text: i18n.t('Days'), value: 'days' },
-      { text: i18n.t('Start'), value: 'startTime' },
-      { text: i18n.t('End'), value: 'endTime' },
-      { text: i18n.t('Service'), value: 'service' },
-      { text: i18n.t('Resource'), value: 'resource' },
-      { text: i18n.t('Event'), value: 'event' },
-      { text: i18n.t('Group'), value: 'group' },
+      { text: i18n.t('Days'), value: 'days', info: i18n.t('EscalationDaysInfo') },
+      { text: i18n.t('Start'), value: 'startTime', info: i18n.t('EscalationStartTimeInfo') },
+      { text: i18n.t('End'), value: 'endTime', info: i18n.t('EscalationEndTimeInfo') },
+      { text: i18n.t('Service'), value: 'service', info: i18n.t('EscalationServicesInfo') },
+      { text: i18n.t('Resource'), value: 'resource', info: i18n.t('EscalationResourceInfo') },
+      { text: i18n.t('Event'), value: 'event', info: i18n.t('EscalationEventInfo') },
+      { text: i18n.t('Group'), value: 'group', info: i18n.t('EscalationGroupInfo') },
       { text: i18n.t('Tags'), value: 'tags' },
       { text: i18n.t('ExcludedTags'), value: 'excludedTags' },
       { text: i18n.t('User'), value: 'user' },
