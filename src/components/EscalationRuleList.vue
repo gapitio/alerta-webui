@@ -62,7 +62,7 @@
                   position="left"
                 />
 
-                <v-flex xs12>
+                <v-flex xs11>
                   <v-select
                     v-model="editedItem.days"
                     :items="days"
@@ -71,21 +71,33 @@
                     multiple
                   />
                 </v-flex>
+                <information-tooltip
+                  :info="$t('EscalationDaysInfo')"
+                  position="left"
+                />
 
-                <v-flex xs6>
+                <v-flex xs5>
                   <v-combobox
                     v-model="editedItem.period.startTime"
                     :items="times"
                     :label="$t('StartTime')"
                   />
                 </v-flex>
-                <v-flex xs6>
+                <information-tooltip
+                  :info="$t('EscalationStartTimeInfo')"
+                  position="left"
+                />
+                <v-flex xs5>
                   <v-combobox
                     v-model="editedItem.period.endTime"
                     :items="times"
                     :label="$t('EndTime')"
                   />
                 </v-flex>
+                <information-tooltip
+                  :info="$t('EscalationEndTimeInfo')"
+                  position="left"
+                />
 
                 <v-flex xs12>
                   <v-card>
@@ -179,7 +191,7 @@
                       wrap
                       xs12
                     >
-                      <v-flex xs12>
+                      <v-flex xs11>
                         <v-select
                           v-model="editedItem.environment"
                           :items="allowedEnvironments"
@@ -189,6 +201,10 @@
                           required
                         />
                       </v-flex>
+                      <information-tooltip
+                        :info="$t('EscalationEnvironmentInfo')"
+                        position="left"
+                      />
 
                       <v-flex xs11>
                         <v-combobox
@@ -206,19 +222,27 @@
                         position="left"
                       />
 
-                      <v-flex xs12>
+                      <v-flex xs11>
                         <v-text-field
                           v-model.trim="editedItem.resource"
                           :label="$t('Resource')"
                         />
                       </v-flex>
-                      <v-flex xs12>
+                      <information-tooltip
+                        :info="$t('EscalationResourceInfo')"
+                        position="left"
+                      />
+                      <v-flex xs11>
                         <v-text-field
                           v-model.trim="editedItem.event"
                           :label="$t('Event')"
                         />
                       </v-flex>
-                      <v-flex xs12>
+                      <information-tooltip
+                        :info="$t('EscalationEventInfo')"
+                        position="left"
+                      />
+                      <v-flex xs11>
                         <v-combobox
                           v-model.trim="editedItem.group"
                           :items="currentGroups"
@@ -226,6 +250,10 @@
                           clearable
                         />
                       </v-flex>
+                      <information-tooltip
+                        :info="$t('EscalationGroupInfo')"
+                        position="left"
+                      />
 
                       <v-flex xs12>
                         <v-card>
