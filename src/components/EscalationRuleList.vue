@@ -3,6 +3,7 @@
     <v-dialog
       v-model="dialog"
       max-width="540px"
+      scrollable
     >
       <v-form ref="form">
         <v-card>
@@ -43,17 +44,7 @@
                   />
                 </v-flex>
 
-                <v-flex xs12>
-                  <v-select
-                    v-model="editedItem.environment"
-                    :items="allowedEnvironments"
-                    :label="$t('Environment')"
-                    :rules="[rules.required]"
-                    required
-                  />
-                </v-flex>
-
-                <v-flex xs8>
+                <v-flex xs7>
                   <v-text-field
                     v-model.trim="editedItem.timeObj.time"
                     :label="$t('Time')"
@@ -66,12 +57,54 @@
                     :label="$t('Interval')"
                   />
                 </v-flex>
+                <information-tooltip
+                  :info="$t('EscalationTimeInfo')"
+                  position="left"
+                />
+
+                <v-flex xs11>
+                  <v-select
+                    v-model="editedItem.days"
+                    :items="days"
+                    :label="$t('Days')"
+                    chips
+                    multiple
+                  />
+                </v-flex>
+                <information-tooltip
+                  :info="$t('EscalationDaysInfo')"
+                  position="left"
+                />
+
+                <v-flex xs5>
+                  <v-combobox
+                    v-model="editedItem.period.startTime"
+                    :items="times"
+                    :label="$t('StartTime')"
+                  />
+                </v-flex>
+                <information-tooltip
+                  :info="$t('EscalationStartTimeInfo')"
+                  position="left"
+                />
+                <v-flex xs5>
+                  <v-combobox
+                    v-model="editedItem.period.endTime"
+                    :items="times"
+                    :label="$t('EndTime')"
+                  />
+                </v-flex>
+                <information-tooltip
+                  :info="$t('EscalationEndTimeInfo')"
+                  position="left"
+                />
 
                 <v-flex xs12>
                   <v-card>
                     <v-toolbar>
-                      <v-toolbar-title>Triggers</v-toolbar-title>
+                      <v-toolbar-title>{{ $t('Triggers') }}</v-toolbar-title>
 
+                      <escalation-triggers-information-dialog />
                       <v-spacer />
 
                       <v-btn
@@ -102,25 +135,33 @@
                         wrap
                         xs12
                       >
-                        <v-flex xs5>
-                          <v-select
-                            v-model="item.from_severity"
-                            :items="severities"
-                            :label="$t('From')"
-                            chips
-                            multiple
-                          />
+                        <v-flex xs10>
+                          <v-layout wrap>
+                            <v-flex xs12>
+                              <v-select
+                                v-model="item.from_severity"
+                                :items="severities"
+                                :label="$t('PreviousSeverity')"
+                                chips
+                                multiple
+                              />
+                            </v-flex>
+                            <v-flex xs12>
+                              <v-select
+                                v-model="item.to_severity"
+                                :items="severities"
+                                :label="$t('CurrentSeverity')"
+                                chips
+                                multiple
+                              />
+                            </v-flex>
+                          </v-layout>
                         </v-flex>
-                        <v-flex xs5>
-                          <v-select
-                            v-model="item.to_severity"
-                            :items="severities"
-                            :label="$t('To')"
-                            chips
-                            multiple
-                          />
-                        </v-flex>
-                        <v-flex xs2>
+                            
+                        <v-flex 
+                          xs2
+                          align-self-center
+                        >
                           <v-btn
                             icon
                             @click="
@@ -130,142 +171,6 @@
                             <v-icon>delete</v-icon>
                           </v-btn>
                         </v-flex>
-                      </v-layout>
-                    </v-container>
-                  </v-card>
-                </v-flex>
-
-                <v-flex xs12>
-                  <v-select
-                    v-model="editedItem.days"
-                    :items="days"
-                    :label="$t('Days')"
-                    chips
-                    multiple
-                  />
-                </v-flex>
-
-                <v-flex xs6>
-                  <v-combobox
-                    v-model="editedItem.period.startTime"
-                    :items="times"
-                    :label="$t('StartTime')"
-                  />
-                </v-flex>
-                <v-flex xs6>
-                  <v-combobox
-                    v-model="editedItem.period.endTime"
-                    :items="times"
-                    :label="$t('EndTime')"
-                  />
-                </v-flex>
-
-                <v-flex xs12>
-                  <v-combobox
-                    v-model="editedItem.service"
-                    :items="currentServices"
-                    :menu-props="{ maxHeight: '400' }"
-                    :label="$t('Service')"
-                    chips
-                    multiple
-                    :hint="$t('ChooseService')"
-                    persistent-hint
-                  />
-                </v-flex>
-                <v-flex xs12>
-                  <v-text-field
-                    v-model.trim="editedItem.resource"
-                    :label="$t('Resource')"
-                  />
-                </v-flex>
-                <v-flex xs12>
-                  <v-text-field
-                    v-model.trim="editedItem.event"
-                    :label="$t('Event')"
-                  />
-                </v-flex>
-                <v-flex xs12>
-                  <v-combobox
-                    v-model.trim="editedItem.group"
-                    :items="currentGroups"
-                    :label="$t('Group')"
-                    clearable
-                  />
-                </v-flex>
-
-                <v-flex xs12>
-                  <v-card>
-                    <v-toolbar>
-                      <v-toolbar-title>Tags</v-toolbar-title>
-
-                      <v-spacer />
-
-                      <v-btn
-                        icon
-                        @click="
-                          editedItem.tags = [...editedItem.tags, { all: [], any: []}]
-                        "
-                      >
-                        add
-                        <v-icon>add</v-icon>
-                      </v-btn>
-                      <v-spacer />
-
-                      <v-btn
-                        icon
-                        @click="editedItem.tags = []"
-                      >
-                        clear
-                        <v-icon>
-                          clear
-                        </v-icon>
-                      </v-btn>
-                    </v-toolbar>
-                    <v-container>
-                      <v-layout
-                        v-for="(tag, index) in editedItem.tags"
-                        :key="index"
-                        wrap
-                        xs12
-                      >
-                        <v-flex xs10>
-                          <v-layout> 
-                            <v-flex xs6>
-                              <v-combobox 
-                                v-model="tag.all"
-                                v-tooltip="'start'"
-                                :items="currentTags"
-                                :label="$t('AND')"
-                                tooltip="test"
-                                chips
-                                multiple
-                                xs4
-                              />
-                            </v-flex>
-                            <v-flex xs6>
-                              <v-combobox
-                                v-model="tag.any"
-                                :items="currentTags"
-                                :label="$t('OR')"
-                                chips
-                                multiple
-                              />
-                            </v-flex>         
-                          </v-layout>
-                        </v-flex>                                                 
-                        <v-flex 
-                          xs2
-                          align-self-center
-                        >
-                          <v-btn
-                            icon
-                            @click="
-                              editedItem.tags.splice(index, 1)
-                            "
-                          >
-                            <v-icon>delete</v-icon>
-                          </v-btn>
-                        </v-flex>
                         <v-flex>
                           <v-divider />
                         </v-flex>
@@ -273,87 +178,249 @@
                     </v-container>
                   </v-card>
                 </v-flex>
+                <v-card>
+                  <v-toolbar>
+                    <v-toolbar-title>{{ $t('AlertFields') }}</v-toolbar-title>
+                    <information-tooltip
+                      :info="$t('AlertFieldsInfo')"
+                      position="right"
+                    />
+                  </v-toolbar>
+                  <v-container>
+                    <v-layout
+                      wrap
+                      xs12
+                    >
+                      <v-flex xs11>
+                        <v-select
+                          v-model="editedItem.environment"
+                          :items="allowedEnvironments"
+                          :label="$t('Environment')+'*'"
+                          :rules="[rules.required]"
+                          :hint="$t('ChooseService')"
+                          required
+                        />
+                      </v-flex>
+                      <information-tooltip
+                        :info="$t('EscalationEnvironmentInfo')"
+                        position="left"
+                      />
 
-                <v-flex xs12>
-                  <v-card>
-                    <v-toolbar>
-                      <v-toolbar-title>Excluded Tags</v-toolbar-title>
+                      <v-flex xs11>
+                        <v-combobox
+                          v-model="editedItem.service"
+                          :items="currentServices"
+                          :menu-props="{ maxHeight: '400' }"
+                          :label="$t('Service')"
+                          chips
+                          multiple
+                          persistent-hint
+                        />
+                      </v-flex>
+                      <information-tooltip
+                        :info="$t('EscalationServicesInfo')"
+                        position="left"
+                      />
 
-                      <v-spacer />
+                      <v-flex xs11>
+                        <v-text-field
+                          v-model.trim="editedItem.resource"
+                          :label="$t('Resource')"
+                        />
+                      </v-flex>
+                      <information-tooltip
+                        :info="$t('EscalationResourceInfo')"
+                        position="left"
+                      />
+                      <v-flex xs11>
+                        <v-text-field
+                          v-model.trim="editedItem.event"
+                          :label="$t('Event')"
+                        />
+                      </v-flex>
+                      <information-tooltip
+                        :info="$t('EscalationEventInfo')"
+                        position="left"
+                      />
+                      <v-flex xs11>
+                        <v-combobox
+                          v-model.trim="editedItem.group"
+                          :items="currentGroups"
+                          :label="$t('Group')"
+                          clearable
+                        />
+                      </v-flex>
+                      <information-tooltip
+                        :info="$t('EscalationGroupInfo')"
+                        position="left"
+                      />
 
-                      <v-btn
-                        icon
-                        @click="
-                          editedItem.excludedTags = [...editedItem.excludedTags, { all: [], any: []}]
-                        "
-                      >
-                        add
-                        <v-icon>add</v-icon>
-                      </v-btn>
-                      <v-spacer />
+                      <v-flex xs12>
+                        <v-card>
+                          <v-toolbar>
+                            <v-toolbar-title>Tags</v-toolbar-title>
+                            <tags-information-dialog />
 
-                      <v-btn
-                        icon
-                        @click="editedItem.excludedTags = []"
-                      >
-                        clear
-                        <v-icon>
-                          clear
-                        </v-icon>
-                      </v-btn>
-                    </v-toolbar>
-                    <v-container>
-                      <v-layout
-                        v-for="(tag, index) in editedItem.excludedTags"
-                        :key="index"
-                        wrap
-                        xs12
-                      >
-                        <v-flex xs10>
-                          <v-layout> 
-                            <v-flex xs6>
-                              <v-combobox 
-                                v-model="tag.all"
-                                v-tooltip="'start'"
-                                :items="currentTags"
-                                :label="$t('AND')"
-                                tooltip="test"
-                                chips
-                                multiple
-                                xs4
-                              />
-                            </v-flex>
-                            <v-flex xs6>
-                              <v-combobox
-                                v-model="tag.any"
-                                :items="currentTags"
-                                :label="$t('OR')"
-                                chips
-                                multiple
-                              />
-                            </v-flex>         
-                          </v-layout>
-                        </v-flex>                                                 
-                        <v-flex 
-                          xs2
-                          align-self-center
-                        >
-                          <v-btn
-                            icon
-                            @click="
-                              editedItem.excludedTags.splice(index, 1)
-                            "
-                          >
-                            <v-icon>delete</v-icon>
-                          </v-btn>
-                        </v-flex>
-                        <v-flex>
-                          <v-divider />
-                        </v-flex>
-                      </v-layout>
-                    </v-container>
-                  </v-card>
-                </v-flex>
+                            <v-spacer />
+
+                            <v-btn
+                              icon
+                              @click="
+                                editedItem.tags = [...editedItem.tags, { all: [], any: []}]
+                              "
+                            >
+                              add
+                              <v-icon>add</v-icon>
+                            </v-btn>
+                            <v-spacer />
+
+                            <v-btn
+                              icon
+                              @click="editedItem.tags = []"
+                            >
+                              clear
+                              <v-icon>
+                                clear
+                              </v-icon>
+                            </v-btn>
+                          </v-toolbar>
+                          <v-container>
+                            <v-layout
+                              v-for="(tag, index) in editedItem.tags"
+                              :key="index"
+                              wrap
+                              xs12
+                            >
+                              <v-flex xs10>
+                                <v-layout> 
+                                  <v-flex xs6>
+                                    <v-combobox 
+                                      v-model="tag.all"
+                                      v-tooltip="'start'"
+                                      :items="currentTags"
+                                      :label="$t('AND')"
+                                      tooltip="test"
+                                      chips
+                                      multiple
+                                      xs4
+                                    />
+                                  </v-flex>
+                                  <v-flex xs6>
+                                    <v-combobox
+                                      v-model="tag.any"
+                                      :items="currentTags"
+                                      :label="$t('OR')"
+                                      chips
+                                      multiple
+                                    />
+                                  </v-flex>         
+                                </v-layout>
+                              </v-flex>                                                 
+                              <v-flex 
+                                xs2
+                                align-self-center
+                              >
+                                <v-btn
+                                  icon
+                                  @click="
+                                    editedItem.tags.splice(index, 1)
+                                  "
+                                >
+                                  <v-icon>delete</v-icon>
+                                </v-btn>
+                              </v-flex>
+                              <v-flex>
+                                <v-divider />
+                              </v-flex>
+                            </v-layout>
+                          </v-container>
+                        </v-card>
+                      </v-flex>
+
+                      <v-flex xs12>
+                        <v-card>
+                          <v-toolbar>
+                            <v-toolbar-title>Excluded Tags</v-toolbar-title>
+                            <excluded-tags-information-dialog />
+
+                            <v-spacer />
+
+                            <v-btn
+                              icon
+                              @click="
+                                editedItem.excludedTags = [...editedItem.excludedTags, { all: [], any: []}]
+                              "
+                            >
+                              add
+                              <v-icon>add</v-icon>
+                            </v-btn>
+                            <v-spacer />
+
+                            <v-btn
+                              icon
+                              @click="editedItem.excludedTags = []"
+                            >
+                              clear
+                              <v-icon>
+                                clear
+                              </v-icon>
+                            </v-btn>
+                          </v-toolbar>
+                          <v-container>
+                            <v-layout
+                              v-for="(tag, index) in editedItem.excludedTags"
+                              :key="index"
+                              wrap
+                              xs12
+                            >
+                              <v-flex xs10>
+                                <v-layout> 
+                                  <v-flex xs6>
+                                    <v-combobox 
+                                      v-model="tag.all"
+                                      v-tooltip="'start'"
+                                      :items="currentTags"
+                                      :label="$t('AND')"
+                                      tooltip="test"
+                                      chips
+                                      multiple
+                                      xs4
+                                    />
+                                  </v-flex>
+                                  <v-flex xs6>
+                                    <v-combobox
+                                      v-model="tag.any"
+                                      :items="currentTags"
+                                      :label="$t('OR')"
+                                      chips
+                                      multiple
+                                    />
+                                  </v-flex>         
+                                </v-layout>
+                              </v-flex>                                                 
+                              <v-flex 
+                                xs2
+                                align-self-center
+                              >
+                                <v-btn
+                                  icon
+                                  @click="
+                                    editedItem.excludedTags.splice(index, 1)
+                                  "
+                                >
+                                  <v-icon>delete</v-icon>
+                                </v-btn>
+                              </v-flex>
+                              <v-flex>
+                                <v-divider />
+                              </v-flex>
+                            </v-layout>
+                          </v-container>
+                        </v-card>
+                      </v-flex>
+                    </v-layout>
+                  </v-container>
+                </v-card>
               </v-layout>
             </v-container>
           </v-card-text>
@@ -381,7 +448,15 @@
 
     <v-card>
       <v-card-title class="title">
-        {{ $t('Escalation Rules') }}
+        {{ $t('EscalationRules') }}
+        <information-dialog 
+          :info="headers" 
+          :title="$t('EscalationRuleInfo')"
+        >
+          <escalation-triggers-information-dialog :slot="$t('Triggers')" />
+          <tags-information-dialog :slot="$t('Tags')" />
+          <excluded-tags-information-dialog :slot="$t('ExcludedTags')" />
+        </information-dialog>
         <v-spacer />
         <v-btn-toggle
           v-model="status"
@@ -392,23 +467,19 @@
             value="true"
             flat
           >
-            <v-tooltip bottom>
-              <v-icon slot="activator">
-                notifications
-              </v-icon>
-              <span>{{ $t('Active') }}</span>
-            </v-tooltip>
+            <information-tooltip
+              :info="status.includes('true') ? $t('HideActive') : $t('ShowActive')"
+              icon="notifications"
+            />
           </v-btn>
           <v-btn
             value="false"
             flat
           >
-            <v-tooltip bottom>
-              <v-icon slot="activator">
-                notifications_paused
-              </v-icon>
-              <span>{{ $t('Deactivated') }}</span>
-            </v-tooltip>
+            <information-tooltip
+              :info="status.includes('false') ? $t('HideDeactivated') : $t('ShowDeactivated')"
+              icon="notifications_paused"
+            />
           </v-btn>
         </v-btn-toggle>
         <v-spacer />
@@ -473,7 +544,7 @@
                     v-if="!emptyArray(trigger.from_severity)"
                     xs12
                   >
-                    From:
+                    {{ $t('From') }}:
                     <v-chip
                       v-for="severity in trigger.from_severity"
                       :key="severity"
@@ -487,7 +558,7 @@
                     v-if="!emptyArray(trigger.to_severity)"
                     xs12 
                   >
-                    To:
+                    {{ $t('To') }}:
                     <v-chip
                       v-for="severity in trigger.to_severity"
                       :key="severity"
@@ -692,12 +763,21 @@
 
 <script>
 import ListButtonAdd from './lib/ListButtonAdd'
-import moment from 'moment'
+import InformationTooltip from '@/components/notification/InformationTooltip'
+import InformationDialog from '@/components/notification/InformationDialog'
+import EscalationTriggersInformationDialog from '@/components/notification/EscalationTriggersInformationDialog'
+import TagsInformationDialog from '@/components/notification/TagsInformationDialog'
+import ExcludedTagsInformationDialog from './notification/ExcludedTagsInformationDialog'
 import i18n from '@/plugins/i18n'
 
 export default {
   components: {
-    ListButtonAdd
+    ListButtonAdd,
+    InformationTooltip,
+    InformationDialog,
+    EscalationTriggersInformationDialog,
+    TagsInformationDialog,
+    ExcludedTagsInformationDialog
   },
   data: vm => ({
     status: ['true', 'false'],
@@ -706,18 +786,18 @@ export default {
     search: '',
     dialog: false,
     headers: [
-      { text: i18n.t('Active'), value: 'active' },
+      { text: i18n.t('Active'), value: 'active', info: [i18n.t('ActiveInfoTrue'), i18n.t('ActiveInfoFalse') ] },
       { text: i18n.t('Customer'), value: 'customer' },
-      { text: i18n.t('Environment'), value: 'environment' },
-      { text: i18n.t('Time'), value: 'time' },
+      { text: i18n.t('Environment'), value: 'environment', info: i18n.t('EscalationEnvironmentInfo') },
+      { text: i18n.t('Time'), value: 'time', info: i18n.t('EscalationTimeInfo') },
       { text: i18n.t('Triggers'), value: 'triggers' },
-      { text: i18n.t('Days'), value: 'days' },
-      { text: i18n.t('Start'), value: 'startTime' },
-      { text: i18n.t('End'), value: 'endTime' },
-      { text: i18n.t('Service'), value: 'service' },
-      { text: i18n.t('Resource'), value: 'resource' },
-      { text: i18n.t('Event'), value: 'event' },
-      { text: i18n.t('Group'), value: 'group' },
+      { text: i18n.t('Days'), value: 'days', info: i18n.t('EscalationDaysInfo') },
+      { text: i18n.t('Start'), value: 'startTime', info: i18n.t('EscalationStartTimeInfo') },
+      { text: i18n.t('End'), value: 'endTime', info: i18n.t('EscalationEndTimeInfo') },
+      { text: i18n.t('Service'), value: 'service', info: i18n.t('EscalationServicesInfo') },
+      { text: i18n.t('Resource'), value: 'resource', info: i18n.t('EscalationResourceInfo') },
+      { text: i18n.t('Event'), value: 'event', info: i18n.t('EscalationEventInfo') },
+      { text: i18n.t('Group'), value: 'group', info: i18n.t('EscalationGroupInfo') },
       { text: i18n.t('Tags'), value: 'tags' },
       { text: i18n.t('ExcludedTags'), value: 'excludedTags' },
       { text: i18n.t('User'), value: 'user' },
