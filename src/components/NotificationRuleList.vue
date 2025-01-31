@@ -279,7 +279,7 @@
                 </v-flex>
 
                 <v-flex
-                  xs8
+                  xs7
                 >
                   <v-menu
                     ref="menu2"
@@ -316,15 +316,25 @@
                     :label="$t('Time')"
                   />
                 </v-flex>
+                
+                <information-tooltip
+                  :info="$t('ReactivateDateInfo')" 
+                  position="left"
+                />
 
-                <v-flex xs12>
+                <v-flex xs11>
                   <v-text-field
                     v-model.trim="editedItem.name"
                     :label="$t('Name')"
                   />
                 </v-flex>
 
-                <v-flex xs12>
+                <information-tooltip
+                  :info="$t('NameInfo')" 
+                  position="left"
+                />
+
+                <v-flex xs11>
                   <v-select
                     v-model="editedItem.channelId"
                     :items="currentChannelsIds"
@@ -333,6 +343,11 @@
                     required
                   />
                 </v-flex>
+
+                <information-tooltip
+                  :info="$t('NotificationHistoryChannel')" 
+                  position="left"
+                />
 
                 <v-flex xs7>
                   <v-text-field
@@ -508,7 +523,8 @@
                     </v-container>
                   </v-card>
                 </v-flex>
-                <v-flex xs12>
+
+                <v-flex xs11>
                   <v-select
                     v-model="editedItem.days"
                     :items="days"
@@ -518,20 +534,33 @@
                   />
                 </v-flex>
 
-                <v-flex xs6>
+                <information-tooltip
+                  :info="$t('DaysInfo')" 
+                  position="left"
+                />
+
+                <v-flex xs5>
                   <v-combobox
                     v-model="editedItem.period.startTime"
                     :items="times"
                     :label="$t('StartTime')"
                   />
                 </v-flex>
-                <v-flex xs6>
+                <information-tooltip
+                  :info="$t('StartTimeInfo')" 
+                  position="left"
+                />
+                <v-flex xs5>
                   <v-combobox
                     v-model="editedItem.period.endTime"
                     :items="times"
                     :label="$t('EndTime')"
                   />
                 </v-flex>
+                <information-tooltip
+                  :info="$t('EndTimeInfo')" 
+                  position="left"
+                />
                 <v-card>
                   <v-toolbar>
                     <v-toolbar-title>{{ $t('AlertFields') }}</v-toolbar-title>
@@ -542,7 +571,7 @@
                       wrap
                       xs12
                     >
-                      <v-flex xs12>
+                      <v-flex xs11>
                         <v-select
                           v-model="editedItem.environment"
                           :items="allowedEnvironments"
@@ -551,20 +580,32 @@
                           required
                         />
                       </v-flex>
+                      <information-tooltip
+                        :info="$t('EnvironmentInfo')" 
+                        position="left"
+                      />
 
-                      <v-flex xs12>
+                      <v-flex xs11>
                         <v-text-field
                           v-model.trim="editedItem.resource"
                           :label="$t('Resource')"
                         />
                       </v-flex>
+                      <information-tooltip
+                        :info="$t('ResourceInfo')" 
+                        position="left"
+                      />
 
-                      <v-flex xs12>
+                      <v-flex xs11>
                         <v-text-field
                           v-model.trim="editedItem.event"
                           :label="$t('Event')"
                         />
                       </v-flex>
+                      <information-tooltip
+                        :info="$t('EventInfo')" 
+                        position="left"
+                      />
                       
                       <v-flex xs11>
                         <v-combobox
@@ -579,11 +620,11 @@
                         />
                       </v-flex>
                       <information-tooltip 
-                        :info="$t('ServiceInfo')" 
+                        :info="$t('ServicesInfo')" 
                         position="left"
                       />
 
-                      <v-flex xs12>
+                      <v-flex xs11>
                         <v-combobox
                           v-model.trim="editedItem.group"
                           :items="currentGroups"
@@ -591,6 +632,10 @@
                           clearable
                         />
                       </v-flex>
+                      <information-tooltip 
+                        :info="$t('GroupInfo')" 
+                        position="left"
+                      />
 
                       <v-flex xs12>
                         <v-card>
