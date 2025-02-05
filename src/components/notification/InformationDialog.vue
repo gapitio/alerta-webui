@@ -56,6 +56,16 @@
             </v-container>
           </v-flex>
         </v-card-text>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn
+            color="blue darken-1"
+            flat
+            @click="() => show = false"
+          >
+            {{ $t('Close') }}
+          </v-btn>
+        </v-card-actions>
       </v-card>
     </v-dialog>
     <v-icon 
