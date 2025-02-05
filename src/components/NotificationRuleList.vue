@@ -755,12 +755,13 @@
                   </v-container>
                 </v-card>
 
-                <v-flex xs12>
+                <v-flex xs11>
                   <v-text-field
                     v-model.trim="editedItem.text"
                     :label="$t('Text')"
                   />
                 </v-flex>
+                <text-information-dialog />
               </v-layout>
             </v-container>
           </v-card-text>
@@ -796,6 +797,7 @@
           <triggers-information-dialog :slot="$t('Triggers')" />
           <tags-information-dialog :slot="$t('Tags')" />
           <excluded-tags-information-dialog :slot="$t('ExcludedTags')" />
+          <text-information-dialog :slot="('Text')" />
         </information-dialog>
         <v-spacer />
         <span
@@ -1196,6 +1198,7 @@ import TagsInformationDialog from '@/components/notification/TagsInformationDial
 import ExcludedTagsInformationDialog from './notification/ExcludedTagsInformationDialog'
 import TriggersInformationDialog from '@/components/notification/TriggersInformationDialog'
 import InformationDialog from '@/components/notification/InformationDialog'
+import TextInformationDialog from '@/components/notification/TextInformationDialog'
 import moment from 'moment'
 import i18n from '@/plugins/i18n'
 
@@ -1206,7 +1209,8 @@ export default {
     TagsInformationDialog,
     ExcludedTagsInformationDialog,
     TriggersInformationDialog,
-    InformationDialog
+    InformationDialog,
+    TextInformationDialog
   },
   data: vm => ({
     status: ['true', 'false'],
@@ -1234,9 +1238,9 @@ export default {
       { text: i18n.t('Event'), value: 'event', info: i18n.t('EventInfo') },
       { text: i18n.t('Group'), value: 'group', info: i18n.t('GroupInfo') },
       { text: i18n.t('Tags'), value: 'tags' },
-      { text: i18n.t('ExcludedTags'), value: 'excludedTags', info: i18n.t('') },
+      { text: i18n.t('ExcludedTags'), value: 'excludedTags' },
       { text: i18n.t('User'), value: 'user'},
-      { text: 'Text', value: 'text', info: i18n.t('TextInfo') },
+      { text: 'Text', value: 'text' },
       { text: i18n.t('Actions'), value: 'name', sortable: false }
     ],
     editedId: null,
