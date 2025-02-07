@@ -5,11 +5,11 @@
       scrollable
       max-width="640px"
     >
-      <v-card>
-        <v-card-title class="title">
-          <v-toolbar>
-            <v-toolbar-title>{{ $t('NotificationText') }}</v-toolbar-title>
-          </v-toolbar>
+      <v-card>          
+        <v-card-title>
+          <span class="headline">
+            {{ $t('NotificationText') }}
+          </span>
         </v-card-title>
         <v-card-text>
           <v-container>
@@ -171,7 +171,7 @@
 
 export default {  
   data: vm => ({
-    show: true,
+    show: false,
     alert: {
       attributes: { 'ip': '127.0.0.1' },
       correlate: [],

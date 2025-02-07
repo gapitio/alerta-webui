@@ -6,10 +6,10 @@
       max-width="540px"
     >
       <v-card>
-        <v-card-title class="title">
-          <v-toolbar>
-            <v-toolbar-title>{{ $t('Triggers') }}</v-toolbar-title>
-          </v-toolbar>
+        <v-card-title>
+          <span class="headline">
+            {{ $t('ExcludedTags') }}
+          </span>
         </v-card-title>
         <v-card-text>
           <v-container>
