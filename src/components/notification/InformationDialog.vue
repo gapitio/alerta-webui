@@ -6,8 +6,10 @@
       scrollable
     >
       <v-card>
-        <v-card-title class="infotitle title">
-          {{ title }}
+        <v-card-title>
+          <span class="headline">
+            {{ title }}
+          </span>
         </v-card-title>
         <v-card-text>
           <v-flex xs12>          
@@ -97,10 +99,6 @@ export default {
 </script>
 
 <style>
-.infotitle {
-  background-color: rgb(238, 238, 238);
-  padding: 10px;
-}
 .container {
   padding-top: 0px;
   /* padding-bottom: 0px; */
