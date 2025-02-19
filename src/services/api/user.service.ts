@@ -19,6 +19,9 @@ export default {
     }
     return api.get('/users', config)
   },
+  getUsersName() {
+    return api.get('users/name')
+  },
   updateUser(userId: string, data: object) {
     return api.put(`/user/${userId}`, data)
   },

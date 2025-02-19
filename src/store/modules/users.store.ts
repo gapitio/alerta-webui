@@ -9,6 +9,7 @@ const state = {
 
   domains: [],
   users: [],
+  names: [],
   groups: []
 }
 
@@ -19,6 +20,9 @@ const mutations = {
   SET_USERS(state, users) {
     state.isLoading = false
     state.users = users
+  },
+  SET_USERS_NAME(state, names) {
+    state.names = names
   },
   SET_USER_GROUPS(state, groups) {
     state.groups = groups
@@ -37,6 +41,11 @@ const actions = {
     return UsersApi.getUsers({})
       .then(({users}) => commit('SET_USERS', users))
       .catch(() => commit('RESET_LOADING'))
+  },
+  getUsersName({commit}) {
+    return UsersApi.getUsersName().then(({users}) => {
+      commit('SET_USERS_NAME', users)
+    })
   },
   createUser({dispatch, commit}, user) {
     return UsersApi.createUser(user).then(response => {

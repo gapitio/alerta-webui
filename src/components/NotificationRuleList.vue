@@ -281,7 +281,7 @@
                     required
                   />
                 </v-flex>
-                
+
                 <v-flex xs8>
                   <v-text-field
                     v-model.trim="editedItem.timeObj.time"
@@ -324,10 +324,8 @@
 
                 <v-flex xs12>
                   <v-select
-                    v-model="editedItem.userIds"
+                    v-model="editedItem.userNames"
                     :items="users"
-                    item-text="name"
-                    item-value="id"
                     :label="$t('Users')"
                     chips
                     multiple
@@ -414,10 +412,10 @@
                                 v-model="item.text"
                                 :label="$t('Text')"
                               />
-                            </v-flex>                            
+                            </v-flex>
                           </v-layout>
-                        </v-flex>                                                 
-                        <v-flex 
+                        </v-flex>
+                        <v-flex
                           xs2
                           align-self-center
                         >
@@ -532,9 +530,9 @@
                         xs12
                       >
                         <v-flex xs10>
-                          <v-layout> 
+                          <v-layout>
                             <v-flex xs6>
-                              <v-combobox 
+                              <v-combobox
                                 v-model="tag.all"
                                 v-tooltip="'start'"
                                 :items="currentTags"
@@ -553,10 +551,10 @@
                                 chips
                                 multiple
                               />
-                            </v-flex>         
+                            </v-flex>
                           </v-layout>
-                        </v-flex>                                                 
-                        <v-flex 
+                        </v-flex>
+                        <v-flex
                           xs2
                           align-self-center
                         >
@@ -613,9 +611,9 @@
                         xs12
                       >
                         <v-flex xs10>
-                          <v-layout> 
+                          <v-layout>
                             <v-flex xs6>
-                              <v-combobox 
+                              <v-combobox
                                 v-model="tag.all"
                                 v-tooltip="'start'"
                                 :items="currentTags"
@@ -634,10 +632,10 @@
                                 chips
                                 multiple
                               />
-                            </v-flex>         
+                            </v-flex>
                           </v-layout>
-                        </v-flex>                                                 
-                        <v-flex 
+                        </v-flex>
+                        <v-flex
                           xs2
                           align-self-center
                         >
@@ -693,9 +691,9 @@
       <v-card-title class="title">
         {{ $t('Notification Rules') }}
         <v-spacer />
-        <span 
+        <span
           v-if="selectableRows"
-          class="subheading" 
+          class="subheading"
         >
           {{ selected.length }}<span class="hidden-sm-and-down"> {{ $t('selected') }}</span>
         </span>
@@ -716,9 +714,9 @@
           </v-btn>
           <span>{{ $t('Activate') }}</span>
         </v-tooltip>
-        <v-tooltip 
+        <v-tooltip
           v-if="selectableRows"
-          bottom 
+          bottom
         >
           <v-btn
             slot="activator"
@@ -827,7 +825,7 @@
           <td>{{ props.item.channelId }}</td>
           <td>
             <v-chip
-              v-for="number in [...props.item.receivers, ...users.filter(b => props.item.userIds.includes(b.id)).map(b => b.name), ...groups.filter(b => props.item.groupIds.includes(b.id)).map(b => b.name)]"
+              v-for="number in [...props.item.receivers, ...users.filter(b => props.item.userNames.includes(b)), ...groups.filter(b => props.item.groupIds.includes(b.id)).map(b => b.name)]"
               :key="number"
               outline
               small
@@ -848,7 +846,7 @@
                   <!-- <v-flex xs12 v-if="!emptyArray(trigger.from_severity) || !emptyArray(trigger.to_severity) || !emptyArray(trigger.status)">
                     Trigger{{ index }}
                   </v-flex> -->
-                  <v-flex 
+                  <v-flex
                     v-if="!emptyArray(trigger.from_severity)"
                     xs12
                   >
@@ -862,9 +860,9 @@
                       {{ severity }}
                     </v-chip>
                   </v-flex>
-                  <v-flex 
+                  <v-flex
                     v-if="!emptyArray(trigger.to_severity)"
-                    xs12 
+                    xs12
                   >
                     To:
                     <v-chip
@@ -876,7 +874,7 @@
                       {{ severity }}
                     </v-chip>
                   </v-flex>
-                  <v-flex 
+                  <v-flex
                     v-if="!emptyArray(trigger.status)"
                     xs12
                   >
@@ -938,7 +936,7 @@
                 style="padding: 1px;"
               >
                 <v-layout>
-                  <v-flex 
+                  <v-flex
                     v-if="!emptyArray(tag.all)"
                     xs12
                   >
@@ -952,9 +950,9 @@
                       {{ t }}
                     </v-chip>
                   </v-flex>
-                  <v-flex 
+                  <v-flex
                     v-if="!emptyArray(tag.any)"
-                    xs12 
+                    xs12
                   >
                     OR:
                     <v-chip
@@ -980,7 +978,7 @@
                 style="padding: 1px;"
               >
                 <v-layout>
-                  <v-flex 
+                  <v-flex
                     v-if="!emptyArray(tag.all)"
                     xs12
                   >
@@ -994,9 +992,9 @@
                       {{ t }}
                     </v-chip>
                   </v-flex>
-                  <v-flex 
+                  <v-flex
                     v-if="!emptyArray(tag.any)"
-                    xs12 
+                    xs12
                   >
                     OR:
                     <v-chip
@@ -1150,7 +1148,7 @@ export default {
         interval: null
       },
       receivers: [],
-      userIds: [],
+      userNames: [],
       groupIds: [],
       useOnCall: false,
       service: [],
@@ -1183,7 +1181,7 @@ export default {
         interval: null
       },
       receivers: [],
-      userIds: [],
+      userNames: [],
       groupIds: [],
       useOnCall: false,
       service: [],
@@ -1250,7 +1248,7 @@ export default {
                   : b.text.replace(/%\(([\w\[\]\. ]*)\)s/g, '{$1}'),
               triggers:  b.triggers.map(a => {return {...a, text: a.text !== null ? a.text.replace(/%\(([\w\[\]\. ]*)\)s/g, '{$1}') : a.text}})
             },
-            reactivate ? {reactivateDate: reactivate.format('YYYY-MM-DD'),reactivateTime: reactivate.format('HH:mm'),} : {} 
+            reactivate ? {reactivateDate: reactivate.format('YYYY-MM-DD'),reactivateTime: reactivate.format('HH:mm'),} : {}
           )
         })
     },
@@ -1273,7 +1271,7 @@ export default {
       }
     },
     users() {
-      return this.$store.state.users.users
+      return this.$store.state.users.names
     },
     groups() {
       return this.$store.state.notificationGroups.notificationGroups
@@ -1391,7 +1389,7 @@ export default {
           if (b[key] === null || a[key].length !== b[key].length || !this.compareDict(a[key], b[key])) return false
         }
         else if (a[key] !== b[key]) return false
-      } 
+      }
       return true
     },
     emptyArray(arr) {
@@ -1421,7 +1419,7 @@ export default {
       this.$store.dispatch('customers/getCustomers')
     },
     getUsers() {
-      this.$store.dispatch('users/getUsers')
+      this.$store.dispatch('users/getUsersName')
     },
     getGroups() {
       this.$store.dispatch('groups/getGroups')
@@ -1577,7 +1575,7 @@ export default {
             environment: this.editedItem.environment,
             delayTime: this.editedItem.timeObj.time ? `${this.editedItem.timeObj.time} ${this.editedItem.timeObj.interval}` : null,
             receivers: this.editedItem.receivers,
-            userIds: this.editedItem.userIds,
+            userNames: this.editedItem.userNames,
             groupIds: this.editedItem.groupIds,
             useOnCall: this.editedItem.useOnCall,
             service: this.editedItem.service,
