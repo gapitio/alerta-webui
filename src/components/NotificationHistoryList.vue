@@ -2,7 +2,11 @@
   <div>
     <v-card>
       <v-card-title class="title">
-        {{ $t('Notification History') }}
+        {{ $t('NotificationHistory') }}
+        <information-dialog 
+          :title="$t('NotificationHistory') + ': ' + $t('NotificationHistoryInfo')" 
+          :info="headers"
+        />
         <v-spacer />
         <v-btn-toggle
           v-model="sent"
@@ -83,8 +87,6 @@
               {{ props.item.alert }}
             </td>
             <td>{{ props.item.error }}</td>
-            <td>{{ props.item.confirmed }}</td>
-            <td>{{ props.item.confirmed_time }}</td>
           </tr>
         </template>
         <template slot="no-data">
@@ -108,27 +110,28 @@
     </v-card>
   </div>
 </template>
-
 <script>
 import moment from 'moment'
 import i18n from '@/plugins/i18n'
+import InformationDialog from '@/components/notification/InformationDialog'
 
 export default {
+  components: {
+    InformationDialog,
+  },
   data: vm => ({
     search: '',
     headers: [
-      { text: i18n.t('Id'), value: 'id' },
-      { text: i18n.t('Sent'), value: 'sent' },
-      { text: i18n.t('SentTime'), value: 'sent_time' },
-      { text: i18n.t('Message'), value: 'message' },
-      { text: i18n.t('Receiver'), value: 'receiver' },
-      { text: i18n.t('Sender'), value: 'sender' },
-      { text: i18n.t('Channel'), value: 'channel' },
-      { text: i18n.t('NotificationRule'), value: 'rule' },
-      { text: i18n.t('Alert'), value: 'alert' },
-      { text: i18n.t('Error'), value: 'error' },
-      { text: i18n.t('Confirmed'), value: 'confirmed' },
-      { text: i18n.t('ConfirmedTime'), value: 'confirmed_time' },
+      { text: i18n.t('Id'), value: 'id', sortable: false, info: i18n.t('NotificationHistoryId') },
+      { text: i18n.t('Sent'), value: 'sent', sortable: false, info: [i18n.t('NotificationHistorySentTrue'), i18n.t('NotificationHistorySentFalse')]},
+      { text: i18n.t('SentTime'), value: 'sent_time', sortable: false, info: i18n.t('NotificationHistorySentTime') },
+      { text: i18n.t('Message'), value: 'message', sortable: false, info: i18n.t('NotificationHistoryMessage') },
+      { text: i18n.t('Receiver'), value: 'receiver', sortable: false, info: i18n.t('NotificationHistoryReceiver') },
+      { text: i18n.t('Sender'), value: 'sender', sortable: false, info: i18n.t('SenderInfo') },
+      { text: i18n.t('Channel'), value: 'channel', sortable: false, info: i18n.t('NotificationHistoryChannel') },
+      { text: i18n.t('NotificationRule'), value: 'rule', sortable: false, info: i18n.t('NotificationHistoryRule') },
+      { text: i18n.t('Alert'), value: 'alert', sortable: false, info: i18n.t('NotificationHistoryAlert') },
+      { text: i18n.t('Error'), value: 'error', sortable: false, info: i18n.t('NotificationHistoryError') },
     ],
     rules: {
       required: v => !!v || i18n.t('Required')
