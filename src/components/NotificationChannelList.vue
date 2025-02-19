@@ -472,7 +472,7 @@ export default {
       return this.$store.state.users.users
     },
     groups() {
-      return this.$store.state.groups.groups
+      return this.$store.state.notificationGroups.notificationGroups
     },
     computedHeaders() {
       return this.headers.filter(h =>
@@ -504,6 +504,7 @@ export default {
     refresh(val) {
       if (!val) return
       this.getNotificationChannels()
+      this.getUsersAndGroups()
       this.getEncryptionKey()
       this.getCustomers()
     },
@@ -516,6 +517,7 @@ export default {
   },
   created() {
     this.getNotificationChannels()
+    this.getUsersAndGroups()
     this.getEncryptionKey()
     this.getCustomers()
     this.editedItem = Object.assign({}, this.defaultItem)
@@ -544,6 +546,10 @@ export default {
     },
     getNotificationChannels() {
       this.$store.dispatch('notificationChannels/getNotificationChannels')
+    },
+    getUsersAndGroups() {
+      this.$store.dispatch('users/getUsers')
+      this.$store.dispatch('notificationGroups/getNotificationGroups')
     },
     getCustomers() {
       this.$store.dispatch('customers/getCustomers')
