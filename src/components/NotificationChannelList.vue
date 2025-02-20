@@ -187,10 +187,8 @@
 
                 <v-flex xs12>
                   <v-select
-                    v-model="testedItem.userIds"
+                    v-model="testedItem.userNames"
                     :items="users"
-                    item-text="name"
-                    item-value="id"
                     :label="$t('Users')"
                     chips
                     multiple
@@ -403,14 +401,14 @@ export default {
     testId: null,
     testedItem: {
       receivers: [],
-      userIds: [],
+      userNames: [],
       groupIds: [],
       useOnCall: false,
       text: '',
     },
     defaultTestItem: {
       receivers: [],
-      userIds: [],
+      userNames: [],
       groupIds: [],
       useOnCall: false,
       text: '',
@@ -469,7 +467,7 @@ export default {
       }
     },
     users() {
-      return this.$store.state.users.users
+      return this.$store.state.users.names
     },
     groups() {
       return this.$store.state.notificationGroups.notificationGroups
@@ -548,7 +546,7 @@ export default {
       this.$store.dispatch('notificationChannels/getNotificationChannels')
     },
     getUsersAndGroups() {
-      this.$store.dispatch('users/getUsers')
+      this.$store.dispatch('users/getUsersName')
       this.$store.dispatch('notificationGroups/getNotificationGroups')
     },
     getCustomers() {
@@ -591,7 +589,7 @@ export default {
     },
     closeTest() {
       this.testDialog = false
-      this.testedItem = Object.assign({}, this.defaultTest)
+      this.testedItem = Object.assign({}, this.defaultTestItem)
     },
     test() {
       this.$store.dispatch('notificationChannels/testNotificationChannel', [this.testId, this.testedItem])
