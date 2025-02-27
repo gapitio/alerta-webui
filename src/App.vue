@@ -667,6 +667,13 @@ export default {
         },
         {
           icon: 'notifications',
+          text: i18n.t('Notification Send'),
+          path: '/notificationsend',
+          perms: 'read:notification_channels',
+          show: true
+        },
+        {
+          icon: 'notifications',
           text: i18n.t('Notification Channels'),
           path: '/notificationchannels',
           perms: 'read:notification_channels',

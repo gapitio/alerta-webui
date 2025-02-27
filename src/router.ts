@@ -86,6 +86,12 @@ export function createRouter(basePath): VueRouter {
         meta: {title: 'NotificationDelays', requiresAuth: true}
       },
       {
+        path: '/notificationsend',
+        name: 'notificationsend',
+        component: () => import(/* webpackChunkName: 'user' */ './views/NotificationSend.vue'),
+        meta: {title: 'NotificationSend', requiresAuth: true}
+      },
+      {
         path: '/notificationrules',
         name: 'notificationrules',
         props: route => ({
