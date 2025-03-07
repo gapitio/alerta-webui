@@ -4,6 +4,7 @@ import config from './modules/config.store'
 import alerts from './modules/alerts.store'
 import heartbeats from './modules/heartbeats.store'
 import blackouts from './modules/blackouts.store'
+import notificationSends from './modules/notificationSends.store'
 import notificationRules from './modules/notificationRule.store'
 import notificationHistory from './modules/notificationHistory.store'
 import notificationDelays from './modules/notificationDelay.store'
@@ -51,6 +52,7 @@ export function createStore(): Store<any> {
       alerts,
       heartbeats,
       blackouts,
+      notificationSends,
       notificationRules,
       notificationDelays,
       notificationHistory,
