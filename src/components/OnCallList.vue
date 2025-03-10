@@ -64,7 +64,7 @@
                     <template v-slot:activator="{ on }">
                       <v-text-field
                         v-model="editedItem.startDate"
-                        label="Start Date"
+                        :label="$t('StartDate')"
                         prepend-icon="event"
                         readonly
                         clearable
@@ -94,7 +94,7 @@
                     <template v-slot:activator="{ on }">
                       <v-text-field
                         v-model="editedItem.endDate"
-                        label="End Date"
+                        :label="$t('EndDate')"
                         prepend-icon="event"
                         readonly
                         clearable
@@ -162,7 +162,7 @@
                     <template v-slot:activator="{ on }">
                       <v-text-field
                         v-model="editedItem.endTime"
-                        label="End Time"
+                        :label="$t('EndTime')"
                         prepend-icon="schedule"
                         readonly
                         clearable
@@ -209,12 +209,12 @@
                     <template v-slot:prepend-item>
                       <v-list-tile @click="selectOdd($refs.repeatWeeks)">
                         <v-list-tile-content>
-                          <v-list-tile-title>Select Odd</v-list-tile-title>
+                          <v-list-tile-title>{{ $t('SelectOdd') }}</v-list-tile-title>
                         </v-list-tile-content>
                       </v-list-tile>
                       <v-list-tile @click="selectEven($refs.repeatWeeks)">
                         <v-list-tile-content>
-                          <v-list-tile-title>Select Even</v-list-tile-title>
+                          <v-list-tile-title>{{ $t('SelectEven') }}</v-list-tile-title>
                         </v-list-tile-content>
                       </v-list-tile>
                       <v-divider class="mt-2" />
@@ -256,7 +256,11 @@
 
     <v-card>
       <v-card-title class="title">
-        {{ $t('On Call') }}
+        {{ $t('OnCall') }}
+        <information-tooltip
+          :info="$t('OnCallInfo')"
+          position="right"
+        />
         <v-spacer />
         <v-btn-toggle
           v-model="status"
@@ -267,23 +271,19 @@
             value="active"
             flat
           >
-            <v-tooltip bottom>
-              <v-icon slot="activator">
-                notifications_paused
-              </v-icon>
-              <span>{{ $t('Active') }}</span>
-            </v-tooltip>
+            <information-tooltip
+              :info="status.includes('active') ? $t('HideActive') : $t('ShowActive')"
+              icon="notifications_paused"
+            />
           </v-btn>
           <v-btn
             value="deactivated"
             flat
           >
-            <v-tooltip bottom>
-              <v-icon slot="activator">
-                schedule
-              </v-icon>
-              <span>{{ $t('Deactivated') }}</span>
-            </v-tooltip>
+            <information-tooltip
+              :info="status.includes('deactivated') ? $t('HideDeactivated') : $t('ShowDeactivated')"
+              icon="schedule"
+            />
           </v-btn>
         </v-btn-toggle>
         <v-spacer />
@@ -449,12 +449,13 @@
 
 <script>
 import ListButtonAdd from './lib/ListButtonAdd'
-import moment from 'moment'
+import InformationTooltip from '@/components/notification/InformationTooltip'
 import i18n from '@/plugins/i18n'
 
 export default {
   components: {
-    ListButtonAdd
+    ListButtonAdd,
+    InformationTooltip
   },
   data: vm => ({
     status: ['active', 'deactivated'],
@@ -490,31 +491,31 @@ export default {
         value: 'groups'
       },
       {
-        text: i18n.t('Start Date'),
+        text: i18n.t('StartDate'),
         value: 'startDate'
       },
       {
-        text: i18n.t('End Date'),
+        text: i18n.t('EndDate'),
         value: 'endDate'
       },
       {
-        text: i18n.t('Start Time'),
+        text: i18n.t('StartTime'),
         value: 'startTime'
       },
       {
-        text: i18n.t('End Time'),
+        text: i18n.t('EndTime'),
         value: 'endTime'
       },
       {
-        text: i18n.t('repeatDays'),
+        text: i18n.t('RepeatDays'),
         value: 'repeatDays'
       },
       {
-        text: i18n.t('repeatWeeks'),
+        text: i18n.t('RepeatWeeks'),
         value: 'repeatWeeks'
       },
       {
-        text: i18n.t('repeatMonths'),
+        text: i18n.t('RepeatMonths'),
         value: 'repeatMonths'
       },
       {

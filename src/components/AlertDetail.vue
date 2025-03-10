@@ -707,6 +707,8 @@
                     </div>
                   </div>
                 </div>
+                <span> {{ $t("Attributes") }} </span>
+                <v-divider />
                 <div
                   v-for="(value, attr) in item.attributes"
                   :key="attr"

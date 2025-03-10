@@ -27,7 +27,7 @@
                   />
                 </v-flex>
 
-                <v-flex xs12>
+                <v-flex xs11>
                   <v-text-field
                     v-model="editedItem.id"
                     :label="$t('Id')"
@@ -36,7 +36,14 @@
                   />
                 </v-flex>
 
-                <v-flex xs12>
+                <v-flex xs1>
+                  <information-tooltip
+                    :info="$t('NotificationChannelId')"
+                    position="left"
+                  />
+                </v-flex>
+
+                <v-flex xs11>
                   <v-text-field
                     v-model="editedItem.sender"
                     :label="$t('Sender')"
@@ -45,7 +52,15 @@
                   />
                 </v-flex>
 
-                <v-flex xs12>
+                
+                <v-flex xs1>
+                  <information-tooltip
+                    :info="$t('SenderInfo')"
+                    position="left"
+                  />
+                </v-flex>
+
+                <v-flex xs11>
                   <v-select
                     v-model="editedItem.type"
                     :items="types"
@@ -54,6 +69,14 @@
                     required
                   />
                 </v-flex>
+
+                <v-flex xs1>
+                  <information-tooltip
+                    :info="$t('NotificationChannelType')"
+                    position="left"
+                  />
+                </v-flex>
+
                 <v-flex
                   v-if="(editedItem.type === 'smtp' || editedItem.type === 'link_mobility' || editedItem.type === 'link_mobility_xml')"
                   xs12
@@ -67,23 +90,30 @@
                 </v-flex>
                 <v-flex
                   v-if="(editedItem.type === 'smtp' || editedItem.type === 'link_mobility' || editedItem.type === 'link_mobility_xml')"
-                  xs12
+                  xs11
                 >
                   <v-text-field
                     v-model="editedItem.verify"
                     :label="$t('Verify')"
                   />
                 </v-flex>
+                <v-flex 
+                  v-if="(editedItem.type === 'smtp' || editedItem.type === 'link_mobility' || editedItem.type === 'link_mobility_xml')"
+                  xs1
+                >
+                  <information-tooltip
+                    :info="$t('VerifyInfo')"
+                    position="left"
+                  />
+                </v-flex>
                 <v-flex
-                  v-if="editedId === null && editedItem.type !== 'sendgrid'"
+                  v-if="editedId === null && labels[editedItem.type].username !== undefined"
                   xs12
                 >
                   <v-text-field
                     v-model="editedItem.apiSid"
                     :type="editedItem.type !== 'smtp' && editedItem.type !== 'jira' ? 'password' : 'text'"
-                    :label="
-                      (editedItem.type !== 'smtp' && editedItem.type !== 'link_mobility' && editedItem.type !== 'jira') ? $t('ApiSid') : $t('Username')
-                    "
+                    :label="labels[editedItem.type].username"
                     :rules="[rules.required]"
                     required
                   />
@@ -95,11 +125,7 @@
                   <v-text-field
                     v-model="editedItem.apiToken"
                     :type="'password'"
-                    :label="
-                      (editedItem.type !== 'smtp' && editedItem.type !== 'link_mobility')
-                        ? $t('ApiToken')
-                        : $t('Password')
-                    "
+                    :label="labels[editedItem.type].password"
                     :rules="[rules.required]"
                     required
                   />
@@ -236,6 +262,11 @@
     <v-card>
       <v-card-title class="title">
         {{ $t('Notification Channels') }}
+        
+        <information-dialog 
+          :info="info"
+          :title="$t('NotificationChannelsInfo') "
+        />
         <v-spacer />
         <v-tooltip bottom>
           <template slot="activator">
@@ -243,15 +274,9 @@
               Get New Encryption Key
             </v-btn>
           </template>
-          <span>{{
-            $t('Genereates New Encryption Key And Copies It To Clipboard')
-          }}</span>
+          <span>{{ $t('NotificationKeyGenerate') }}</span>
           <br>
-          <span>{{
-            $t(
-              'Set NOTIFICATION_KEY="{New Key}" In Config To Use Generated Key'
-            )
-          }}</span>
+          <span>{{ $t('NotificationKey') }}</span>
         </v-tooltip>
         <v-spacer />
         <v-spacer />
@@ -372,12 +397,15 @@
 
 <script>
 import ListButtonAdd from './lib/ListButtonAdd'
-import moment from 'moment'
+import InformationTooltip from '@/components/notification/InformationTooltip'
+import InformationDialog from '@/components/notification/InformationDialog'
 import i18n from '@/plugins/i18n'
 
 export default {
   components: {
-    ListButtonAdd
+    ListButtonAdd,
+    InformationTooltip,
+    InformationDialog
   },
   data: vm => ({
     types: [
@@ -386,11 +414,26 @@ export default {
       { text: 'twilio (sms)', value: 'twilio_sms' },
       { text: 'twilio (call + sms)', value: 'twilio_call' },
       { text: 'link moblity xml (sms)', value: 'link_mobility_xml' },
-      { text: 'my link', value: 'my_link' }
+      { text: 'my link (sms)', value: 'my_link' }
     ],
+    labels: {
+      sendgrid: {password: 'API Key'},
+      smtp: {password: 'Password', username: 'Username'},
+      twilio_sms: {password: 'ApiToken', username: 'ApiSid'},
+      twilio_call: {password: 'ApiToken', username: 'ApiSid'},
+      link_mobility_xml: {password: 'Password', username: 'Username'},
+      my_link: {password: 'Client Secret', username: 'Client ID'},
+    },
     search: '',
     dialog: false,
     testDialog: false,
+    info: [
+      { text: i18n.t('Id'), info: i18n.t('NotificationChannelId') },
+      { text: i18n.t('Sender'), info: i18n.t('SenderInfo') },
+      { text: i18n.t('Type'), info: i18n.t('NotificationChannelType') },
+      { text: i18n.t('Host'), info: i18n.t('HostInfo') },
+      { text: i18n.t('Verify'), info: i18n.t('VerifyInfo') },
+    ],
     headers: [
       { text: i18n.t('Customer'), value: 'customer' },
       { text: i18n.t('Id'), value: 'id' },
