@@ -13,7 +13,7 @@
               md9
             >
               <span class="headline">
-                Active
+                {{ editedItem.active ? 'Activate' : 'Deactivate' }} {{ editedItem.name ? editedItem.name : editedItem.id }}
               </span>
             </v-flex>
             <v-flex
@@ -37,6 +37,7 @@
                   <v-menu
                     ref="menu1"
                     v-model="menu1"
+                    :disabled="editedItem.active"
                     :close-on-content-click="false"
                     :nudge-right="40"
                     lazy
@@ -49,6 +50,7 @@
                     <v-text-field
                       slot="activator"
                       v-model="editedItem.reactivateDate"
+                      :disabled="editedItem.active"
                       :label="$t('ReactivateDate')"
                       prepend-icon="event"
                     />
@@ -65,6 +67,7 @@
                 >
                   <v-combobox
                     v-model="editedItem.reactivateTime"
+                    :disabled="editedItem.active"
                     :items="times"
                   />
                 </v-flex>
@@ -93,6 +96,54 @@
       </v-form>
     </v-dialog>
     <v-dialog
+      v-model="activateBulkDialog"
+      max-width="540px"
+    > 
+      <v-card>
+        <v-card-title>
+          <v-flex
+            xs12
+            sm6
+            md9
+          >
+            <span class="headline">
+              {{ $t('Activate') }} {{ $t('NotificationRules') }}
+            </span>
+          </v-flex>
+        </v-card-title>
+        
+        <v-card-text>
+          <span> {{ $t('NotificationRules') }} {{ $t('Activated') }}: </span>
+          <ul>
+            <li
+              v-for="item in selected"
+              :key="item.id"
+            >
+              {{ item.name ? item.name : item.id }}
+            </li>
+          </ul>
+        </v-card-text>
+
+        <v-card-actions>
+          <v-spacer />
+          <v-btn
+            color="blue darken-1"
+            flat
+            @click="closeBulkActive"
+          >
+            {{ $t('Cancel') }}
+          </v-btn>
+          <v-btn
+            color="blue darken-1"
+            flat
+            @click="changeBulkState({active:true})"
+          >
+            {{ $t('Ok') }}
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <v-dialog
       v-model="deactivateBulkDialog"
       max-width="540px"
     >
@@ -105,7 +156,7 @@
               md9
             >
               <span class="headline">
-                Active
+                {{ $t('Deactivate') }} {{ $t('NotificationRules') }}
               </span>
             </v-flex>
           </v-card-title>
@@ -151,6 +202,15 @@
                   />
                 </v-flex>
               </v-layout>
+              <span> {{ $t('NotificationRules') }} {{ $t('Deactivated') }}: </span>
+              <ul>
+                <li
+                  v-for="item in selected"
+                  :key="item.id"
+                >
+                  {{ item.name ? item.name : item.id }}
+                </li>
+              </ul>
             </v-container>
           </v-card-text>
 
@@ -1130,6 +1190,7 @@ export default {
     ],
     editedId: null,
     deactivateBulkDialog: false,
+    activateBulkDialog: false,
     bulkDeactivateItem:{
       active: false,
       reactivateDate: null,
@@ -1445,14 +1506,13 @@ export default {
       this.editedId = item.id
       this.editedItem = Object.assign({}, item)
       this.editedItem.active = !this.editedItem.active
-      if (this.editedItem.active) this.changeState(this.editedItem)
-      else this.active_dialog = true
+      this.active_dialog = true
     },
     deactivateBulk() {
       this.deactivateBulkDialog = true
     },
     activateBulk() {
-      this.changeBulkState({active:true})
+      this.activateBulkDialog = true
     },
     editItem(item) {
       this.editedId = item.id
@@ -1493,10 +1553,13 @@ export default {
       }, 300)
     },
     closeBulkActive() {
-      this.deactivateBulkDialog = false
-      setTimeout(() => {
-        this.bulkDeactivateItem = Object.assign({}, this.bulkDeactivateDefaultItem)
-      }, 300)
+      if(this.deactivateBulkDialog){
+        this.deactivateBulkDialog = false
+        setTimeout(() => {
+          this.bulkDeactivateItem = Object.assign({}, this.bulkDeactivateDefaultItem)
+        }, 300)
+      }
+      else this.activateBulkDialog = false
     },
     validate() {
       if (this.$refs.form.validate()) {
@@ -1509,7 +1572,7 @@ export default {
         item.id,
         {
           active: item.active,
-          reactivate: this.editedItem.reactivateDate ? this.toISODate(
+          reactivate: this.editedItem.reactivateDate && !item.active ? this.toISODate(
             this.editedItem.reactivateDate,
             this.editedItem.reactivateTime
           ) : null
