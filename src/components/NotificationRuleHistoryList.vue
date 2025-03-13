@@ -17,11 +17,11 @@
 
       <v-data-table
         :headers="computedHeaders"
+        :pagination.sync="pagination"
+        :total-items="pagination.totalItems"
+        :rows-per-page-items="pagination.rowsPerPageItems"
         :items="notification_rule_history"
-        :total-items="notification_rule_history.length"
-        :rows-per-page-items="[10,20,30]"
         class="alert-table"
-        :loading="isLoading"
         must-sort
         sort-icon="arrow_drop_down"
       >
@@ -77,7 +77,7 @@ export default {
     headers: [
       { text: i18n.t('User'), value: 'user', sortable: false, info: i18n.t('NotificationRuleHistoryUser') },
       { text: i18n.t('Type'), value: 'message', sortable: false, info: [i18n.t('NotificationRuleHistoryTypeUpdate'),i18n.t('NotificationRuleHistoryTypeCreate'),i18n.t('NotificationRuleHistoryTypeReactivate')] },
-      { text: i18n.t('CreateTime'), value: 'receiver', sortable: true, info: i18n.t('NotificationRuleHistoryCreateTime') },
+      { text: i18n.t('CreateTime'), value: 'receiver', sortable: false, info: i18n.t('NotificationRuleHistoryCreateTime') },
       { text: i18n.t('Data'), value: 'sender', sortable: false, info: i18n.t('NotificationRuleHistoryCreateData') },
     ]
   }),
@@ -123,10 +123,10 @@ export default {
     },
     pagination: {
       get() {
-        return this.$store.getters['notificationHistory/pagination']
+        return this.$store.getters['notificationRules/historyPagination']
       },
       set(value) {
-        this.$store.dispatch('notificationHistory/setPagination', value)
+        this.$store.dispatch('notificationRules/setHistoryPagination', value)
       }
     },
     computedHeaders() {
