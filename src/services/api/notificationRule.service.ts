@@ -13,6 +13,9 @@ export default {
     }
     return api.get('/notificationrules', config)
   },
+  getNotificationRuleHistory(id: string) {
+    return api.get(`/notificationrules/${id}/history`)
+  },
   updateNotificationRule(id: string, data: object) {
     return api.put(`/notificationrules/${id}`, data)
   },

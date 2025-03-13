@@ -101,6 +101,13 @@ export function createRouter(basePath): VueRouter {
         meta: {title: 'NotificationRules', requiresAuth: true}
       },
       {
+        path: '/notificationrules/:id',
+        name: 'notificationrulehistory',
+        component: () => import(/* webpackChunkName: 'user' */ './views/NotificationRuleHistory.vue'),
+        props: true,
+        meta: {title: 'Notification Rule History', requiresAuth: true}
+      },
+      {
         path: '/notificationhistory',
         name: 'notificationhistory',
         props: route => ({

@@ -1222,6 +1222,19 @@
                 delete
               </v-icon>
             </v-btn>
+            <v-btn
+              v-has-perms.disable="'read:notification_rules'"
+              icon
+              class="btn--plain mr-0"
+              :href="'/notificationrules/' + props.item.id"
+            >
+              <v-icon
+                small
+                color="grey darken-3"
+              >
+                history
+              </v-icon>
+            </v-btn>
           </td>
         </template>
         <template slot="no-data">

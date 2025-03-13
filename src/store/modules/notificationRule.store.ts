@@ -8,6 +8,9 @@ const state = {
   notification_rules: [],
   selected: [],
 
+  notificationRuleHistory: [],
+  notificationRule: null,
+
   query: {},
 
   pagination: {
@@ -26,11 +29,17 @@ const mutations = {
   SET_SEARCH_QUERY(state, query): any {
     state.query = query
   },
-  SET_NOTIFICATION_RULE(state, [notificationRules, total, pageSize]) {
+  SET_NOTIFICATION_RULES(state, [notificationRules, total, pageSize]) {
     state.isLoading = false
     state.notification_rules = notificationRules
     state.pagination.totalItems = total
     state.pagination.rowsPerPage = pageSize
+  },
+  SET_NOTIFICATION_RULE_HISTORY(state, notificationRuleHistory) {
+    state.notificationRuleHistory = notificationRuleHistory
+  },
+  SET_NOTIFICATION_RULE(state, notificationRule) {
+    state.notificationRule = notificationRule
   },
   SET_SELECTED(state, selected) {
     state.selected = selected
@@ -57,9 +66,19 @@ const actions = {
 
     return NotificationRuleApi.getNotificationRules(params)
       .then(({notificationRules, total, pageSize}) =>
-        commit('SET_NOTIFICATION_RULE', [notificationRules, total, pageSize])
+        commit('SET_NOTIFICATION_RULES', [notificationRules, total, pageSize])
       )
       .catch(() => commit('RESET_LOADING'))
+  },
+  getNotificationRuleHistory({commit}, id) {
+    return NotificationRuleApi.getNotificationRuleHistory(id).then(({notificationRuleHistory}) => {
+      commit('SET_NOTIFICATION_RULE_HISTORY', notificationRuleHistory)
+    })
+  },
+  getNotificationRule({commit}, id) {
+    return NotificationRuleApi.getNotificationRule(id).then(({notificationRule}) => {
+      commit('SET_NOTIFICATION_RULE', notificationRule)
+    })
   },
   createNotificationRule({dispatch, commit}, notificationrule) {
     return NotificationRuleApi.createNotificationRule(notificationrule).then(response => {
