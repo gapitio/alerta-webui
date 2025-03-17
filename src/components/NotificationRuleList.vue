@@ -138,7 +138,7 @@
             flat
             @click="changeBulkState({active:true})"
           >
-            {{ $t('Ok') }}
+            {{ $t('OK') }}
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -849,7 +849,7 @@
 
     <v-card>
       <v-card-title class="title">
-        {{ $t('Notification Rules') }}
+        {{ $t('NotificationRules') }}
         <information-dialog 
           :info="headers" 
           :title="$t('NotificationRulesInfo')"

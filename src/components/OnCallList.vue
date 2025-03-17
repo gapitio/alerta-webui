@@ -143,7 +143,7 @@
                         color="primary"
                         @click="sTimeMenu = false"
                       >
-                        Ok
+                        {{ $t('OK') }}
                       </v-btn>
                     </v-time-picker>
                   </v-menu>
@@ -180,7 +180,7 @@
                         color="primary"
                         @click="eTimeMenu = false"
                       >
-                        Ok
+                        {{ $t('OK') }}
                       </v-btn>
                     </v-time-picker>
                   </v-menu>

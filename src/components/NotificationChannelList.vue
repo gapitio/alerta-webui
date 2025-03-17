@@ -30,7 +30,7 @@
                 <v-flex xs11>
                   <v-text-field
                     v-model="editedItem.id"
-                    :label="$t('Id')"
+                    :label="$t('ID')"
                     :rules="[rules.required]"
                     required
                   />
@@ -194,7 +194,7 @@
                 <v-flex xs12>
                   <v-text-field
                     v-model="testedItem.text"
-                    :label="$t('message')"
+                    :label="$t('Message')"
                   />
                 </v-flex>
 
@@ -252,7 +252,7 @@
               flat
               @click="test"
             >
-              {{ $t('Test') }}
+              {{ testType == "sendgrid" || testType == "smtp" ? $t('TestEmail') : $t('TestSMS') }}
             </v-btn>
           </v-card-actions>
         </v-card>
@@ -261,7 +261,7 @@
 
     <v-card>
       <v-card-title class="title">
-        {{ $t('Notification Channels') }}
+        {{ $t('NotificationChannels') }}
         
         <information-dialog 
           :info="info"
@@ -324,7 +324,7 @@
                 small
                 color="grey darken-3"
               >
-                {{ props.item.type == "sendgrid" || props.item.type == "smtp" ? "mail": "sms" }}
+                {{ props.item.type == "sendgrid" || props.item.type == "smtp" ? "email": "sms" }}
               </v-icon>
             </v-btn>
             <v-btn
@@ -409,8 +409,8 @@ export default {
   },
   data: vm => ({
     types: [
-      { text: 'sendgrid (mail)', value: 'sendgrid' },
-      { text: 'smtp (mail)', value: 'smtp' },
+      { text: 'sendgrid (email)', value: 'sendgrid' },
+      { text: 'smtp (email)', value: 'smtp' },
       { text: 'twilio (sms)', value: 'twilio_sms' },
       { text: 'twilio (call + sms)', value: 'twilio_call' },
       { text: 'link moblity xml (sms)', value: 'link_mobility_xml' },
@@ -428,7 +428,7 @@ export default {
     dialog: false,
     testDialog: false,
     info: [
-      { text: i18n.t('Id'), info: i18n.t('NotificationChannelId') },
+      { text: i18n.t('ID'), info: i18n.t('NotificationChannelId') },
       { text: i18n.t('Sender'), info: i18n.t('SenderInfo') },
       { text: i18n.t('Type'), info: i18n.t('NotificationChannelType') },
       { text: i18n.t('Host'), info: i18n.t('HostInfo') },
@@ -436,7 +436,7 @@ export default {
     ],
     headers: [
       { text: i18n.t('Customer'), value: 'customer' },
-      { text: i18n.t('Id'), value: 'id' },
+      { text: i18n.t('ID'), value: 'id' },
       { text: i18n.t('Sender'), value: 'sender' },
       { text: i18n.t('Type'), value: 'type' },
       { text: i18n.t('Host'), value: 'type' },
@@ -444,6 +444,7 @@ export default {
       { text: i18n.t('Actions'), value: 'name', sortable: false }
     ],
     testId: null,
+    testType: null,
     testedItem: {
       receivers: [],
       userIds: [],
@@ -605,6 +606,7 @@ export default {
     },
     testItem(item) {
       this.testId = item.id
+      this.testType = item.type
       this.testDialog = true
     },
     copyItem(item) {

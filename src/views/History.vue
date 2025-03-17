@@ -2,7 +2,7 @@
   <div class="alerts">
     <v-card>
       <v-card-title class="title">
-        {{ $t('Alerts History') }}
+        {{ $t('AlertsHistory') }}
       </v-card-title>
       <v-tabs
         v-model="currentTab"

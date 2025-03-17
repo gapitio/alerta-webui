@@ -2,7 +2,7 @@
   <div>
     <v-card>
       <v-card-title class="title">
-        {{ $t('Notification Delays') }}
+        {{ $t('NotificationDelays') }}
       </v-card-title>
 
       <v-data-table

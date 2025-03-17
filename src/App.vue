@@ -590,21 +590,21 @@ export default {
         },
         {
           icon: 'history',
-          text: i18n.t('Notification History'),
+          text: i18n.t('NotificationHistory'),
           path: '/notificationhistory',
           perms: 'read:notification_history',
           show: true
         },
         {
           icon: 'av_timer',
-          text: i18n.t('Notification Delays'),
+          text: i18n.t('NotificationDelays'),
           path: '/notificationdelays',
           perms: 'read:notification_rules',
           show: true
         },
         {
           icon: 'arrow_upward',
-          text: i18n.t('Escalation Rules'),
+          text: i18n.t('EscalationRules'),
           path: '/escalationrules',
           perms: 'read:escalation_rules',
           show: true
@@ -639,14 +639,14 @@ export default {
         },
         {
           icon: 'people',
-          text: i18n.t('Notification Groups'),
+          text: i18n.t('NotificationGroups'),
           path: '/notificationgroups',
           perms: 'read:notification_groups',
           show: true
         },
         {
           icon: 'phone',
-          text: i18n.t('On Call'),
+          text: i18n.t('OnCall'),
           path: '/oncall',
           perms: 'read:notification_rules',
           show: true
@@ -667,21 +667,21 @@ export default {
         },
         {
           icon: 'notifications',
-          text: i18n.t('Notification Send'),
+          text: i18n.t('NotificationSend'),
           path: '/notificationsend',
           perms: 'read:notification_channels',
           show: true
         },
         {
           icon: 'notifications',
-          text: i18n.t('Notification Channels'),
+          text: i18n.t('NotificationChannels'),
           path: '/notificationchannels',
           perms: 'read:notification_channels',
           show: true
         },
         {
           icon: 'notifications',
-          text: i18n.t('Notification Rules'),
+          text: i18n.t('NotificationRules'),
           path: '/notificationrules',
           perms: 'read:notification_rules',
           show: true
