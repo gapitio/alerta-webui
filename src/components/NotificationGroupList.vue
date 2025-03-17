@@ -39,7 +39,7 @@
                 <v-flex xs12>
                   <v-combobox
                     v-model="editedItem.mails"
-                    :label="$t('Mails')"
+                    :label="$t('Emails')"
                     chips
                     multiple
                   />
@@ -80,7 +80,7 @@
 
     <v-card>
       <v-card-title class="title">
-        {{ $t('Notification Groups') }}
+        {{ $t('NotificationGroups') }}
       </v-card-title>
 
       <v-data-table
@@ -220,11 +220,11 @@ export default {
         value: 'users'
       },
       {
-        text: i18n.t('Phone Numbers'),
+        text: i18n.t('PhoneNumbers'),
         value: 'phoneNumbers'
       },
       {
-        text: i18n.t('Mails'),
+        text: i18n.t('Emails'),
         value: 'mails'
       },
       {

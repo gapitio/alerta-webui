@@ -99,7 +99,7 @@
                 >
                   <v-text-field
                     v-model.trim="editedItem.phoneNumber"
-                    :label="$t('Phone Number')"
+                    :label="$t('PhoneNumber')"
                   />
                 </v-flex>
 

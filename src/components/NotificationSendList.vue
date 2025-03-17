@@ -2,7 +2,7 @@
   <div>
     <v-card>
       <v-card-title class="title">
-        {{ $t('Notification Send') }}
+        {{ $t('NotificationSend') }}
         <v-spacer />
         <v-select
           v-model="emailChannel"
@@ -89,7 +89,7 @@ export default {
     headers: [
       { text: i18n.t('Name'), value: 'name' },
       { text: i18n.t('Type'), value: 'type' },
-      { text: i18n.t('Mail'), value: 'mail' },
+      { text: i18n.t('Email'), value: 'email' },
       { text: i18n.t('SMS'), value: 'sms' }
     ],
   }),

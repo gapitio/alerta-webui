@@ -122,7 +122,7 @@ export default {
   data: vm => ({
     search: '',
     headers: [
-      { text: i18n.t('Id'), value: 'id', sortable: false, info: i18n.t('NotificationHistoryId') },
+      { text: i18n.t('ID'), value: 'id', sortable: false, info: i18n.t('NotificationHistoryId') },
       { text: i18n.t('Sent'), value: 'sent', sortable: false, info: [i18n.t('NotificationHistorySentTrue'), i18n.t('NotificationHistorySentFalse')]},
       { text: i18n.t('SentTime'), value: 'sent_time', sortable: false, info: i18n.t('NotificationHistorySentTime') },
       { text: i18n.t('Message'), value: 'message', sortable: false, info: i18n.t('NotificationHistoryMessage') },
