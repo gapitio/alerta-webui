@@ -582,6 +582,13 @@ export default {
           show: true
         },
         {
+          icon: 'expand_less',
+          'icon-alt': 'expand_more',
+          text: i18n.t('Searches'),
+          model: false,
+          queries: this.queries
+        },
+        {
           icon: 'history',
           text: i18n.t('History'),
           path: '/history',
@@ -608,13 +615,6 @@ export default {
           path: '/escalationrules',
           perms: 'read:escalation_rules',
           show: true
-        },
-        {
-          icon: 'expand_less',
-          'icon-alt': 'expand_more',
-          text: i18n.t('Searches'),
-          model: false,
-          queries: this.queries
         },
         {
           icon: 'timer',
