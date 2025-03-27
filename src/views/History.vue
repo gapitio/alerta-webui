@@ -33,7 +33,7 @@
             <keep-alive max="1">
               <history-list
                 v-if="env == filter.environment || env == 'ALL'"
-                :history="historyByEnvironment"
+                :history="history"
               />
             </keep-alive>
           </v-tab-item>
@@ -46,10 +46,7 @@
 <script>
 import HistoryList from '@/components/HistoryList.vue'
 
-import moment from 'moment'
-import { ExportToCsv } from 'export-to-csv'
 import utils from '@/common/utils'
-import i18n from '@/plugins/i18n'
 
 export default {
   components: {
@@ -85,16 +82,7 @@ export default {
       return this.$store.state.alerts.historyFilter
     },
     history() {
-      if (this.filter) {
-        return this.$store.getters['alerts/history']
-          .filter(alert =>
-            this.filter.text
-              ? Object.keys(alert).some(k => alert[k] && alert[k].toString().toLowerCase().includes(this.filter.text.toLowerCase()))
-              : true
-          )
-      } else {
-        return this.$store.getters['alerts/history']
-      }
+      return this.$store.getters['alerts/history']
     },
     showAllowedEnvs() {
       return this.$store.getters.getPreference('showAllowedEnvs')
@@ -103,14 +91,7 @@ export default {
       return ['ALL'].concat(this.$store.getters['alerts/environments'](this.showAllowedEnvs))
     },
     environmentCounts() {
-      return this.$store.getters['alerts/counts']
-    },
-    historyByEnvironment() {
-      return this.history.filter(history =>
-        this.filter.environment
-          ? history.environment === this.filter.environment
-          : true
-      )
+      return this.$store.getters['alerts/historyCounts']
     },
     refreshInterval() {
       return (
@@ -134,6 +115,7 @@ export default {
   watch: {
     currentTab(val) {
       this.setPage(1)
+      this.getHistory()
     },
     pagination: {
       handler(newVal, oldVal) {
@@ -189,6 +171,7 @@ export default {
       this.$store.dispatch('alerts/setPanel', panel.asi == '1')
     },
     getHistory() {
+      this.$store.dispatch('alerts/getAlertHistoryCount')
       return this.$store.dispatch('alerts/getAlertHistory')
     },
     setSearch(query) {

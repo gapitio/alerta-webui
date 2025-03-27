@@ -54,6 +54,9 @@ export default {
     }
     return api.get('/alerts/history', config)
   },
+  getAlertHistoryCount() {
+    return api.get('/alerts/history/count')
+  },
   getCounts(query: object) {
     let config = {
       params: query
