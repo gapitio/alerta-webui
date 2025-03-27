@@ -13,6 +13,7 @@ const state = {
   history: [],
   selected: [], // used by multi-select checkboxes
   environments: [],
+  historyEnvironments: [],
   services: [],
   groups: [],
   tags: [],
@@ -75,6 +76,9 @@ const mutations = {
   SET_HISTORY(state, [history, total]): any {
     state.history = history
     state.historyPagination.totalItems = total
+  },
+  SET_HISTORY_ENVIRONMENTS(state, [environments, total]) {
+    state.historyEnvironments = {ALL: total, ...environments}
   },
   RESET_LOADING(state): any {
     state.isLoading = false
@@ -190,15 +194,20 @@ const actions = {
   getAlertHistory({commit, state}) {
     let params = new URLSearchParams(state.query)
 
-    state.historyFilter.environment && params.append('environment', state.filter.environment)
+    state.historyFilter.environment && params.append('environment', state.historyFilter.environment)
 
     params.append('page', state.historyPagination.page)
     params.append('page-size', state.historyPagination.rowsPerPage)
 
     return AlertsApi.getAlertHistory(params).then(({history, total}) => commit('SET_HISTORY', [history, total]))
   },
+  getAlertHistoryCount({commit, state}) {
+    return AlertsApi.getAlertHistoryCount().then(({environments, total}) =>
+      commit('SET_HISTORY_ENVIRONMENTS', [environments, total])
+    )
+  },
   setHistoryFilter({commit}, filter) {
-    commit('SET_FILTER', filter)
+    commit('SET_HISTORY_FILTER', filter)
   },
   updateQuery({commit}, query) {
     commit('SET_SEARCH_QUERY', query)
@@ -364,6 +373,9 @@ const getters = {
       },
       {ALL: 0}
     )
+  },
+  historyCounts: state => {
+    return state.historyEnvironments
   },
   services: state => {
     return state.services.map(s => s.service).sort()
