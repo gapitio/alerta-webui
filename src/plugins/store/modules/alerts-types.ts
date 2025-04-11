@@ -1,5 +1,6 @@
-import type { ActionContext } from 'vuex/types/index.d.ts'
+import type { ActionContext } from 'vuex'
 import type { State as RootState } from '../types'
+import type { ActionTree } from 'vuex';
 
 interface Attributes {
   [key: string]: string; 
@@ -235,7 +236,7 @@ export type Actions = {
   setPagination({ commit }: AugmentedActionContext, pagination: Pagination): void
   setHistoryPagination({ commit }: AugmentedActionContext, pagination: Pagination): void
   setPanel({ commit }: AugmentedActionContext, panel: boolean): void
-}
+} & ActionTree<State, RootState>
 export type Getters = {
   alerts(state: State, rootState: RootState): Alert[]
   history(state: State): History[]

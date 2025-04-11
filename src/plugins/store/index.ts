@@ -19,15 +19,36 @@ import reports from './modules/reports.store'
 import prefs from './modules/preferences.store'
 import management from './modules/management.store'
 import notifications from './modules/notifications.store'
+import type { ActionContext, ActionTree } from 'vuex'
+import type { State as RootState } from './types'
 
+type State = {
+  multiselect: boolean;
+  refresh: boolean;
+}
 
-const mutations = {
-  SET_SETTING(state, {s, v}) {
+type Mutations = {
+  SET_SETTING<K extends keyof State>(state: State, {s, v}: {s: K, v: State[K]}): void
+}
+
+type AugmentedActionContext = {
+  commit<K extends keyof Mutations>(
+    key: K,
+    payload?: Parameters<Mutations[K]>[1]
+  ): Mutations[K]
+} & Omit<ActionContext<State, RootState>, 'commit'>
+
+const mutations: Mutations = {
+  SET_SETTING(state: typeof store.state, {s, v}) {
     state[s] = v
   }
 }
 
-const actions = {
+type Actions = {
+  set<T extends keyof State>({commit}: AugmentedActionContext, [s, v]: [T, State[T]]): void
+} & ActionTree<State, RootState>
+
+const actions: Actions = {
   set({commit}, [s, v]) {
     commit('SET_SETTING', {s, v})
   }

@@ -9,9 +9,11 @@ import VueI18nPlugin from '@intlify/unplugin-vue-i18n/vite'
 import { defineConfig } from 'vite'
 import { fileURLToPath, URL } from 'node:url'
 import { resolve, dirname } from 'node:path'
+import { version } from './package.json'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: process.env.BASE_URL,
   plugins: [
     VueRouter(),
     Vue({
@@ -37,7 +39,7 @@ export default defineConfig({
       include: resolve(dirname(fileURLToPath(import.meta.url)), './path/to/src/locales/**'),
     }),
   ],
-  define: { 'process.env': {} },
+  define: { __APP_VERSION__: JSON.stringify(version) },
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),

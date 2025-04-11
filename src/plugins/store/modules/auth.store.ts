@@ -11,7 +11,7 @@ interface Store {
   getters: Getters;
 }
 
-interface VueAuthenticateFix extends Omit<VueAuthenticate, 'authenticate'> {
+export interface VueAuthenticateFix extends Omit<VueAuthenticate, 'authenticate'> {
   getPayload(): Payload;
   authenticate(
     provider: string,

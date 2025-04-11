@@ -1,6 +1,6 @@
-import type { ActionContext } from 'vuex/types/index.d.ts'
 import type { State as RootState } from '../types'
 import type { AuthenticateOptions } from 'vue-authenticate-2'
+import type { ActionTree, ActionContext } from 'vuex';
 
 
 export interface Payload {
@@ -62,7 +62,7 @@ export type Actions = {
   forgot({commit}: AugmentedActionContext, email: string): void
   reset(_: AugmentedActionContext, [token, password]: [string, string]): void
   logout({commit}: AugmentedActionContext): void
-}
+} & ActionTree<State, RootState>
 
 export type Getters = {
   getOptions(): AuthenticateOptions

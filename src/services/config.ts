@@ -19,6 +19,7 @@ class Config {
         return this.setEnvConfig(response)
       })
       .then(() => {
+        console.log(this.getLocalConfig())
         return this.getLocalConfig()
       })
       .then(response => {
@@ -39,22 +40,15 @@ class Config {
 
   getEnvConfig() {
     return new Promise((resolve) => {
-      const envConfig = {}
-      if (process.env.VUE_APP_ALERTA_ENDPOINT) {
-        envConfig['endpoint'] = process.env.VUE_APP_ALERTA_ENDPOINT
-      }
-      if (process.env.VUE_APP_CLIENT_ID) {
-        envConfig['client_id'] = process.env.VUE_APP_CLIENT_ID
-      }
-      if (process.env.VUE_APP_TRACKING_ID) {
-        envConfig['tracking_id'] = process.env.VUE_APP_TRACKING_ID
+      const envConfig = {
+        endpoint: import.meta.env.VITE_APP_ALERTA_ENDPOINT ?? null
       }
       resolve(envConfig)
     })
   }
 
   getLocalConfig() {
-    const basePath = process.env.BASE_URL
+    const basePath = import.meta.env.BASE_URL
     return this.$http
       .get(`${basePath}config.json`)
       .then(response => response.data)

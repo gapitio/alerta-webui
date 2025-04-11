@@ -29,3 +29,8 @@ export type Store = {
   getters: Getters
 }
 
+declare module '@vue/runtime-core' {
+  export interface ComponentCustomProperties {
+    $store: Store
+  }
+}

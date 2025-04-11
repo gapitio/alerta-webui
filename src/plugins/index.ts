@@ -16,6 +16,7 @@ import {registerVueAuth} from '@/services/auth'
 
 // Types
 import type { App } from 'vue'
+import type { VueAuthenticateFix } from './store/modules/auth.store'
 
 
 
@@ -31,7 +32,7 @@ export function registerPlugins (app: App) {
   axios.defaults.baseURL = config.endpoint
   store.dispatch('updateConfig', config)
   store.dispatch('alerts/setFilter', config.filter)
-  store.registerModule('auth', makeStore(app.config.globalProperties.$auth))  
+  store.registerModule('auth', makeStore(app.config.globalProperties.$auth as VueAuthenticateFix))  
 }
 registerBefore(store)
 
