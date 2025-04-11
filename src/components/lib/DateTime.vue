@@ -1,38 +1,33 @@
 <template>
-  <v-tooltip top>
-    <span
-      slot="activator"
-      class="text-no-wrap"
-    >
-      {{ value | date(displayMode, formatString) }}
-    </span>
-    <span>{{ value | date('utc', 'YYYY/MM/DD HH:mm:ss.SSS Z') }}</span>
+  <v-tooltip 
+    :text="filters.date(value, displayMode, store.getters.getConfig('dates').longDate)"
+    location="top"
+  >
+    <template #activator="{ props }">
+      <div v-bind="props">
+        <span style="white-space: nowrap;">
+          {{ filters.date(value, displayMode, formatString) }}
+          <br v-if="!noBreak">
+          ({{ filters.until(value) }})
+        </span>
+      </div>
+    </template>
   </v-tooltip>
 </template>
 
-<script>
+<script lang="ts" setup>
+import { useFilters } from '@/filters'
+import type { Store } from '@/plugins/store/types'
+import { computed } from 'vue'
+import { useStore } from 'vuex'
 
-import moment from 'moment'
-import i18n from '@/plugins/i18n'
-moment.locale(i18n.locale)
+const store: Store = useStore()
+const filters = useFilters()
 
-export default {
-  props: {
-    value: { type: String, required: true },
-    format: { type: String, default: 'mediumDate' }
-  },
-  computed: {
-    displayMode() {
-      return this.$store.state.prefs.timezone
-    },
-    formatString() {
-      return (
-        this.$store.state.prefs.dates[this.format] ||
-        this.$config.dates[this.format]
-      )
-    }
-  }
-}
+const compProps = defineProps<{value: string, format?: 'mediumDate' | 'longDate' | 'shortTime', noBreak?: boolean}>()
+
+const format = computed(() => compProps.format ?? 'mediumDate')
+const displayMode = computed(() => store.getters.getPreference('timezone'))
+const formatString = computed(() => store.getters.getPreference('dates')[format.value] ?? store.getters.getConfig('dates')[format.value])
+
 </script>
-
-<style></style>

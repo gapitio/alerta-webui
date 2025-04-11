@@ -1,21 +1,17 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
-import VueAxios from 'vue-axios'
-import {VueAuthenticate} from '@alerta/vue-authenticate'
-import axios from 'axios'
-
-Vue.use(Vuex)
-Vue.use(VueAxios, axios)
+import VueAuthenticate from 'vue-authenticate-2'
+import type {App} from 'vue'
 
 function getRedirectUri(path: string) {
   return window.location.origin + (path || '')
 }
 
-export function vueAuth(config) {
-  let basePath = config.base_path || process.env.BASE_URL
-  return new VueAuthenticate(Vue.prototype.$http, {
+export function registerVueAuth(app: App) {
+  const config = app.config.globalProperties.$config
+  const basePath = config.base_path || __BASE_URL__
+  app.use(VueAuthenticate, {
     tokenPath: 'token',
     tokenName: 'token',
+    responseDataKey: 'data',
     tokenPrefix: '',
     registerUrl: '/auth/signup',
     logoutUrl: '/auth/logout',
@@ -30,11 +26,11 @@ export function vueAuth(config) {
         redirectUri: getRedirectUri(basePath),
         requiredUrlParams: ['scope'],
         optionalUrlParams: ['display', 'state'],
-        scope: 'openid+profile+email',
+        scope: ['openid', 'profile', 'email'],
         display: 'popup',
         oauthType: '2.0',
         popupOptions: {width: 1020, height: 618},
-        state: () => encodeURIComponent(Math.random().toString(36).substr(2))
+        state: encodeURIComponent(Math.random().toString(36).substr(2))
       },
       cognito: {
         name: 'Amazon Cognito',
@@ -44,11 +40,11 @@ export function vueAuth(config) {
         redirectUri: getRedirectUri(basePath),
         requiredUrlParams: ['scope'],
         optionalUrlParams: ['display', 'state'],
-        scope: 'openid+profile+email',
+        scope: ['openid', 'profile', 'email'],
         display: 'popup',
         oauthType: '2.0',
         popupOptions: {width: 1020, height: 618},
-        state: () => encodeURIComponent(Math.random().toString(36).substr(2))
+        state: encodeURIComponent(Math.random().toString(36).substr(2))
       },
       github: {
         name: 'GitHub',
@@ -70,7 +66,7 @@ export function vueAuth(config) {
         display: 'popup',
         oauthType: '2.0',
         popupOptions: {width: 1020, height: 618},
-        state: () => encodeURIComponent(Math.random().toString(36).substr(2))
+        state: encodeURIComponent(Math.random().toString(36).substr(2))
       },
       google: {
         name: 'Google',
@@ -86,11 +82,11 @@ export function vueAuth(config) {
         redirectUri: getRedirectUri(basePath),
         requiredUrlParams: ['scope'],
         optionalUrlParams: ['display', 'state'],
-        scope: 'openid+profile+email',
+        scope: ['openid', 'profile', 'email'],
         display: 'popup',
         oauthType: '2.0',
         popupOptions: {width: 1020, height: 618},
-        state: () => encodeURIComponent(Math.random().toString(36).substr(2))
+        state: encodeURIComponent(Math.random().toString(36).substr(2))
       },
       openid: {
         name: 'OpenID',
@@ -100,11 +96,11 @@ export function vueAuth(config) {
         redirectUri: getRedirectUri(basePath),
         requiredUrlParams: ['scope'],
         optionalUrlParams: ['display', 'state'],
-        scope: 'openid+profile+email',
+        scope: ['openid', 'profile', 'email'],
         display: 'popup',
         oauthType: '2.0',
         popupOptions: {width: 1020, height: 618},
-        state: () => encodeURIComponent(Math.random().toString(36).substr(2))
+        state: encodeURIComponent(Math.random().toString(36).substr(2))
       },
       pingfederate: {
         name: 'PingFederate',
@@ -113,8 +109,8 @@ export function vueAuth(config) {
         authorizationEndpoint: config.pingfederate_url,
         redirectUri: getRedirectUri(basePath || '/'),
         requiredUrlParams: ['pfidpadapterid', 'scope'],
-        scope: 'openid+profile+email',
-        pfidpadapterid: 'kerberos',
+        scope: ['openid', 'profile', 'email'],
+        // pfidpadapterid: 'kerberos',
         oauthType: '2.0'
       }
     }

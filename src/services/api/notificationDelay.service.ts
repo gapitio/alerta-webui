@@ -2,8 +2,8 @@ import api from './index'
 
 export default {
   getNotificationDelays(query: object) {
-    let config = {
-      params: {}
+    const config = {
+      params: query
     }
     return api.get('/notificationdelay', config)
   },

@@ -8,7 +8,7 @@ export default {
     return api.get(`/notificationgroups/${id}`)
   },
   getNotificationGroups(query: object) {
-    let config = {
+    const config = {
       params: query
     }
     return api.get('/notificationgroups', config)

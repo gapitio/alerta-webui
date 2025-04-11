@@ -1,217 +1,213 @@
 <template>
-  <v-container
-    grid-list-sm
-    fill-height
-  >
-    <v-layout
-      align-center
-      row
-      wrap
-    >
-      <v-flex
+  <v-container class="fill-height">
+    <v-row justify="center">
+      <v-col
         v-if="isBasicAuth"
-        xs12
-        sm8
-        offset-xs0
-        offset-sm2
+        cols="12"
+        sm="8"
       >
-        <p class="text-xs-center headline font-weight-medium">
-          {{ $t('LoginToContinue') }}
+        <p class="text-center text-h5 font-weight-medium pb-4">
+          {{ t("LoginToContinue") }}
         </p>
-        <v-form @submit.prevent="login()">
-          <v-text-field
-            v-model.trim="username"
-            name="login"
-            type="text"
-            :label="$t('Username')"
-            prepend-inner-icon="alternate_email"
-            outline
-          />
-          <v-text-field
-            v-model="password"
-            name="password"
-            :type="showPassword ? 'text' : 'password'"
-            :label="$t('Password')"
-            :append-icon="showPassword ? 'visibility_off' : 'visibility'"
-            outline
-            @click:append="showPassword = !showPassword"
-          />
-          <v-btn
-            block
-            color="primary"
-            type="submit"
-          >
-            {{ $t('LogIn') }}
-          </v-btn>
+        <v-form @submit.prevent="login">
+          <v-row>
+            <v-col cols="12">
+              <g-text-field
+                v-model.trim="username"
+                name="login"
+                :label="t('Username')"
+                prepend-inner-icon="alternate_email"
+              />
+            </v-col>
+            <v-col cols="12">
+              <g-text-field
+                v-model="password"
+                name="password"
+                :type="showPassword ? 'text' : 'password'"
+                :label="t('Password')"
+                :append-inner-icon="showPassword ? 'visibility_off' : 'visibility'"
+                @click:append-inner="() => showPassword = !showPassword"
+              />
+            </v-col>
+            <v-col cols="12">
+              <v-btn
+                block
+                color="primary"
+                type="submit"
+              >
+                {{ t("LogIn") }}
+              </v-btn>
+            </v-col>
+          </v-row>
         </v-form>
-        <div class="text-xs-center">
+        <div class="text-center">
           <v-btn
-            flat
+            variant="text"
             color="primary"
-            to="/signup"
+            :to="'/signup'"
             :disabled="!signupEnabled"
           >
-            {{ $t('CreateAccount') }}
+            {{ t("CreateAccount") }}
           </v-btn>
           <v-btn
-            flat
+            variant="text"
             color="primary"
-            to="/forgot"
+            :to="'/forgot'"
           >
-            {{ $t('ForgotPassword') }}
+            {{ t("ForgotPassword") }}
           </v-btn>
         </div>
-      </v-flex>
+      </v-col>
 
-      <v-flex
-        v-else-if="$config.provider == 'saml2'"
-        xs12
-        sm8
-        offset-xs0
-        offset-sm2
+      <v-col
+        v-else-if="provider === 'saml2'"
+        cols="12"
+        sm="8"
       >
         <div>
-          <p class="text-xs-center headline font-weight-medium">
+          <p class="text-center text-h5 font-weight-medium">
             SAML2 Authentication uses pop-up windows.
           </p>
-          <p class="text-xs-center subheading font-weight-medium">
+          <p class="text-center text-body-1 font-weight-medium">
             Please allow pop-ups from <kbd>{{ host }}</kbd>
           </p>
         </div>
-        <div v-show="message && !error">
-          <p class="text-xs-center headline font-weight-medium">
+        <div v-if="message && !error">
+          <p class="text-center text-h5 font-weight-medium">
             {{ message }}
           </p>
         </div>
-        <div v-show="error">
-          <p class="text-xs-center headline font-weight-medium">
-            {{ $t('UnspecifiedProblem') }}
+        <div v-if="error">
+          <p class="text-center text-h5 font-weight-medium">
+            {{ t("UnspecifiedProblem") }}
             <a
               href="#"
-              @click="authenticateUsingSAML"
+              @click.prevent="authenticateUsingSAML"
             >
-              {{ $t('TryAgain') }}
+              {{ t("TryAgain") }}
             </a>
           </p>
-          <p class="text-xs-center subheading font-weight-medium">
-            {{ $t('Error') }}: {{ error }}
+          <p class="text-center text-body-1 font-weight-medium">
+            {{ t("Error") }}: {{ error }}
           </p>
         </div>
-      </v-flex>
+      </v-col>
 
-      <v-flex
+      <v-col
         v-else
-        xs12
-        sm8
-        offset-xs0
-        offset-sm2
+        cols="12"
+        sm="8"
       >
-        <div v-show="message && !error">
-          <p class="text-xs-center headline font-weight-medium">
+        <div v-if="message && !error">
+          <p class="text-center text-h5 font-weight-medium">
             {{ message }}
           </p>
         </div>
-        <div v-show="error">
-          <p class="text-xs-center headline font-weight-medium">
-            {{ $t('UnspecifiedProblem') }}
+        <div v-if="error">
+          <p class="text-center text-h5 font-weight-medium">
+            {{ t("UnspecifiedProblem") }}
             <a
               href="#"
-              @click="authenticate"
+              @click.prevent="authenticate"
             >
-              {{ $t('TryAgain') }}
+              {{ t("TryAgain") }}
             </a>
           </p>
-          <p class="text-xs-center subheading font-weight-medium">
-            {{ $t('Error') }}: {{ error }}
+          <p class="text-center text-body-1 font-weight-medium">
+            {{ t("Error") }}: {{ error }}
           </p>
         </div>
-      </v-flex>
-
-      <v-flex
-        xs12
-        sm8
-        offset-xs0
-        offset-sm2
+      </v-col>
+      <v-col 
+        cols="12"
+        sm="8"
       />
-    </v-layout>
+    </v-row>
   </v-container>
 </template>
 
-<script>
-import i18n from '@/plugins/i18n'
+<script setup lang="ts">
+import type { Store } from '@/plugins/store/types';
+import { AxiosError } from 'axios';
+import { computed, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
+import { useRoute, useRouter } from 'vue-router';
+import { useTheme } from 'vuetify';
+import { useStore } from 'vuex';
 
-export default {
-  props: [],
-  data: () => ({
-    host: window.location.origin,
-    username: null,
-    password: null,
-    showPassword: false,
-    message: null,
-    error: null
-  }),
-  computed: {
-    isBasicAuth() {
-      return this.$config.provider == 'basic' || this.$config.provider == 'ldap'
-    },
-    authProvider() {
-      let providers = this.$store.getters['auth/getOptions']['providers']
-      return providers[this.$config.provider] ? providers[this.$config.provider].name : null
-    },
-    signupEnabled() {
-      return this.$store.getters.getConfig('signup_enabled')
+const store: Store = useStore()
+const router = useRouter()
+const route = useRoute()
+const { t } = useI18n()
+const theme = useTheme()
+
+const host = ref(window.location.origin)
+const username = ref<string | null>(null)
+const showPassword = ref(false)
+const password = ref<string | null>(null)
+const message = ref<string | null>(null)
+const error = ref<string | null>(null)
+
+const isDark = computed(() => store.getters.getPreference('isDark'))
+const provider = computed(() => store.getters.getConfig('provider'))
+const isBasicAuth = computed(() => ['basic', 'ldap'].includes(provider.value))
+const authProvider = computed(() => {
+  const provs = store.getters['auth/getOptions'].providers[provider.value]
+  return provs ? provs.name : null
+})
+const signupEnabled = computed(() => store.getters.getConfig('signup_enabled'))
+
+if (provider.value == 'saml2') authenticateUsingSAML()
+else if (authProvider.value) authenticate()
+
+async function login() {
+  const creds = {
+    username: username.value!,
+    password: password.value!
+  }
+  await store.dispatch('auth/login', creds)
+  await store.dispatch('getUserPrefs')
+  theme.global.name.value = isDark.value ? 'gapitDark' : 'gapitLight'
+  const redirect = !(route.query.redirect instanceof Array) ? route.query.redirect?.toString() : null
+  router.push({ path: redirect || '/' })
+}
+
+function authenticate(){
+  if (authProvider.value) {
+    message.value = `Authenticating with ${authProvider.value} ...`
+    try {
+      store.dispatch('auth/authenticate', provider.value)
+    } catch (e) {
+      if (e instanceof AxiosError) error.value = (e.response?.data as {message: string}).message
+      else throw e
     }
-  },
-  created() {
-    if (this.$config.provider == 'saml2') {
-      this.authenticateUsingSAML()
-    } else if (this.authProvider) {
-      this.authenticate()
-    }
-  },
-  methods: {
-    login() {
-      let credentials = {
-        username: this.username,
-        password: this.password
-      }
-      this.$store
-        .dispatch('auth/login', credentials)
-        .then(() => this.$router.push({ path: this.$route.query.redirect || '/' }))
-        .catch(error => this.error = error.response.data.message)
-    },
-    authenticate() {
-      if (this.authProvider) {
-        this.message = `Authenticating with ${this.authProvider} ...`
-        this.$store
-          .dispatch('auth/authenticate', this.$config.provider)
-          .then(() => this.$router.push({ path: this.$route.query.redirect || '/' }))
-          .catch(error => this.error = error.response.data.message)
-      } else {
-        this.message = i18n.t('AuthNotPossible')
-        this.error = `Unknown authentication provider (${this.$config.provider})`
-      }
-    },
-    authenticateUsingSAML() {
-      let auth_win
-      window.addEventListener('message', event => {
+  }
+  else {
+    message.value = t('AuthNotPossible')
+    error.value = `Unknown authentication provider (${provider.value})`
+  }
+}
+
+function authenticateUsingSAML() {
+  const auth_win = window.open(store.getters.getConfig('endpoint') + '/auth/saml', t('AuthInProgress'))
+  window.addEventListener('message', async event => {
         if (event.source === auth_win) {
           if (event.data && event.data.status && event.data.status === 'ok' && event.data.token) {
-            this.$store
-              .dispatch('auth/setToken', event.data)
-              .then(() => this.$router.push({ path: this.$route.query.redirect || '/' }))
-              .catch(error => this.error = error.response.data.message)
+            try {
+              await store.dispatch('auth/setToken', event.data)
+              const redirect = !(route.query.redirect instanceof Array) ? route.query.redirect?.toString() : null
+              router.push({ path: redirect || '/' })
+            } catch (e) {
+              if (e instanceof AxiosError) error.value = (e.response?.data as {message: string}).message
+              else throw e
+            }
+              
           } else {
-            this.message = i18n.t('AuthNotPossible')
-            this.error = event.data.message ? event.data.message : JSON.stringify(event)
+            message.value = t('AuthNotPossible')
+            error.value = event.data.message ? event.data.message : JSON.stringify(event)
           }
         }
         return
       })
-      auth_win = window.open(this.$config.endpoint + '/auth/saml', i18n.t('AuthInProgress'))
-    }
-  }
 }
 </script>
-
-<style></style>
