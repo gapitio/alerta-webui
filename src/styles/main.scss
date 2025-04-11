@@ -1,0 +1,153 @@
+@use 'gapitDark';
+@use 'gapitLight';
+
+$overlay-multiplier: 2;
+
+
+.big-font {
+  font-size: 16px !important;
+}
+
+h1 {
+  padding: 16px 8px;
+}
+
+.table-row {
+  height: 40px !important;
+}
+
+.header {
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.sidebar {
+  border-left: none !important;
+  border-top: none !important;
+  border-bottom: none !important;
+  border-right: 10px solid;
+}
+
+.console-text {
+  font-size: 14px;
+  white-space: pre;
+  line-height: 1;
+}
+
+.text-secondary {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.hover-lighten:hover {
+  filter: brightness(0.87);
+}
+
+.square-btn-icon {
+  border-radius: 4px;
+  margin-left: 16px;
+}
+
+.v-btn:hover > .v-btn__overlay {
+  opacity: calc(var(--v-hover-opacity) * $overlay-multiplier);
+}
+
+.v-btn:focus-visible > .v-btn__overlay {
+  opacity: calc(var(--v-focus-opacity) * $overlay-multiplier);
+}
+
+.v-list-item--active .v-list-item__overlay,
+.v-list-item:hover .v-list-item__overlay
+{
+  opacity: 1;
+  z-index: 0;
+}
+
+.v-list-item__content {
+  z-index: 1;
+}
+
+.v-ripple__container {
+  opacity: 0.3;
+}
+
+.header {
+  font-weight: 500;
+}
+
+.label {
+  align-self: center;
+  padding-right: 0px;
+  font-size: 13px;
+  font-weight: 400;
+}
+
+.sidebar {
+  border: 1px solid;
+}
+
+.table.v-table th, td {
+  padding: 0px 5px !important;
+}
+
+.table {
+  --v-border-opacity: 0.4;
+}
+
+.dialog-card-actions {
+  border-top: 1px solid;
+  text-align: center;
+  justify-content: center !important;
+}
+
+.table-column {
+  border-bottom: 2px solid !important;
+}
+
+.no-cap-btn {
+  text-transform: none;
+}
+
+.bold {
+  font-weight: 500;
+}
+
+.chip {
+  font-weight: 00;
+  font-size: 13px !important;
+  border-radius: 20px;
+  border: 1px solid;
+}
+
+.chip.critical,
+.chip.major,
+.chip.minor,
+.chip.warning,
+.chip.normal,
+.chip.ok,
+.chip.slow,
+.chip.expired {
+  text-transform: capitalize;
+  border: none;
+}
+
+.chip.critical,
+.chip.major,
+.chip.warning,
+.chip.normal,
+.chip.ok,
+.chip.expired {
+  border: none;
+  color: white !important;
+}
+
+.chip.minor,
+.chip.slow {
+  color: black !important;
+}
+
+.clickable {
+  cursor: pointer;
+  text-decoration: underline;
+}
+

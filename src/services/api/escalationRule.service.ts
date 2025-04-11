@@ -8,7 +8,7 @@ export default {
     return api.get(`/escalationrules/${id}`)
   },
   getEscalationRules(query: object) {
-    let config = {
+    const config = {
       params: query
     }
     return api.get('/escalationrules', config)

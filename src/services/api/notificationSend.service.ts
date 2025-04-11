@@ -2,7 +2,7 @@ import api from './index'
 
 export default {
   getNotificationSends(query: object) {
-    let config = {
+    const config = {
       params: query
     }
     return api.get('/notificationsends', config)

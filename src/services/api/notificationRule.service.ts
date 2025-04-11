@@ -5,25 +5,25 @@ export default {
     return api.post('/notificationrules', data)
   },
   getNotificationAlerts(data: object, params: object) {
-    let config = {
+    const config = {
       params: params
     }
     return api.post('/notificationrule/alerts', data, config)
-  },
-  getNotificationRulesByNGroup(groupId: string) {
-    return api.get(`/notificationrules/group/${groupId}`)
   },
   getNotificationRule(id: string) {
     return api.get(`/notificationrules/${id}`)
   },
   getNotificationRules(query: object) {
-    let config = {
+    const config = {
       params: query
     }
     return api.get('/notificationrules', config)
   },
-  getNotificationRuleHistory(id: string, params) {
-    let config = {
+  getNotificationRulesByNGroup(groupId: string) {
+    return api.get(`/notificationrules/group/${groupId}`)
+  },
+  getNotificationRuleHistory(id: string, params: object) {
+    const config = {
       params: params
     }
     return api.get(`/notificationrules/${id}/history`, config)

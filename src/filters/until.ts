@@ -1,8 +1,7 @@
 import moment from 'moment'
-import Vue from 'vue'
 
-export default Vue.filter('until', function (value) {
+export default function until(value?: string) {
   if (value) {
     return moment(String(value)).fromNow()
   }
-})
+}

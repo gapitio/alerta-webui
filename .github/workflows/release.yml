@@ -16,7 +16,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '14'
+          node-version: '22'
       - run: npm version
       - run: npm install
       - name: Lint
@@ -24,7 +24,7 @@ jobs:
         run: npm run lint:nofix
       - name: Unit Test
         id: unit-test
-        run: npm run test:unit
+        run: npm run test
 
       - uses: act10ns/slack@v2
         with:
@@ -41,7 +41,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '14'
+          node-version: '22'
       - run: npm version
       - run: npm install
       - name: Build artifacts
