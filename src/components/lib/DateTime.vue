@@ -1,16 +1,14 @@
 <template>
   <v-tooltip top>
-    <span
-      slot="activator"
-      class="text-no-wrap"
-    >
-      {{ value | date(displayMode, formatString) }}
-    </span>
-    <span>{{ value | date('utc', 'YYYY/MM/DD HH:mm:ss.SSS Z') }}</span>
+    <template #activator>
+      <span class="text-no-wrap">
+        {{ $filters.date(value, displayMode, formatString) }}
+      </span>
+    </template>
   </v-tooltip>
 </template>
 
-<script>
+<script lang="ts">
 
 import moment from 'moment'
 import i18n from '@/plugins/i18n'

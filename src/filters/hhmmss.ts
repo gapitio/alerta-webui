@@ -1,15 +1,14 @@
 import moment from 'moment'
-import Vue from 'vue'
 
-export default Vue.filter('hhmmss', function (value) {
-  function pad(s) {
+export default function hhmmss(value: moment.DurationInputArg1) {
+  function pad(s: number) {
     return ('0' + s).slice(-2)
   }
   if (value) {
-    let duration = moment.duration(value, 'seconds')
-    let seconds = pad(duration.seconds())
-    let minutes = pad(duration.minutes())
-    let hours = Math.floor(duration.as('h'))
+    const duration = moment.duration(value, 'seconds')
+    const seconds = pad(duration.seconds())
+    const minutes = pad(duration.minutes())
+    const hours = Math.floor(duration.as('h'))
     return `${hours}:${minutes}:${seconds}`
   }
-})
+}

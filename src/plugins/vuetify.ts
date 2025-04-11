@@ -1,14 +1,19 @@
-import Vue from 'vue'
-import Vuetify from 'vuetify/lib'
-import colors from 'vuetify/es5/util/colors'
+/**
+ * plugins/vuetify.ts
+ *
+ * Framework documentation: https://vuetifyjs.com`
+ */
 
-import 'vuetify/src/stylus/app.styl'
+// Styles
+import '@mdi/font/css/materialdesignicons.css'
+import 'vuetify/styles'
 
-Vue.use(Vuetify, {
+// Composables
+import { createVuetify } from 'vuetify'
+
+// https://vuetifyjs.com/en/introduction/why-vuetify/#feature-guides
+export default createVuetify({
   theme: {
-    primary: '#3f51b5',
-    secondary: '#2196f3',
-    accent: '#ffa726'
+    defaultTheme: 'dark',
   },
-  iconfont: 'md'
 })

@@ -1,528 +1,169 @@
 <template>
-  <div>
-    <v-data-table
-      v-model="selected"
-      :headers="customHeaders"
-      :items="alerts"
-      item-key="id"
-      :pagination.sync="pagination"
-      :total-items="pagination.totalItems"
-      :rows-per-page-items="pagination.rowsPerPageItems"
-      :loading="isSearching"
-      class="alert-table"
-      :class="[ displayDensity ]"
-      :style="columnWidths"
-      sort-icon="arrow_drop_down"
-      select-all
+  <v-data-table-server
+    v-model:items-per-page="pagination.rowsPerPage"
+    v-model="selected"
+    show-select
+    :headers="customHeaders"
+    :items="alerts"
+    :items-length="pagination.totalItems"
+    :items-per-page-options="pagination.rowsPerPageItems"
+    :loading="isSearching"
+    :row-props="rowProps"
+    multi-sort
+    density="compact"
+    sort-desc-icon="mdi-menu-down"
+    sort-asc-icon="mdi-menu-up"
+    class="alert-table h-100"
+    @update:options="setPagination"
+  >
+    <template
+      v-for="timeObj in ['lastReceiveTime', 'createTime', 'receiveTime']"
+      :key="timeObj"
+      #[`item.${timeObj}`]="{item}"
     >
-      <template
-        slot="items"
-        slot-scope="props"
+      <date-time :value="item[timeObj]" />
+    </template>
+    <template #[`item.timeout`]="{item}">
+      {{ $filters.hhmmss(item.timeout) }}
+    </template>
+    <template #[`item.timeoutLeft`]="{item}">
+      {{ $filters.hhmmss(timeoutLeft(item)) }}
+    </template>
+    <template #[`item.severity`]="{item}">
+      <v-chip
+        :color="severityColor(item.severity, 'open')"
+        label
+        variant="elevated"
+        size="small"
       >
-        <tr
-          :style="{ 'background-color': severityColor(props.item.severity, props.item.status) }"
-          class="hover-lighten"
-          @click="selectItem(props.item)"
-        >
-          <td
-            class="text-no-wrap"
-            :style="fontStyle"
-          >
-            <v-checkbox
-              v-if="selectableRows"
-              v-model="props.selected"
-              primary
-              hide-details
-              color="gray"
-              class="select-box"
-              :ripple="false"
-              :size="fontSize"
-              @click.stop
-            />
-            <v-icon
-              v-else-if="props.item.trendIndication == 'moreSevere'"
-              :class="['trend-arrow', textColor(props.item.severity)]"
-              :size="fontSize"
-              @click.stop="multiselect = true; props.selected = true"
-            >
-              arrow_upward
-            </v-icon>
-            <v-icon
-              v-else-if="props.item.trendIndication == 'lessSevere'"
-              :class="['trend-arrow', textColor(props.item.severity)]"
-              :size="fontSize"
-              @click.stop="multiselect = true; props.selected = true"
-            >
-              arrow_downward
-            </v-icon>
-            <v-icon
-              v-else
-              :class="['trend-arrow', textColor(props.item.severity)]"
-              :size="fontSize"
-              @click.stop="multiselect = true; props.selected = true"
-            >
-              remove
-            </v-icon>
-          </td>
-          <td
-            v-for="col in $config.columns"
-            :key="col"
-            :class="['text-no-wrap', textColor(props.item.severity)]"
-            :style="fontStyle"
-          >
-            <span
-              v-if="col == 'id'"
-            >
-              {{ props.item.id | shortId }}
-            </span>
-            <span
-              v-if="col == 'resource'"
-            >
-              {{ props.item.resource }}
-            </span>
-            <span
-              v-if="col == 'event'"
-            >
-              {{ props.item.event }}
-            </span>
-            <span
-              v-if="col == 'environment'"
-            >
-              {{ props.item.environment }}
-            </span>
-            <span
-              v-if="col == 'severity'"
-            >
-              <span
-                :class="['label', 'label-' + props.item.severity.toLowerCase()]"
-                :style="fontStyle"
-              >
-                {{ props.item.severity | capitalize }}
-              </span>
-            </span>
-            <span
-              v-if="col == 'correlate'"
-            >
-              {{ props.item.correlate.join(', ') }}
-            </span>
-            <span
-              v-if="col == 'status'"
-            >
-              <span
-                class="label"
-                :style="fontStyle"
-              >
-                {{ props.item.status | capitalize }}
-
-              </span>
-              <span
-                v-if="showNotesIcon"
-              >
-                <span
-                  v-if="lastNote(props.item)"
-                  class="pl-2"
-                >
-                  <v-tooltip bottom>
-                    <template v-slot:activator="{ on, attrs }">
-                      <v-icon
-                        v-bind="attrs"
-                        small
-                        v-on="on"
-                      >text_snippet</v-icon>
-                    </template>
-                    <span>{{ lastNote(props.item) }}</span>
-                  </v-tooltip>
-                </span>
-              </span>
-            </span>
-            <span
-              v-if="col == 'service'"
-            >
-              {{ props.item.service.join(', ') }}
-            </span>
-            <span
-              v-if="col == 'group'"
-            >
-              {{ props.item.group }}
-            </span>
-            <span
-              v-if="col == 'value'"
-            >
-              <div class="fixed-table">
-                <div class="text-truncate">
-                  <span v-html="props.item.value" />
-                </div>
-              </div>
-            </span>
-            <span
-              v-if="col == 'text'"
-            >
-              <div class="fixed-table">
-                <div class="text-truncate">
-                  <span v-html="props.item.text" />
-                </div>
-              </div>
-            </span>
-            <span
-              v-if="col == 'tags'"
-            >
-              <span
-                v-for="tag in props.item.tags"
-                :key="tag"
-              ><span
-                class="label"
-                :style="fontStyle"
-              >{{ tag }}</span>&nbsp;</span>
-            </span>
-            <span
-              v-if="props.item.attributes.hasOwnProperty(col)"
-            >
-              <span v-html="props.item.attributes[col]" />
-            </span>
-            <span
-              v-if="col == 'origin'"
-            >
-              {{ props.item.origin }}
-            </span>
-            <span
-              v-if="col == 'type'"
-            >
-              <span
-                class="label"
-                :style="fontStyle"
-              >
-                {{ props.item.type | splitCaps }}
-              </span>
-            </span>
-            <span
-              v-if="col == 'createTime'"
-            >
-              <date-time
-                :value="props.item.createTime"
-                format="mediumDate"
-              />
-            </span>
-            <span
-              v-if="col == 'timeout'"
-            >
-              {{ props.item.timeout | hhmmss }}
-            </span>
-            <span
-              v-if="col == 'timeoutLeft'"
-              class="text-xs-right"
-            >
-              {{ timeoutLeft(props.item) | hhmmss }}
-            </span>
-            <!-- rawData not supported -->
-            <span
-              v-if="col == 'customer' && $config.customer_views"
-            >
-              {{ props.item.customer }}
-            </span>
-            <span
-              v-if="col == 'duplicateCount'"
-            >
-              {{ props.item.duplicateCount }}
-            </span>
-            <span
-              v-if="col == 'repeat'"
-            >
-              <span
-                class="label"
-                :style="fontStyle"
-              >
-                {{ props.item.repeat | capitalize }}
-              </span>
-            </span>
-            <span
-              v-if="col == 'previousSeverity'"
-            >
-              <span
-                :class="['label', 'label-' + props.item.previousSeverity.toLowerCase()]"
-                :style="fontStyle"
-              >
-                {{ props.item.previousSeverity | capitalize }}
-              </span>
-            </span>
-            <!-- trendIndication not supported -->
-            <span
-              v-if="col == 'receiveTime'"
-            >
-              <date-time
-                :value="props.item.receiveTime"
-                format="mediumDate"
-              />
-            </span>
-            <span
-              v-if="col == 'duration'"
-              class="text-xs-right"
-            >
-              {{ duration(props.item) | hhmmss }}
-            </span>
-            <span
-              v-if="col == 'lastReceiveId'"
-            >
-              {{ props.item.lastReceiveId | shortId }}
-            </span>
-            <span
-              v-if="col == 'lastReceiveTime'"
-            >
-              <date-time
-                :value="props.item.lastReceiveTime"
-                format="mediumDate"
-              />
-            </span>
-            <!-- only history supported is most recent note -->
-            <span
-              v-if="col == 'note'"
-            >
-              {{ lastNote(props.item) }}
-            </span>
-          </td>
-          <td
-            :class="['text-no-wrap', textColor(props.item.severity)]"
-          >
-            <div
-              class="action-buttons"
-              :style="{ 'background-color': severityColor(props.item.severity, props.item.status) }"
-            >
-              ...&nbsp;
-              <v-btn
-                v-if="isAcked(props.item.status) || isClosed(props.item.status)"
-                flat
-                icon
-                small
-                class="btn--plain pa-0 ma-0"
-                @click.stop="takeAction(props.item.id, 'open')"
-              >
-                <v-icon
-                  :size="fontSize"
-                >
-                  refresh
-                </v-icon>
-              </v-btn>
-
-              <v-btn
-                v-if="!isWatched(props.item.tags)"
-                flat
-                icon
-                small
-                class="btn--plain pa-0 ma-0"
-                @click.stop="watchAlert(props.item.id)"
-              >
-                <v-icon
-                  :size="fontSize"
-                >
-                  visibility
-                </v-icon>
-              </v-btn>
-              <v-btn
-                v-if="isWatched(props.item.tags)"
-                flat
-                icon
-                small
-                class="btn--plain pa-0 ma-0"
-                @click.stop="unwatchAlert(props.item.id)"
-              >
-                <v-icon
-                  :size="fontSize"
-                >
-                  visibility_off
-                </v-icon>
-              </v-btn>
-
-              <v-btn
-                v-if="isOpen(props.item.status)"
-                flat
-                icon
-                small
-                class="btn--plain pa-0 ma-0"
-                @click.stop="ackAlert(props.item.id)"
-              >
-                <v-icon
-                  :size="fontSize"
-                >
-                  check
-                </v-icon>
-              </v-btn>
-              <v-btn
-                v-if="isAcked(props.item.status)"
-                flat
-                icon
-                small
-                class="btn--plain pa-0 ma-0"
-                @click.stop="takeAction(props.item.id, 'unack')"
-              >
-                <v-icon
-                  :size="fontSize"
-                >
-                  undo
-                </v-icon>
-              </v-btn>
-
-              <v-btn
-                v-if="isOpen(props.item.status) || isAcked(props.item.status)"
-                flat
-                icon
-                small
-                class="btn--plain pa-0 ma-0"
-                @click.stop="shelveAlert(props.item.id)"
-              >
-                <v-icon
-                  :size="fontSize"
-                >
-                  schedule
-                </v-icon>
-              </v-btn>
-              <v-btn
-                v-if="isShelved(props.item.status)"
-                flat
-                icon
-                small
-                class="btn--plain pa-0 ma-0"
-                @click.stop="takeAction(props.item.id, 'unshelve')"
-              >
-                <v-icon
-                  :size="fontSize"
-                >
-                  restore
-                </v-icon>
-              </v-btn>
-
-              <v-btn
-                v-if="!isClosed(props.item.status) && isAlertAlarmModel()"
-                flat
-                icon
-                small
-                class="btn--plain pa-0 ma-0"
-                @click.stop="takeAction(props.item.id, 'close')"
-              >
-                <v-icon
-                  :size="fontSize"
-                >
-                  highlight_off
-                </v-icon>
-              </v-btn>
-              <v-btn
-                v-if="haveDeleteScope()"
-                flat
-                icon
-                small
-                class="btn--plain pa-0 ma-0"
-                @click.stop="deleteAlert(props.item.id)"
-              >
-                <v-icon
-                  :size="fontSize"
-                >
-                  delete
-                </v-icon>
-              </v-btn>
-              <!-- <v-btn
-                flat
-                icon
-                small
-                class="btn--plain pa-0 ma-0"
-                @click.stop="clipboardCopy(JSON.stringify(props.item, null, 4))"
-              >
-                <v-icon
-                  :size="fontSize"
-                >
-                  content_copy
-                </v-icon>
-              </v-btn> -->
-
-              <v-menu
-                bottom
-                left
-              >
-                <v-btn
-                  slot="activator"
-                  flat
-                  icon
-                  small
-                  class="btn--plain pa-0 ma-0"
-                >
-                  <v-icon small>
-                    more_vert
-                  </v-icon>
-                </v-btn>
-
-                <v-list
-                  subheader
-                >
-                  <v-subheader>Actions</v-subheader>
-                  <v-divider />
-                  <v-list-tile
-                    v-for="(action, i) in actions"
-                    :key="i"
-                    @click.stop="takeAction(props.item.id, action)"
-                  >
-                    <v-list-tile-title>{{ action | splitCaps }}</v-list-tile-title>
-                  </v-list-tile>
-                </v-list>
-              </v-menu>
-            </div>
-          </td>
-        </tr>
-      </template>
-      <template slot="no-data">
-        <div class="text-xs-center">
-          <span v-if="isLoading">{{ $t('Loading') }}...</span>
-          <span v-if="!isLoading">{{ $t('NoDataAvailable') }}</span>
-        </div>
-      </template>
-    </v-data-table>
-  </div>
+        {{ item.severity }}
+      </v-chip>
+    </template>
+    <template #[`item.status`]="{item}">
+      <v-chip 
+        label
+        variant="elevated"
+        size="small"
+      >
+        {{ item.status }}
+      </v-chip>
+    </template>
+    <template #[`item.actions`]="{item}">
+      <div
+        class="action-buttons"
+      >
+        <v-btn
+          v-if="isAcked(item.status) || isClosed(item.status)"
+          density="compact"
+          variant="text"
+          icon="mdi-refresh"
+          @click.stop="takeAction(item.id, 'open')"
+        />
+        <v-btn
+          v-if="!isWatched(item.tags)"
+          density="compact"
+          variant="text"
+          icon="mdi-eye"
+          @click.stop="watchAlert(item.id)"
+        />
+        <v-btn
+          v-if="isWatched(item.tags)"
+          density="compact"
+          variant="text"
+          icon="mdi-eye-off"
+          @click.stop="unwatchAlert(item.id)"
+        />
+        <v-btn
+          v-if="isOpen(item.status)"
+          density="compact"
+          variant="text"
+          icon="mdi-check"
+          @click.stop="ackAlert(item.id)"
+        />
+        <v-btn
+          v-if="isAcked(item.status)"
+          density="compact"
+          variant="text"
+          icon="mdi-undo"
+          @click.stop="takeAction(item.id, 'unack')"
+        />
+        <v-btn
+          v-if="isOpen(item.status) || isAcked(item.status)"
+          density="compact"
+          variant="text"
+          icon="mdi-clock"
+          @click.stop="shelveAlert(item.id)"
+        />
+        <v-btn
+          v-if="isShelved(item.status)"
+          density="compact"
+          variant="text"
+          icon="mdi-restore"
+          @click.stop="takeAction(item.id, 'unshelve')"
+        />
+        <v-btn
+          v-if="!isClosed(item.status) && isAlertAlarmModel()"
+          density="compact"
+          variant="text"
+          icon="mdi-close-circle-outline"
+          @click.stop="takeAction(item.id, 'close')"
+        />
+        <v-btn
+          v-if="haveDeleteScope()"
+          density="compact"
+          variant="text"
+          icon="mdi-delete"
+          @click.stop="deleteAlert(item.id)"
+        />
+      </div>
+    </template>            
+  </v-data-table-server>
 </template>
 
-<script>
+<script lang="ts">
 import debounce from 'lodash/debounce'
-import get from 'lodash/get'
-import DateTime from './lib/DateTime'
 import moment from 'moment'
-import i18n from '@/plugins/i18n'
 
 export default {
-  components: {
-    DateTime
-  },
   props: {
-    alerts: {
-      type: Array,
-      default: () => []
+    filter: {
+      type: Object,
+      required: true
     }
   },
-  data: vm => ({
+  data: a => ({
     search: '',
     headersMap: {
-      id: { text: i18n.t('AlertId'), value: 'id' },
-      resource: { text: i18n.t('Resource'), value: 'resource' },
-      event: { text: i18n.t('Event'), value: 'event' },
-      environment: { text: i18n.t('Environment'), value: 'environment' },
-      severity: { text: i18n.t('Severity'), value: 'severity' },
-      correlate: { text: i18n.t('Correlate'), value: 'correlate' },
-      status: { text: i18n.t('Status'), value: 'status' },
-      service: { text: i18n.t('Service'), value: 'service' },
-      group: { text: i18n.t('Group'), value: 'group' },
-      value: { text: i18n.t('Value'), value: 'value', class: 'value-header' },
-      text: { text: i18n.t('Description'), value: 'text', class: 'text-header' },
-      tags: { text: i18n.t('Tags'), value: 'tags' },
-      attributes: { text: i18n.t('Attribute'), value: 'attributes' },
-      origin: { text: i18n.t('Origin'), value: 'origin' },
-      type: { text: i18n.t('Type'), value: 'type' },
-      createTime: { text: i18n.t('CreateTime'), value: 'createTime' },
-      timeout: { text: i18n.t('Timeout'), value: 'timeout' },
-      timeoutLeft: { text: i18n.t('TimeoutLeft'), value: 'timeoutLeft' },
-      customer: { text: i18n.t('Customer'), value: 'customer' },
-      duplicateCount: { text: i18n.t('Dupl'), value: 'duplicateCount' },
-      repeat: { text: i18n.t('Repeat'), value: 'repeat' },
-      previousSeverity: { text: i18n.t('PrevSeverity'), value: 'previousSeverity' },
-      trendIndication: { text: i18n.t('TrendIndication'), value: 'trendIndication' },
-      receiveTime: { text: i18n.t('ReceiveTime'), value: 'receiveTime' },
-      duration: { text: i18n.t('Duration'), value: 'duration' },
-      lastReceiveId: { text: i18n.t('LastReceiveId'), value: 'lastReceiveId' },
-      lastReceiveTime: { text: i18n.t('LastReceiveTime'), value: 'lastReceiveTime' },
-      note: { text: i18n.t('LastNote'), value: 'note', sortable: false }
+      id: { title: a.$t('AlertId'), key: 'id' },
+      resource: { title: a.$t('Resource'), key: 'resource' },
+      event: { title: a.$t('Event'), key: 'event' },
+      environment: { title: a.$t('Environment'), key: 'environment' },
+      severity: { title: a.$t('Severity'), key: 'severity' },
+      correlate: { title: a.$t('Correlate'), key: 'correlate' },
+      status: { title: a.$t('Status'), key: 'status' },
+      service: { title: a.$t('Service'), key: 'service' },
+      group: { title: a.$t('Group'), key: 'group' },
+      value: { title: a.$t('Value'), value: 'value', class: 'value-header' },
+      tags: { title: a.$t('Tags'), key: 'tags' },
+      attributes: { title: a.$t('Attribute'), key: 'attributes' },
+      origin: { title: a.$t('Origin'), key: 'origin' },
+      type: { title: a.$t('Type'), key: 'type' },
+      createTime: { title: a.$t('CreateTime'), key: 'createTime' },
+      timeout: { title: a.$t('Timeout'), key: 'timeout' },
+      timeoutLeft: { title: a.$t('TimeoutLeft'), key: 'timeoutLeft' },
+      customer: { title: a.$t('Customer'), key: 'customer' },
+      duplicateCount: { title: a.$t('Dupl'), key: 'duplicateCount', },
+      repeat: { title: a.$t('Repeat'), key: 'repeat' },
+      previousSeverity: { title: a.$t('PrevSeverity'), key: 'previousSeverity' },
+      trendIndication: { title: a.$t('TrendIndication'), key: 'trendIndication' },
+      receiveTime: { title: a.$t('ReceiveTime'), key: 'receiveTime' },
+      duration: { title: a.$t('Duration'), key: 'duration' },
+      lastReceiveId: { title: a.$t('LastReceiveId'), key: 'lastReceiveId', headerProps: {class:"text-no-wrap"} },
+      lastReceiveTime: { title: a.$t('LastReceiveTime'), key: 'lastReceiveTime', headerProps: {class:'text-no-wrap'}},
+      text: { title: a.$t('Description'), key: 'text' },
+      note: { title: a.$t('LastNote'), key: 'note', sortable: false },
+      actions: { title: a.$t('Actions'), key: 'actions', sortable: false, },
+
     },
     details: false,
     selectedId: null,
@@ -530,6 +171,16 @@ export default {
     timer: null
   }),
   computed: {
+    alerts() {
+      if (this.filter.text) {
+        return this.$store.getters['alerts/alerts']
+          .filter(alert =>
+            Object.keys(alert).some(k => alert[k] && alert[k].toString().toLowerCase().includes(this.filter.text.toLowerCase()))
+          )
+      } else {
+        return this.$store.getters['alerts/alerts'].map((b) => { return {...b, service: b.service.join(', ')}})
+      }
+    },
     displayDensity() {
       return (
         this.$store.getters.getPreference('displayDensity') ||
@@ -565,21 +216,18 @@ export default {
     rowsPerPage() {
       return this.$store.getters.getPreference('rowsPerPage')
     },
-    pagination: {
-      get() {
-        return this.$store.state.alerts.pagination
-      },
-      set(value) {
-        this.$store.dispatch('alerts/setPagination', value)
-      }
+    pagination() {
+      return this.$store.state.alerts.pagination
     },
     actions() {
       return this.$config.actions
     },
     customHeaders() {
-      return this.$config.columns.map(c =>
+      const configHeaders = this.$config.columns.map(c =>
         this.headersMap[c] || { text: this.$options.filters.capitalize(c), value: 'attributes.' + c }
       )
+      
+      return [...configHeaders, this.headersMap.actions]
     },
     selectedItem() {
       return this.alerts.filter(a => a.id == this.selectedId)[0]
@@ -611,13 +259,19 @@ export default {
     }
   },
   methods: {
+    setPagination(value) {
+      console.log(value)
+      this.$store.dispatch('alerts/setPagination', value)
+      this.$store.dispatch('alerts/getAlerts')
+      this.$store.dispatch('alerts/getTags')
+    },
     duration(item) {
       return moment.duration(moment().diff(moment(item.receiveTime)))
     },
     timeoutLeft(item) {
-      let ackedOrShelved = this.isShelved(item.status) || this.isAcked(item.status)
-      let lastModified = ackedOrShelved && item.updateTime ? item.updateTime : item.lastReceiveTime
-      let expireTime = moment(lastModified).add(item.timeout, 'seconds')
+      const ackedOrShelved = this.isShelved(item.status) || this.isAcked(item.status)
+      const lastModified = ackedOrShelved && item.updateTime ? item.updateTime : item.lastReceiveTime
+      const expireTime = moment(lastModified).add(item.timeout, 'seconds')
       return expireTime.isAfter() ? expireTime.diff(moment(), 'seconds') : moment.duration()
     },
     lastNote(item) {
@@ -632,19 +286,26 @@ export default {
     },
     textColor(severity) {
       if (this.severityColor(severity) === 'black' || this.severityColor(severity) === '#000000') {
-        return 'white--text'
+        return 'text-white'
       }
       return this.$store.getters.getConfig('colors').text
-        ? `${this.$store.getters.getConfig('colors').text}--text`
+        ? `text-${this.$store.getters.getConfig('colors').text}`
         : ''
+    },
+    rowProps({item}) {
+      return {
+        style: {backgroundColor: this.severityColor(item.severity, item.status)},
+        class: `${this.textColor(item.severity)} hover-lighten text-no-wrap`,
+        'onClick': () => this.selectItem(item),
+      }
     },
     severityColor(severity, status) {
       const config = this.$store.getters.getConfig('colors')
       return (config.status || {})[status] || config.severity[severity] || 'white'
     },
     selectItem(item) {
-      if (!this.selected.length) {
-        this.$emit('set-alert', item)
+      if (!this.selected.length) {        
+        this.$router.push({ path: `/alert/${item.id}`, query: {redirect: this.$route.fullPath} })
       }
     },
     isOpen(status) {
@@ -696,12 +357,12 @@ export default {
         .then(() => this.$store.dispatch('alerts/getAlerts'))
     }, 200, {leading: true, trailing: false}),
     deleteAlert: debounce(function(id) {
-      confirm(i18n.t('ConfirmDelete')) &&
+      confirm(this.$t('ConfirmDelete')) &&
         this.$store.dispatch('alerts/deleteAlert', id)
           .then(() => this.$store.dispatch('alerts/getAlerts'))
     }, 200, {leading: true, trailing: false}),
     clipboardCopy(text) {
-      let textarea = document.createElement('textarea')
+      const textarea = document.createElement('textarea')
       textarea.textContent = text
       document.body.appendChild(textarea)
       textarea.select()
@@ -713,9 +374,7 @@ export default {
 </script>
 
 <style>
-.alert-table .v-table th, td {
-  padding: 0px 5px !important;
-}
+
 
 .value-header {
   width: var(--value-width);
@@ -735,8 +394,8 @@ export default {
   height: 34px !important;
 }
 
-.alert-table .v-table tbody td {
-  border-top: 1px solid rgb(221, 221, 221);
+.alert-table td {
+  --v-border-opacity: 0.4 !important;
 }
 
 .fixed-table {
@@ -805,13 +464,9 @@ div.select-box {
   height: auto;
   width: auto;
   margin: 0;
-  padding: 8px;
-  min-width: 0;
-  font-size: 24px;
 }
 .btn--plain {
   padding: 0;
-  opacity: 0.6;
 }
 .btn--plain:before {
   background-color: transparent !important;
@@ -822,7 +477,6 @@ div.select-box {
 }
 
 div.action-buttons {
-  position: absolute;
   opacity: 0;
   right: 0;
   top: 0.5em;

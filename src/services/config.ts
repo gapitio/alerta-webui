@@ -1,4 +1,5 @@
-import Axios, {AxiosResponse, AxiosInstance} from 'axios'
+import Axios from 'axios'
+import type {AxiosInstance} from 'axios'
 
 class Config {
   private config: any = {}
@@ -23,8 +24,8 @@ class Config {
       .then(response => {
         return this.setLocalConfig(response)
       })
-      .then(response => {
-        let endpoint = this.config.endpoint ? this.config.endpoint : 'http://localhost:8080'
+      .then(() => {
+        const endpoint = this.config.endpoint ? this.config.endpoint : 'http://localhost:8080'
         return this.getRemoteConfig(endpoint)
       })
       .then(response => {
@@ -37,8 +38,8 @@ class Config {
   }
 
   getEnvConfig() {
-    return new Promise((resolve, reject) => {
-      let envConfig = {}
+    return new Promise((resolve) => {
+      const envConfig = {}
       if (process.env.VUE_APP_ALERTA_ENDPOINT) {
         envConfig['endpoint'] = process.env.VUE_APP_ALERTA_ENDPOINT
       }

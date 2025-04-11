@@ -1,50 +1,32 @@
-<template>
+<template>  
   <v-card
-    class="alert-indicator"
     @click="selectAsi()"
   >
-    <v-card-text
-      class="pa-0"
-      :style="{ 'background-color': severityColor(maxSeverity) }"
-    >
-      <div
-        class="text-uppercase text-xs-center py-2"
-      >
-        {{ title }}
-      </div>
-    </v-card-text>
-
-    <v-card-actions
-      class="pa-0 mx-0"
-      :style="{ 'background-color': isDark ? '' : '#F5F5F5' }"
-    >
-      <v-layout>
-        <v-flex>
-          <div
-            class="counts-container"
-          >
-            <v-layout
-              v-if="counts"
-              align-start
-              justify-space-between
-            >
-              <div
-                v-for="severity in $config.indicators.severity"
-                :key="severity"
-                class="count text-xs-center py-2"
-                :style="{ 'background-color': severityColor(severity) }"
-              >
-                {{ counts[severity] || 0 }}
-              </div>
-            </v-layout>
-          </div>
-        </v-flex>
-      </v-layout>
-    </v-card-actions>
+    <v-container fluid>
+      <v-row>
+        <v-col 
+          :style="{ 'background-color': severityColor(maxSeverity) }"
+          align="center"
+          cols="12"
+        >
+          {{ title }}
+        </v-col>
+      </v-row>
+      <v-row v-if="counts">
+        <v-col
+          v-for="severity in $config.indicators.severity"
+          :key="severity"
+          align="center"
+          :style="{ 'background-color': severityColor(severity)}"
+        >
+          {{ counts[severity] || 0 }}
+        </v-col>
+      </v-row>
+    </v-container>
   </v-card>
 </template>
 
-<script>
+<script lang="ts">
 import AlertsApi from '../services/api/alert.service'
 
 export default {
@@ -90,12 +72,12 @@ export default {
     this.cancelTimer()
     this.refreshCounts()
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.cancelTimer()
   },
   methods: {
     selectAsi() {
-      this.setSearch(new URLSearchParams(this.query))
+      // this.setSearch(new URLSearchParams(this.query))
       this.setFilter(new URLSearchParams(this.query))
       this.refreshList()
     },
@@ -120,13 +102,13 @@ export default {
         .then(response => (this.counts = response.severityCounts))
     },
     getMostSevere() {
-      let paramsWithOpenStatus = new URLSearchParams(this.query)
+      const paramsWithOpenStatus = new URLSearchParams(this.query)
       paramsWithOpenStatus.append('status', 'open')
 
       AlertsApi.getCounts(paramsWithOpenStatus)
         .then(response => {
           this.maxSeverity = this.$config.alarm_model.defaults.normal_severity
-          for (let sev of this.$config.indicators.severity) {
+          for (const sev of this.$config.indicators.severity) {
             if (response.severityCounts[sev] > 0) {
               this.maxSeverity = sev
               break
@@ -156,21 +138,4 @@ export default {
 </script>
 
 <style scoped>
-.alert-indicator .v-card__text div {
-  height: 34px;
-  font-weight: bold;
-  font-family: 'Sintony', sans-serif;
-  font-size: 14px;
-  vertical-align: middle;
-}
-.alert-indicator .v-card__actions div {
-  height: 34px;
-  font-family: 'Sintony', sans-serif;
-  font-size: 14px;
-  vertical-align: middle;
-}
-
-.count {
-  min-width: 16%;
-}
 </style>

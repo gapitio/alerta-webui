@@ -1,117 +1,69 @@
 <template>
-  <v-container
-    grid-list-sm
-    fill-height
-  >
-    <v-layout
-      align-center
-      row
-      wrap
-    >
-      <v-flex
-        xs12
-        sm8
-        offset-xs0
-        offset-sm2
+  <v-container class="fill-height">
+    <v-row justify="center">
+      <v-col
+        cols="12"
+        sm="8"
       >
-        <p class="text-xs-center headline font-weight-medium">
-          <span v-show="signupEnabled">
-            {{ $t('CreateAlertaAccount') }}
-          </span>
-          <span
-            v-show="!signupEnabled"
-          >
-            {{ $t('SignUpNotAvailable') }}
-          </span>
+        <p class="text-center text-h5 font-weight-medium">
+          {{ $t("CreateAccount") }}
         </p>
-        <v-form ref="form">
+        <v-form @submit.prevent="signup">
           <v-text-field
             v-model.trim="name"
             name="name"
             type="text"
             :label="$t('FullName')"
-            :disabled="!signupEnabled"
-            outline
-            :rules="[rules.required]"
-            required
+            variant="outlined"
           />
           <v-text-field
             v-model.trim="email"
-            name="login"
+            name="email"
             type="text"
             :label="$t('Username')"
-            prepend-inner-icon="alternate_email"
-            :disabled="!signupEnabled"
-            outline
-            :rules="[rules.required]"
-            required
+            prepend-inner-icon="mdi-at"
+            variant="outlined"
           />
           <v-text-field
             v-model="password"
             name="password"
             :type="showPassword ? 'text' : 'password'"
             :label="$t('Password')"
-            :append-icon="showPassword ? 'visibility_off' : 'visibility'"
-            :disabled="!signupEnabled"
-            outline
-            :rules="[rules.min]"
-            required
-            @click:append="showPassword = !showPassword"
+            :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
+            variant="outlined"
+            @click:append-inner="showPassword = !showPassword"
           />
           <v-text-field
             v-model="confirmPassword"
-            name="confirm-password"
-            :append-icon="showPassword ? 'visibility_off' : 'visibility'"
+            name="confirm"
             :type="showPassword ? 'text' : 'password'"
             :label="$t('ConfirmPassword')"
-            :disabled="!signupEnabled"
-            outline
-            :rules="[rules.passwordMatch]"
-            required
-            @click:append="showPassword = !showPassword"
+            :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
+            variant="outlined"
+            @click:append-inner="showPassword = !showPassword"
           />
           <v-text-field
-            v-model.trim="text"
-            name="text"
+            v-model="text"
+            name="description"
             type="text"
             :label="$t('Description')"
-            :disabled="!signupEnabled"
-            outline
+            variant="outlined"
           />
           <v-btn
-            :loading="isSending"
-            :disabled="!signupEnabled || isSending"
             block
             color="primary"
-            @click="validate"
+            type="submit"
           >
-            {{ $t('SignUp') }}
+            {{ $t("SignUp") }}
           </v-btn>
         </v-form>
-        <div class="text-xs-center">
-          <span class="body-2">
-            {{ $t('AlreadyHaveAccount') }}
-          </span>
-          <v-btn
-            flat
-            color="primary"
-            to="/login"
-          >
-            {{ $t('SignIn') }}
-          </v-btn>
-        </div>
-      </v-flex>
-      <v-flex
-        xs12
-        sm8
-        offset-xs0
-        offset-sm2
-      />
-    </v-layout>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
-<script>
+
+<script lang="ts">
 import i18n from '@/plugins/i18n'
 
 export default {
@@ -149,8 +101,8 @@ export default {
       }
     },
     signup() {
-      let credentials = {
-        name: this.name,
+      const credentials = {
+        username: this.name,
         email: this.email,
         password: this.password,
         text: this.text

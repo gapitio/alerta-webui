@@ -181,7 +181,7 @@ export default {
     showForm: false,
     valid: true,
     text: '',
-    maxNoteLength: 200,
+    maxNoteLength: 10,
     minNoteLength: 0,
     textRules: [
       v => !!v || i18n.t('TextIsRequired'),

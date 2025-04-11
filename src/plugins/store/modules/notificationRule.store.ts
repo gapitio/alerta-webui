@@ -1,0 +1,102 @@
+import NotificationRuleApi from '@/services/api/notificationRule.service'
+
+const namespaced = true
+
+const state = {
+  isLoading: false,
+
+  notification_rules: [],
+  selected: [],
+
+  query: {},
+
+  pagination: {
+    page: 1,
+    rowsPerPage: 15,
+    sortBy: 'startTime',
+    descending: true,
+    rowsPerPageItems: [10, 15, 30, 50, 100, 200]
+  }
+}
+
+const mutations = {
+  SET_LOADING(state) {
+    state.isLoading = true
+  },
+  SET_SEARCH_QUERY(state, query) {
+    state.query = query
+  },
+  SET_NOTIFICATION_RULE(state, [notificationRules, total, pageSize]) {
+    state.isLoading = false
+    state.notification_rules = notificationRules
+    state.pagination.totalItems = total
+    state.pagination.rowsPerPage = pageSize
+  },
+  SET_SELECTED(state, selected) {
+    state.selected = selected
+  },
+  RESET_LOADING(state) {
+    state.isLoading = false
+  },
+  SET_PAGINATION(state, pagination) {
+    state.pagination = Object.assign({}, state.pagination, pagination)
+  }
+}
+
+const actions = {
+  getNotificationRules({commit, state}) {
+    commit('SET_LOADING')
+    const params = new URLSearchParams(state.query)
+
+    // add server-side paging
+    params.append('page', state.pagination.page)
+    params.append('page-size', state.pagination.rowsPerPage)
+
+    // add server-side sort
+    params.append('sort-by', (state.pagination.descending ? '-' : '') + state.pagination.sortBy)
+
+    return NotificationRuleApi.getNotificationRules(params)
+      .then(({notificationRules, total, pageSize}) =>
+        commit('SET_NOTIFICATION_RULE', [notificationRules, total, pageSize])
+      )
+      .catch(() => commit('RESET_LOADING'))
+  },
+  createNotificationRule({dispatch}, notificationrule) {
+    return NotificationRuleApi.createNotificationRule(notificationrule).then(() => {
+      dispatch('getNotificationRules')
+    })
+  },
+  updateSelected({commit}, selected) {
+    commit('SET_SELECTED', selected)
+  },
+  updateNotificationRule({dispatch}, [notificationRuleId, update]) {
+    return NotificationRuleApi.updateNotificationRule(notificationRuleId, update).then(() => {
+      dispatch('getNotificationRules')
+    })
+  },
+  deleteNotificationRule({dispatch}, notificationRuleId) {
+    return NotificationRuleApi.deleteNotificationRule(notificationRuleId).then(() => {
+      dispatch('getNotificationRules')
+    })
+  },
+  setPagination({commit}, pagination) {
+    commit('SET_PAGINATION', pagination)
+  },
+  updateQuery({commit}, query) {
+    commit('SET_SEARCH_QUERY', query)
+  }
+}
+
+const getters = {
+  pagination: state => {
+    return state.pagination
+  }
+}
+
+export default {
+  namespaced,
+  state,
+  mutations,
+  actions,
+  getters
+}

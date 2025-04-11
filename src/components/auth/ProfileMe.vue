@@ -3,169 +3,88 @@
     max-width="350"
   >
     <v-list>
-      <v-list-tile>
-        <v-list-tile-content>
-          <v-list-tile-title>{{ profile.name }}</v-list-tile-title>
-          <v-list-tile-sub-title>
-            <span>
-              <span
-                v-if="profile.preferred_username && !profile.preferred_username.includes('@')"
-              >@</span>{{ profile.preferred_username }}
-            </span>
-          </v-list-tile-sub-title>
-        </v-list-tile-content>
+      <v-list-item>
+        <v-list-item-title>{{ profile.name }}</v-list-item-title>
+        <v-list-item-subtitle>
+          <span>
+            <span
+              v-if="profile.preferred_username && !profile.preferred_username.includes('@')"
+            >@</span>{{ profile.preferred_username }}
+          </span>
+        </v-list-item-subtitle>
 
-        <v-list-tile-action>
-          <v-tooltip
+        <template #append>
+          <v-tooltip 
             v-if="profile.provider && profile.provider != 'basic'"
-            top
+            location="top"
+            :text="provider[profile.provider].text"
           >
-            <v-icon slot="activator">
-              {{
-                provider[profile.provider].icon
-              }}
-            </v-icon>
-            <span>{{ provider[profile.provider].text }}</span>
+            <template #activator="{ props }">
+              <v-icon 
+                :icon="provider[profile.provider].icon"
+                v-bind="props"
+              />
+            </template>
           </v-tooltip>
-          <v-tooltip
+          <v-tooltip 
             v-else-if="profile.email_verified"
-            top
+            location="top"
+            :text="$t('EmailVerified')"
           >
-            <v-icon slot="activator">
-              verified_user
-            </v-icon>
-            <span>({{ $t('EmailVerified') }})</span>
+            <template #activator="{ props }">
+              <v-icon 
+                icon="mdi-account-check"
+                v-bind="props"
+              />
+            </template>
           </v-tooltip>
-          <v-tooltip
+          <v-tooltip 
             v-else
-            top
+            location="top"
+            :text="$t('EmailNotVerified')"
           >
-            <v-icon slot="activator">
-              fas fa-user-times
-            </v-icon>
-            <span>{{ $t('EmailNotVerified') }}</span>
+            <template #activator="{ props }">
+              <v-icon 
+                icon="mdi-account-alert"
+                v-bind="props"
+              />
+            </template>
           </v-tooltip>
-        </v-list-tile-action>
-      </v-list-tile>
+        </template>
+      </v-list-item>
     </v-list>
 
     <v-divider />
 
     <v-list>
-      <v-list-tile
+      <profile-info 
         v-if="$config.customer_views"
-      >
-        <v-list-tile-content>
-          <v-list-tile-title>
-            <span
-              v-for="(customer, index) in customers"
-              :key="index"
-            >
-              <v-chip
-                v-if="index < 3"
-                outline
-                small
-              >
-                <span>{{ customer }}</span>
-              </v-chip>
-              <span
-                v-if="index === 3"
-                class="grey--text caption"
-              >(+{{ customers.length - 1 }} {{ $t('others') }})</span>
-            </span>
-          </v-list-tile-title>
-          <v-list-tile-sub-title>{{ $t('Customers') }}</v-list-tile-sub-title>
-        </v-list-tile-content>
-      </v-list-tile>
+        :items="customers"
+        :title="$t('Customers')"
+      />
+      
+      <profile-info
+        v-if="profile.orgs" 
+        :items="profile.orgs"
+        :title="$t('Organizations')"
+      />
 
-      <v-list-tile v-if="profile.orgs">
-        <v-list-tile-content>
-          <v-list-tile-title>
-            <span
-              v-for="(org, index) in profile.orgs"
-              :key="index"
-            >
-              <v-chip
-                v-if="index < 3"
-                small
-              >
-                <span>{{ org }}</span>
-              </v-chip>
-              <span
-                v-if="index === 3"
-                class="grey--text caption"
-              >(+{{ profile.orgs.length - 1 }} {{ $t('others') }})</span>
-            </span>
-          </v-list-tile-title>
-          <v-list-tile-sub-title>{{ $t('Organizations') }}</v-list-tile-sub-title>
-        </v-list-tile-content>
-      </v-list-tile>
-      <v-list-tile v-if="profile.groups">
-        <v-list-tile-content>
-          <v-list-tile-title>
-            <span
-              v-for="(group, index) in profile.groups"
-              :key="index"
-            >
-              <v-chip
-                v-if="index < 3"
-                small
-              >
-                <span>{{ group }}</span>
-              </v-chip>
-              <span
-                v-if="index === 3"
-                class="grey--text caption"
-              >(+{{ profile.groups.length - 1 }} {{ $t('others') }})</span>
-            </span>
-          </v-list-tile-title>
-          <v-list-tile-sub-title>{{ $t('Groups') }}</v-list-tile-sub-title>
-        </v-list-tile-content>
-      </v-list-tile>
-      <v-list-tile v-if="profile.roles">
-        <v-list-tile-content>
-          <v-list-tile-title>
-            <span
-              v-for="(role, index) in profile.roles"
-              :key="index"
-            >
-              <v-chip
-                v-if="index < 3"
-                small
-              >
-                <span>{{ role }}</span>
-              </v-chip>
-              <span
-                v-if="index === 3"
-                class="grey--text caption"
-              >(+{{ profile.roles.length - 1 }} {{ $t('others') }})</span>
-            </span>
-          </v-list-tile-title>
-          <v-list-tile-sub-title>{{ $t('Roles') }}</v-list-tile-sub-title>
-        </v-list-tile-content>
-      </v-list-tile>
-      <v-list-tile>
-        <v-list-tile-content>
-          <v-list-tile-title>
-            <span
-              v-for="(scope, index) in scopes"
-              :key="index"
-            >
-              <v-chip
-                v-if="index < 3"
-                small
-              >
-                <span>{{ scope }}</span>
-              </v-chip>
-              <span
-                v-if="index === 3"
-                class="grey--text caption"
-              >(+{{ scopes.length - 1 }} {{ $t('others') }})</span>
-            </span>
-          </v-list-tile-title>
-          <v-list-tile-sub-title>{{ $t('Scopes') }}</v-list-tile-sub-title>
-        </v-list-tile-content>
-      </v-list-tile>
+      <profile-info
+        v-if="profile.groups" 
+        :items="profile.groups"
+        :title="$t('Groups')"
+      />
+
+      <profile-info
+        v-if="profile.roles" 
+        :items="profile.roles"
+        :title="$t('Roles')"
+      />
+
+      <profile-info
+        :items="scopes"
+        :title="$t('Scopes')"
+      />
     </v-list>
 
     <v-card-actions>
@@ -188,8 +107,7 @@
   </v-card>
 </template>
 
-<script>
-import i18n from '@/plugins/i18n'
+<script lang="ts">
 
 export default {
   props: {
@@ -198,6 +116,7 @@ export default {
       required: true
     }
   },
+  emits: ['close'],
   data: () => ({
     provider: {
       basic: { icon: 'fas fa-id-card', text: 'BasicAuth' },
@@ -228,7 +147,7 @@ export default {
         .dispatch('auth/logout')
         .then(response => {
           if (response.data.logoutUrl) {
-            let redirectUrl =
+            const redirectUrl =
               (this.$config.provider == 'keycloak'
                 ? 'redirect_uri='
                 : 'post_logout_redirect_url=') +
@@ -249,7 +168,7 @@ export default {
 </script>
 
 <style scoped>
-.v-list__tile__title {
+.v-list__item__title {
   height: 40px;
 }
 </style>
