@@ -465,6 +465,83 @@
           </td>
         </tr>
       </template>
+      <template 
+        #headers="props"
+      >
+        <tr>
+          <th style="align-content: end;">
+            <v-checkbox
+              :input-value="props.all"
+              :indeterminate="props.indeterminate"
+              hide-details
+              primary
+              style="margin-bottom: 10px;"
+              color="gray"
+              @click.stop="toggleAll"
+            />
+          </th>
+          <th 
+            v-for="header in footerHeaders"
+            :key="header.value"
+            style="align-content: end"
+            :class="header.class"
+          >
+            <v-layout wrap>
+              <v-flex 
+                xs12 
+                :style="columnWidths"
+              >
+                <v-select
+                  v-if="header.searchType === 'list'"
+                  ref="filterSelect"
+                  hide-details
+                  :value="getFilter(header)"
+                  :items="header.searchables"
+                  multiple
+                  @input="(value) => {setFilter(header, value)}"
+                />
+                <v-select
+                  v-else-if="header.searchType === 'time'"
+                  ref="filterSelect"
+                  v-model="filterDateRange"
+                  hide-details
+                  :items="dateRanges"
+                  name="dateRange"
+                  item-value="range"
+                />
+                <v-text-field
+                  v-else-if="header.searchType !== 'ignore'"
+                  hide-details
+                  :value="getFilter(header)"
+                  @input="(value) => {setFilter(header, value)}"
+                />
+                <v-text-field 
+                  v-else
+                  disabled
+                  hide-details
+                />
+              </v-flex>
+              <v-flex 
+                xs12
+                style="margin: 10px 0px;"
+                @click="changeSort(header.value)"
+              >
+                <th
+                  :class="['column sortable', pagination.descending ? 'desc' : 'asc', header.value === pagination.sortBy ? 'active' : '', header.class]"
+                >
+                  {{ header.text }}
+                  <v-icon
+                    small
+                  >
+                    arrow_drop_down
+                  </v-icon>
+                </th>
+              </v-flex>
+            </v-layout>
+          </th>
+          <th />
+        </tr>
+      </template>
       <template slot="no-data">
         <div class="text-xs-center">
           <span v-if="isLoading">{{ $t('Loading') }}...</span>
@@ -477,7 +554,6 @@
 
 <script>
 import debounce from 'lodash/debounce'
-import get from 'lodash/get'
 import DateTime from './lib/DateTime'
 import moment from 'moment'
 import i18n from '@/plugins/i18n'
@@ -581,6 +657,88 @@ export default {
         this.headersMap[c] || { text: this.$options.filters.capitalize(c), value: 'attributes.' + c }
       )
     },
+    environments() {
+      return this.$store.getters['alerts/environments']()
+    },
+    severities() {
+      return Object.keys(this.$store.getters.getConfig('alarm_model').severity)
+    },
+    statuses() {
+      return Object.keys(this.$store.getters.getConfig('alarm_model').status)
+    },
+    currentServices() {
+      return this.$store.getters['alerts/services']
+    },
+    currentTags() {
+      return this.$store.getters['alerts/tags']
+    },
+    dateRanges() {
+      return [
+        { text: i18n.t('Latest'), range: [null, null] },
+        { text: i18n.t('Hour'), range: [-3600, null] },
+        { text: i18n.t('SixHours'), range: [-3600 * 6, null] },
+        { text: i18n.t('TwelveHours'), range: [-3600 * 12, null] },
+      ]
+    },
+    filterDateRange: {
+      get() {
+        return this.$store.state.alerts.filter.dateRange[0] > 0
+          ? [0, 0]
+          : this.$store.state.alerts.filter.dateRange
+      },
+      set(value) {
+        if (value[0] === 0) {
+          this.period = this.getDateRange(
+            this.$store.state.alerts.filter.dateRange[0]
+              ? this.$store.state.alerts.filter.dateRange[0]
+              : moment().unix() - 7 * 24 * 3600,  // 7 days ago
+            this.$store.state.alerts.filter.dateRange[1]
+              ? this.$store.state.alerts.filter.dateRange[1]
+              : moment().unix()
+          )
+          this.showDateRange = true
+        } else {
+          this.showDateRange = false
+          this.$store.dispatch('alerts/setFilter', {
+            dateRange: value
+          })
+        }
+      }
+    },
+    footerHeaders() {
+      const store = this.$store
+      const searcData = {
+        environment: {
+          searchType: 'list',
+          searchables: this.environments,
+        },
+        severity: {
+          searchType: 'list',
+          searchables: this.severities,
+        },
+        status: {
+          searchType: 'list',
+          searchables: this.statuses,
+        },
+        service: {
+          searchType: 'list',
+          searchables: this.currentServices,
+        },
+        lastReceiveTime: {
+          searchType: 'time',
+        },
+        timeoutLeft: {
+          searchType: 'ignore'
+        },
+        tags: {
+          searchType: 'list',
+          searchables: this.currentTags,
+          get filter() {return store.state.alerts.filter.tags},
+          set filter(value) {store.dispatch('alerts/setFilter', {tags: value})}
+        },
+      }
+      return this.customHeaders.map(value => {return value.value && searcData[value.value] ? Object.assign(searcData[value.value], value) : value})
+    },
     selectedItem() {
       return this.alerts.filter(a => a.id == this.selectedId)[0]
     },
@@ -610,7 +768,36 @@ export default {
       this.pagination = Object.assign({}, this.pagination, {rowsPerPage: val})
     }
   },
+  created() {
+    this.getTags()
+  },
   methods: {
+    setFilter({value}, filter) {
+      if (value === 'environment') this.$store.dispatch('alerts/setFilter', {environments: filter})
+      else this.$store.dispatch('alerts/setFilter', {[value]: filter})
+    },
+    resetFilter() {
+      this.$store.dispatch('alerts/resetFilter')
+    },
+    getFilter({value}){
+      if (value === 'environment') return this.$store.state.alerts.filter.environments
+      return this.$store.state.alerts.filter[value]
+    },
+    toggleAll() {
+      if (this.selected.length) this.selected = []
+      else this.selected = this.alerts
+    },
+    changeSort (column) {
+      if (this.pagination.sortBy === column) {
+        this.pagination.descending = !this.pagination.descending
+      } else {
+        this.pagination.sortBy = column
+        this.pagination.descending = false
+      }
+    },
+    getTags() {
+      this.$store.dispatch('alerts/getTags')
+    },
     duration(item) {
       return moment.duration(moment().diff(moment(item.receiveTime)))
     },
@@ -643,7 +830,8 @@ export default {
       return (config.status || {})[status] || config.severity[severity] || 'white'
     },
     selectItem(item) {
-      if (!this.selected.length) {
+      const selectsOpen = this.$refs.filterSelect.map(({isMenuActive}) => isMenuActive)
+      if (!this.selected.length && !selectsOpen.includes(true)) {
         this.$emit('set-alert', item)
       }
     },
@@ -751,6 +939,14 @@ i.trend-arrow {
 
 div.select-box {
   width: 24px !important;
+}
+
+.alert-table .v-label, .alert-table .v-select {
+  font-size: small !important;
+}
+
+.alert-table th {
+  text-align: left !important;
 }
 
 .label {

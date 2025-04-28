@@ -356,12 +356,10 @@ export default {
     },
     filterText: {
       get() {
-        return this.$store.state.alerts.filter.text
+        return this.$store.state.alerts.searh
       },
       set(value) {
-        this.$store.dispatch('alerts/setFilter', {
-          text: value
-        })
+        this.$store.dispatch('alerts/setSearch', value)
       }
     },
     filterStatus: {
