@@ -8,6 +8,7 @@ const namespaced = true
 const state = {
   isLoading: false,
   isSearching: false,
+  search: null,
 
   alerts: [],
   history: [],
@@ -111,7 +112,14 @@ const mutations = {
   SET_SETTING(state, {s, v}) {
     state[s] = v
   },
+  SET_SEARCH(state, search): any {
+    state.search = search
+  },
   SET_FILTER(state, filter): any {
+    state.filter = Object.assign({}, state.filter, filter)
+  },
+  RESET_FILTER(state, filter): any {
+    state.filter = {}
     state.filter = Object.assign({}, state.filter, filter)
   },
   SET_HISTORY_FILTER(state, filter): any {
@@ -133,13 +141,28 @@ const actions = {
     commit('SET_LOADING')
     // get "lucene" query params (?q=)
     let params = new URLSearchParams(state.query)
+    const specialKeys = ['environment', 'environments', 'dateRange', 'tags', 'search']
+    const notWildcards = ['duplicateCount']
+    for (const key of Object.keys(state.filter)) {
+      if (specialKeys.includes(key) || !state.filter[key]) continue
+      else if (typeof state.filter[key] === 'object') state.filter[key].map(k => params.append(key, k))
+      else if (notWildcards.includes(key)) params.append(key, state.filter[key])
+      else params.append(key, `~${state.filter[key]}`)
+    }
 
     // append filter params to query params
+    state.filter.environments &&
+      !state.filter.environment &&
+      state.filter.environments.map(env => params.append('environment', env))
     state.filter.environment && params.append('environment', state.filter.environment)
-    state.filter.status && state.filter.status.map(st => params.append('status', st))
-    state.filter.customer && state.filter.customer.map(c => params.append('customer', c))
-    state.filter.service && state.filter.service.map(s => params.append('service', s))
-    state.filter.group && state.filter.group.map(g => params.append('group', g))
+    // state.filter.resource && params.append('resource', `~${state.filter.resource}`)
+    // state.filter.event && params.append('event', `~${state.filter.event}`)
+    // state.filter.severities && state.filter.severities.map(se => params.append('severity', se))
+    state.filter.tags && state.filter.tags.map(s => params.append('tag', s))
+    // state.filter.status && state.filter.status.map(st => params.append('status', st))
+    // state.filter.customer && state.filter.customer.map(c => params.append('customer', c))
+    // state.filter.service && state.filter.service.map(s => params.append('service', s))
+    // state.filter.group && state.filter.group.map(g => params.append('group', g))
 
     // add server-side sorting
     let sortBy = state.pagination.sortBy
@@ -324,11 +347,14 @@ const actions = {
   set({commit}, [s, v]) {
     commit('SET_SETTING', {s, v})
   },
+  setSearch({commit}, search) {
+    commit('SET_SEARCH', search)
+  },
   setFilter({commit}, filter) {
     commit('SET_FILTER', filter)
   },
   resetFilter({commit, rootState}) {
-    commit('SET_FILTER', rootState.config.filter)
+    commit('RESET_FILTER', rootState.config.filter)
   },
   setPagination({commit}, pagination) {
     commit('SET_PAGINATION', pagination)

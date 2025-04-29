@@ -84,6 +84,13 @@
       </v-tab>
       <v-spacer />
       <v-btn
+        color="blue darken-1"
+        flat
+        @click="resetFilter"
+      >
+        {{ $t('Reset') }} {{ $t("Filters") }}
+      </v-btn>
+      <v-btn
         flat
         icon
         :class="{ 'filter-active': isActive }"
@@ -205,8 +212,11 @@ export default {
     filter() {
       return this.$store.state.alerts.filter
     },
+    search() {
+      return this.$store.state.alerts.search
+    },
     isActive() {
-      return this.filter.text || this.filter.status || this.filter.customer || this.filter.service || this.filter.group || this.filter.dateRange[0] || this.filter.dateRange[1]
+      return this.search || this.filter.status || this.filter.customer || this.filter.service || this.filter.group || this.filter.dateRange[0] || this.filter.dateRange[1]
     },
     indicators() {
       return this.$config.indicators ? this.$config.indicators.queries  : []
@@ -215,8 +225,8 @@ export default {
       if (this.filter) {
         return this.$store.getters['alerts/alerts']
           .filter(alert =>
-            this.filter.text
-              ? Object.keys(alert).some(k => alert[k] && alert[k].toString().toLowerCase().includes(this.filter.text.toLowerCase()))
+            this.search
+              ? Object.keys(alert).some(k => alert[k] && alert[k].toString().toLowerCase().includes(this.search.toLowerCase()))
               : true
           )
       } else {
@@ -314,6 +324,8 @@ export default {
           this.getAlerts()
           this.getEnvironments()
         }
+        this.getAlerts()
+        this.getEnvironments()
       }
     },
     refresh(val) {
@@ -343,10 +355,13 @@ export default {
     setSearch(query) {
       this.$store.dispatch('alerts/updateQuery', query)
     },
+    resetFilter() {
+      this.$store.dispatch('alerts/resetFilter')
+    },
     setFilter(filter) {
+      this.$store.dispatch('alerts/setSearch')
       this.$store.dispatch('alerts/setFilter', {
         environment: filter.environment,
-        text: filter.text,
         status: filter.status ? filter.status.split(',') : null,
         customer: filter.customer ? filter.customer.split(',') : null,
         service: filter.service ? filter.service.split(',') : null,
