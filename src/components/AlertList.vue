@@ -500,6 +500,16 @@
                   multiple
                   @input="(value) => {setFilter(header, value)}"
                 />
+                <v-combobox
+                  v-else-if="header.searchType === 'free-list'"
+                  ref="filterSelect"
+                  hide-details
+                  :value="getFilter(header)"
+                  :items="header.searchables"
+                  multiple
+                  chips
+                  @input="(value) => {setFilter(header, value)}"
+                />
                 <v-select
                   v-else-if="header.searchType === 'time'"
                   ref="filterSelect"
@@ -658,7 +668,9 @@ export default {
       )
     },
     environments() {
-      return this.$store.getters['alerts/environments']()
+      const envs = this.$store.getters['alerts/environments']()
+      const invertedEnvs = envs.map(b => '!' + b)
+      return [...envs, ...invertedEnvs]
     },
     severities() {
       return Object.keys(this.$store.getters.getConfig('alarm_model').severity)
@@ -731,7 +743,7 @@ export default {
           searchType: 'ignore'
         },
         tags: {
-          searchType: 'list',
+          searchType: 'free-list',
           searchables: this.currentTags,
           get filter() {return store.state.alerts.filter.tags},
           set filter(value) {store.dispatch('alerts/setFilter', {tags: value})}
