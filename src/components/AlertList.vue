@@ -733,7 +733,7 @@ export default {
           searchables: this.statuses,
         },
         service: {
-          searchType: 'list',
+          searchType: 'free-list',
           searchables: this.currentServices,
         },
         lastReceiveTime: {
