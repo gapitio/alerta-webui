@@ -11,6 +11,19 @@
 }
 
 @font-face {
+  font-family: Poppins;
+  font-display: optional;
+  src: url("../fonts/Poppins/Poppins-Regular.ttf");
+}
+
+@font-face {
+  font-family: Poppins;
+  font-weight: bold;
+  font-display: optional;
+  src: url("../fonts/Poppins/Poppins-SemiBold.ttf");
+}
+
+@font-face {
   font-family: Sintony;
   font-weight: bold;
   font-display: fallback;
