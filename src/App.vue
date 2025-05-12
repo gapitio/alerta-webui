@@ -964,6 +964,14 @@ export default {
 
 @import "./assets/css/fonts.css";
 
+.application {
+  font-family: 'Poppins', 'Roboto', sans-serif !important;
+}
+
+.title {
+  font-family: 'Poppins', 'Roboto', sans-serif !important;
+}
+
 .toolbar-title {
   color: inherit;
   text-decoration: inherit;
