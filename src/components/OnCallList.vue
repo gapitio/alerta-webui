@@ -253,15 +253,17 @@
         </v-card>
       </v-form>
     </v-dialog>
-
-    <v-card>
-      <v-card-title class="title">
-        {{ $t('OnCall') }}
+    <h1>
+      {{ $t('OnCall') }}
+      <div style="display: inline-flex;">
         <information-tooltip
           :info="$t('OnCallInfo')"
           position="right"
         />
-        <v-spacer />
+      </div>
+    </h1>
+    <v-card class="section">
+      <v-card-title class="title">
         <v-btn-toggle
           v-model="status"
           class="transparent"
@@ -293,6 +295,7 @@
           :label="$t('Search')"
           single-line
           hide-details
+          solo
         />
       </v-card-title>
 

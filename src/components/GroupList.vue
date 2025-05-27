@@ -5,7 +5,7 @@
       max-width="500px"
     >
       <v-form ref="form">
-        <v-card>
+        <v-card class="section">
           <v-card-title>
             <span class="headline">
               {{ $t('AddRemoveUsers') }}
@@ -23,7 +23,7 @@
                     :disabled="isLoading"
                     :items="allUsers"
                     autofocus
-                    box
+                    solo
                     chips
                     :label="$t('Addusers')"
                     item-text="name"
@@ -112,7 +112,7 @@
       max-width="500px"
     >
       <v-form ref="form">
-        <v-card>
+        <v-card class="section">
           <v-card-title>
             <span class="headline">
               {{ formTitle }}
@@ -140,6 +140,7 @@
                   v-model.trim="editedItem.name"
                   :label="$t('Group')"
                   :rules="[rules.required]"
+                  solo
                   required
                 />
                 <v-flex
@@ -148,6 +149,7 @@
                   <v-text-field
                     v-model.trim="editedItem.text"
                     :label="$t('Description')"
+                    solo
                   />
                 </v-flex>
               </v-layout>
@@ -175,15 +177,19 @@
       </v-form>
     </v-dialog>
 
-    <v-card>
+    <h1>
+      {{ $t('Groups') }}
+    </h1>
+
+    <v-card class="section">
       <v-card-title class="title">
-        {{ $t('Groups') }}
         <v-spacer />
         <v-text-field
           v-model="search"
           append-icon="search"
           :label="$t('Search')"
           single-line
+          solo
           hide-details
         />
       </v-card-title>
@@ -193,7 +199,7 @@
         :items="groups"
         :rows-per-page-items="rowsPerPageItems"
         :pagination.sync="pagination"
-        class="px-2"
+        class="g-table"
         :search="search"
         :loading="isLoading"
         must-sort

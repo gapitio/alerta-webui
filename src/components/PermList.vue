@@ -87,14 +87,14 @@
         </v-card>
       </v-form>
     </v-dialog>
-
-    <v-card>
+    
+    <h1>
+      {{ $t('Permissions') }}
+    </h1>
+    <v-card class="section">
       <v-card-title class="title">
-        {{ $t('Permissions') }}
-        <v-spacer />
         <v-flex
-          xs3
-          class="mr-3 pt-3"
+          xs6
         >
           <v-autocomplete
             v-model="wantScopes"
@@ -102,6 +102,9 @@
             :label="$t('Scopes')"
             chips
             multiple
+            solo
+            hide-details
+            style="margin-right: 40px;"
           >
             <template
               slot="selection"
@@ -123,6 +126,7 @@
             append-icon="search"
             :label="$t('Search')"
             single-line
+            solo
             hide-details
           />
         </v-flex>

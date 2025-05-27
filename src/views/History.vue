@@ -1,44 +1,23 @@
 <template>
-  <div class="alerts">
-    <v-card>
-      <v-card-title class="title">
-        {{ $t('AlertsHistory') }}
-      </v-card-title>
-      <v-tabs
-        v-model="currentTab"
-        class="px-1"
-        grow
-      >
-        <v-tab
-          v-for="env in environments"
-          :key="env"
-          :href="'#tab-' + env"
-          @click="setEnv(env)"
-        >
-          {{ env }}&nbsp;({{ environmentCounts[env] || 0 }})
-        </v-tab>
-    
-        <v-spacer />
+  <div>
+    <h1>{{ $t('AlertsHistory') }}</h1>
 
-        <v-tabs-items
-          v-model="currentTab"
-        >
-          <v-tab-item
-            v-for="env in environments"
-            :key="env"
-            :value="'tab-' + env"
-            :transition="false"
-            :reverse-transition="false"
-          >
-            <keep-alive max="1">
-              <history-list
-                v-if="env == filter.environment || env == 'ALL'"
-                :history="history"
-              />
-            </keep-alive>
-          </v-tab-item>
-        </v-tabs-items>
-      </v-tabs>
+    <v-card class="section">
+      <v-btn 
+        v-for="env in environments"
+        :key="env"
+        color="primary"
+        :href="'#tab-' + env"
+        :outline="(env !== 'ALL' && filter.environment!==env) || (env==='ALL' && !!filter.environment)"
+        @click="setEnv(env)"
+      >
+        {{ env }}&nbsp;({{ environmentCounts[env] || 0 }})
+      </v-btn>
+    </v-card>
+    <v-card class="section">
+      <history-list
+        :history="history"
+      />
     </v-card>
   </div>
 </template>

@@ -1,156 +1,160 @@
 <template>
-  <v-card>
-    <v-card-title class="title">
+  <div>
+    <h1>
       {{ $t('Heartbeats') }}
-      <v-spacer />
-      <v-btn-toggle
-        v-model="status"
-        class="transparent"
-        multiple
-      >
-        <v-btn
-          value="ok"
-          flat
+    </h1>
+    <v-card class="section">
+      <v-card-title class="title">
+        <v-btn-toggle
+          v-model="status"
+          class="transparent"
+          multiple
         >
-          <v-tooltip bottom>
-            <v-icon slot="activator">
-              check_circle
-            </v-icon>
-            <span>{{ $t('OK') }}</span>
-          </v-tooltip>
-        </v-btn>
-        <v-btn
-          value="slow"
-          flat
-        >
-          <v-tooltip bottom>
-            <v-icon slot="activator">
-              access_time
-            </v-icon>
-            <span>{{ $t('Slow') }}</span>
-          </v-tooltip>
-        </v-btn>
-        <v-btn
-          value="expired"
-          flat
-        >
-          <v-tooltip bottom>
-            <v-icon slot="activator">
-              timer_off
-            </v-icon>
-            <span>{{ $t('Expired') }}</span>
-          </v-tooltip>
-        </v-btn>
-      </v-btn-toggle>
-      <v-spacer />
-      <v-text-field
-        v-model="search"
-        append-icon="search"
-        :label="$t('Search')"
-        single-line
-        hide-details
-      />
-    </v-card-title>
-
-    <v-data-table
-      :headers="computedHeaders"
-      :items="heartbeats"
-      :rows-per-page-items="rowsPerPageItems"
-      :pagination.sync="pagination"
-      class="px-2"
-      :search="search"
-      :loading="isLoading"
-      must-sort
-      sort-icon="arrow_drop_down"
-    >
-      <template
-        slot="items"
-        slot-scope="props"
-      >
-        <td>{{ props.item.origin }}</td>
-        <td
-          v-if="$config.customer_views"
-        >
-          {{ props.item.customer }}
-        </td>
-        <td>
-          <v-chip
-            v-for="tag in props.item.tags"
-            :key="tag"
-            label
-            small
-          >
-            <v-icon left>
-              label
-            </v-icon>{{ tag }}
-          </v-chip>
-        </td>
-        <td>
-          {{ props.item.attributes }}
-        </td>
-        <td>
-          <date-time
-            :value="props.item.createTime"
-            format="mediumDate"
-          />
-        </td>
-        <td>
-          <date-time
-            :value="props.item.receiveTime"
-            format="mediumDate"
-          />
-        </td>
-        <td>
-          {{ diffTime(props.item.createTime, props.item.receiveTime) }} ms
-        </td>
-        <td
-          class="text-xs-center text-no-wrap"
-        >
-          {{ timeoutLeft(props.item) | hhmmss }}
-        </td>
-        <td>
-          {{ props.item.receiveTime | timeago }}
-        </td>
-        <td>
-          <span :class="['label', 'label-' + props.item.status.toLowerCase()]">
-            {{ props.item.status | capitalize }}
-          </span>
-        </td>
-        <td class="text-no-wrap">
           <v-btn
-            v-has-perms.disable="'write:heartbeats'"
-            icon
-            class="btn--plain mr-0"
-            @click="deleteItem(props.item)"
+            value="ok"
+            flat
           >
-            <v-icon
-              small
-              color="grey darken-3"
-            >
-              delete
-            </v-icon>
+            <v-tooltip bottom>
+              <v-icon slot="activator">
+                check_circle
+              </v-icon>
+              <span>{{ $t('OK') }}</span>
+            </v-tooltip>
           </v-btn>
-        </td>
-      </template>
-      <template slot="no-data">
+          <v-btn
+            value="slow"
+            flat
+          >
+            <v-tooltip bottom>
+              <v-icon slot="activator">
+                access_time
+              </v-icon>
+              <span>{{ $t('Slow') }}</span>
+            </v-tooltip>
+          </v-btn>
+          <v-btn
+            value="expired"
+            flat
+          >
+            <v-tooltip bottom>
+              <v-icon slot="activator">
+                timer_off
+              </v-icon>
+              <span>{{ $t('Expired') }}</span>
+            </v-tooltip>
+          </v-btn>
+        </v-btn-toggle>
+        <v-spacer />
+        <v-text-field
+          v-model="search"
+          append-icon="search"
+          :label="$t('Search')"
+          single-line
+          solo
+          hide-details
+        />
+      </v-card-title>
+
+      <v-data-table
+        :headers="computedHeaders"
+        :items="heartbeats"
+        :rows-per-page-items="rowsPerPageItems"
+        :pagination.sync="pagination"
+        class="g-table"
+        :search="search"
+        :loading="isLoading"
+        must-sort
+        sort-icon="arrow_drop_down"
+      >
+        <template
+          slot="items"
+          slot-scope="props"
+        >
+          <td>{{ props.item.origin }}</td>
+          <td
+            v-if="$config.customer_views"
+          >
+            {{ props.item.customer }}
+          </td>
+          <td>
+            <v-chip
+              v-for="tag in props.item.tags"
+              :key="tag"
+              label
+              small
+            >
+              <v-icon left>
+                label
+              </v-icon>{{ tag }}
+            </v-chip>
+          </td>
+          <td>
+            {{ props.item.attributes }}
+          </td>
+          <td>
+            <date-time
+              :value="props.item.createTime"
+              format="mediumDate"
+            />
+          </td>
+          <td>
+            <date-time
+              :value="props.item.receiveTime"
+              format="mediumDate"
+            />
+          </td>
+          <td>
+            {{ diffTime(props.item.createTime, props.item.receiveTime) }} ms
+          </td>
+          <td
+            class="text-xs-center text-no-wrap"
+          >
+            {{ timeoutLeft(props.item) | hhmmss }}
+          </td>
+          <td>
+            {{ props.item.receiveTime | timeago }}
+          </td>
+          <td>
+            <span :class="['label', 'label-' + props.item.status.toLowerCase()]">
+              {{ props.item.status | capitalize }}
+            </span>
+          </td>
+          <td class="text-no-wrap">
+            <v-btn
+              v-has-perms.disable="'write:heartbeats'"
+              icon
+              class="btn--plain mr-0"
+              @click="deleteItem(props.item)"
+            >
+              <v-icon
+                small
+                color="grey darken-3"
+              >
+                delete
+              </v-icon>
+            </v-btn>
+          </td>
+        </template>
+        <template slot="no-data">
+          <v-alert
+            :value="true"
+            color="error"
+            icon="warning"
+          >
+            {{ $t('NoDisplay') }}
+          </v-alert>
+        </template>
         <v-alert
+          slot="no-results"
           :value="true"
           color="error"
           icon="warning"
         >
-          {{ $t('NoDisplay') }}
+          {{ $t('SearchNoResult1') }} "{{ search }}" {{ $t('SearchNoResult2') }}
         </v-alert>
-      </template>
-      <v-alert
-        slot="no-results"
-        :value="true"
-        color="error"
-        icon="warning"
-      >
-        {{ $t('SearchNoResult1') }} "{{ search }}" {{ $t('SearchNoResult2') }}
-      </v-alert>
-    </v-data-table>
-  </v-card>
+      </v-data-table>
+    </v-card>
+  </div>
 </template>
 
 <script>

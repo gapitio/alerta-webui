@@ -68,93 +68,75 @@
         <v-divider />
       </div>
     </v-expand-transition>
-
-    <v-tabs
-      v-model="currentTab"
-      class="px-1"
-      grow
-    >
-      <v-tab
+    <v-card class="section">
+      <v-btn 
         v-for="env in environments"
         :key="env"
+        color="primary"
         :href="'#tab-' + env"
+        :outline="(env !== 'ALL' && filter.environment!==env) || (env==='ALL' && !!filter.environment)"
         @click="setEnv(env)"
       >
         {{ env }}&nbsp;({{ environmentCounts[env] || 0 }})
-      </v-tab>
-      <v-spacer />
-      <v-btn
-        color="blue darken-1"
-        flat
-        @click="resetFilter"
-      >
-        {{ $t('Reset') }} {{ $t("Filters") }}
       </v-btn>
-      <v-btn
-        flat
-        icon
-        :class="{ 'filter-active': isActive }"
-        @click="sidesheet = !sidesheet"
-      >
-        <v-icon>filter_list</v-icon>
-      </v-btn>
-
-      <v-menu
-        bottom
-        left
-      >
+      <div style="position: absolute; right: 0px; top: calc(50% - 24px);">
         <v-btn
-          slot="activator"
+          color="blue darken-1"
+          flat
+          @click="resetFilter"
+        >
+          {{ $t('Reset') }} {{ $t("Filters") }}
+        </v-btn>
+        <v-btn
           flat
           icon
+          :class="{ 'filter-active': isActive }"
+          @click="sidesheet = !sidesheet"
         >
-          <v-icon>more_vert</v-icon>
+          <v-icon>filter_list</v-icon>
         </v-btn>
 
-        <v-list>
-          <v-list-tile
-            :disabled="!indicators.length"
-            @click="showPanel = !showPanel"
-          >
-            <v-list-tile-title>
-              {{ showPanel ? $t('Hide') : $t('Show') }} {{ $t('Panel') }}
-            </v-list-tile-title>
-          </v-list-tile>
-          <v-list-tile
-            @click="densityDialog = true"
-          >
-            {{ $t('DisplayDensity') }}
-          </v-list-tile>
-          <v-list-tile
-            @click="toCsv(alertsByEnvironment)"
-          >
-            {{ $t('DownloadAsCsv') }}
-          </v-list-tile>
-        </v-list>
-      </v-menu>
-
-      <span class="pr-2" />
-
-      <v-tabs-items
-        v-model="currentTab"
-      >
-        <v-tab-item
-          v-for="env in environments"
-          :key="env"
-          :value="'tab-' + env"
-          :transition="false"
-          :reverse-transition="false"
+        <v-menu
+          bottom
+          left
         >
-          <keep-alive max="1">
-            <alert-list
-              v-if="env == filter.environment || env == 'ALL'"
-              :alerts="alertsByEnvironment"
-              @set-alert="setAlert"
-            />
-          </keep-alive>
-        </v-tab-item>
-      </v-tabs-items>
-    </v-tabs>
+          <v-btn
+            slot="activator"
+            flat
+            icon
+          >
+            <v-icon>more_vert</v-icon>
+          </v-btn>
+
+          <v-list>
+            <v-list-tile
+              :disabled="!indicators.length"
+              @click="showPanel = !showPanel"
+            >
+              <v-list-tile-title>
+                {{ showPanel ? $t('Hide') : $t('Show') }} {{ $t('Panel') }}
+              </v-list-tile-title>
+            </v-list-tile>
+            <v-list-tile
+              @click="densityDialog = true"
+            >
+              {{ $t('DisplayDensity') }}
+            </v-list-tile>
+            <v-list-tile
+              @click="toCsv(alertsByEnvironment)"
+            >
+              {{ $t('DownloadAsCsv') }}
+            </v-list-tile>
+          </v-list>
+        </v-menu>
+      </div>
+    </v-card>
+    <v-card class="section">
+      <alert-list
+        :alerts="alertsByEnvironment"
+        @set-alert="setAlert"
+      />
+    </v-card>
 
     <alert-list-filter
       :value="sidesheet"

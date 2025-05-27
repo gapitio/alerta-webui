@@ -3,149 +3,147 @@
     <v-dialog
       v-model="show"
       scrollable
-      max-width="640px"
+      max-width="700px"
     >
-      <v-card>          
+      <v-card class="dialog-section">          
         <v-card-title>
           <span class="headline">
             {{ $t('NotificationText') }}
           </span>
         </v-card-title>
         <v-card-text>
-          <v-container>
-            <v-flex
-              xs12
-            >
-              {{ $t('TextExplained') }}
-            </v-flex>
-            <ul>
-              <li>
-                <v-flex 
-                  xs12 
-                  style="align-self: center;"
-                >
-                  {{ $t('TextTrigger') }}
-                </v-flex>
-              </li>
-              <li>
-                <v-flex 
-                  xs10 
-                  style="align-self: center;"
-                >
-                  {{ $t('TextNotificationRule') }}
-                </v-flex>
-              </li>
-              <li>
-                <v-flex 
-                  xs10 
-                  style="align-self: center;"
-                >
-                  {{ $t('TextBothEmpty') }}
-                </v-flex>
-              </li>
-            </ul>
+          <v-flex
+            xs12
+          >
+            {{ $t('TextExplained') }}
+          </v-flex>
+          <ul>
+            <li>
+              <v-flex 
+                xs12 
+                style="align-self: center;"
+              >
+                {{ $t('TextTrigger') }}
+              </v-flex>
+            </li>
+            <li>
+              <v-flex 
+                xs10 
+                style="align-self: center;"
+              >
+                {{ $t('TextNotificationRule') }}
+              </v-flex>
+            </li>
+            <li>
+              <v-flex 
+                xs10 
+                style="align-self: center;"
+              >
+                {{ $t('TextBothEmpty') }}
+              </v-flex>
+            </li>
+          </ul>
 
+          <v-flex 
+            xs12 
+            style="align-self: center;"
+          >
+            {{ $t('TextFields') }}
+          </v-flex>
+
+          <ul>
+            <li>
+              {{ $t('TextFieldObject') }}
+            </li>
+            <li>
+              {{ $t('TextFieldFullObject') }}
+            </li>
+            <li>
+              {{ $t('TextFieldArray') }}
+            </li>
+            <li>
+              {{ $t('TextFieldFullArray') }}
+            </li>
+          </ul>
+
+          <v-container 
+            fluid
+            grid-list-md
+            style="padding:0px"
+          >
+            <v-layout wrap>
+              <v-flex xs12>
+                <v-card class="info-section">
+                  <v-card-title><h4>{{ $t('AlertDetailExample') }}</h4></v-card-title>
+                  <v-list 
+                    dense 
+                    subheader
+                  >
+                    <v-list-tile 
+                      v-for="[key, value] in Object.entries(alert)" 
+                      :key="key"
+                    >
+                      <v-list-tile-content>
+                        {{ key }}:
+                      </v-list-tile-content>
+                      <v-list-tile-content style="align-items: end;">
+                        {{ value }}
+                      </v-list-tile-content>
+                    </v-list-tile>
+                  </v-list>
+                </v-card>
+              </v-flex>
+            </v-layout>
+          </v-container>
+
+          <v-flex
+            xs12
+          >
+            {{ $t('TextExamples') }}
+          </v-flex>
+          <v-flex
+            v-for="(value, index) in showcase"
+            :key="index"
+            xs12
+            headerinfo
+          >
             <v-flex 
-              xs12 
+              xs10 
               style="align-self: center;"
             >
-              {{ $t('TextFields') }}
-            </v-flex>
-
-            <ul>
-              <li>
-                {{ $t('TextFieldObject') }}
-              </li>
-              <li>
-                {{ $t('TextFieldFullObject') }}
-              </li>
-              <li>
-                {{ $t('TextFieldArray') }}
-              </li>
-              <li>
-                {{ $t('TextFieldFullArray') }}
-              </li>
-            </ul>
-
-            <v-container 
-              fluid
-              grid-list-md
-              style="padding:0px"
+              {{ $t('Example') }} {{ index + 1 }} 
+              <ul>
+                <li>
+                  <v-flex 
+                    xs10
+                    style="align-self: center;"
+                  >                        
+                    {{ $t('TextFromTrigger') }}:
+                    <v-chip small>
+                      {{ value.triggerText }}
+                    </v-chip>
+                  </v-flex>
+                </li>
+                <li>
+                  <v-flex 
+                    xs10
+                    style="align-self: center;"
+                  >                        
+                    {{ $t('TextFromNotificationRule') }}:
+                    <v-chip small>
+                      {{ value.notificationRuleText }}
+                    </v-chip>
+                  </v-flex>
+                </li>
+              </ul>
+            </v-flex>  
+            <v-flex 
+              xs10 
+              style="align-self: center;"
             >
-              <v-layout wrap>
-                <v-flex xs12>
-                  <v-card>
-                    <v-card-title><h4>{{ $t('AlertDetailExample') }}</h4></v-card-title>
-                    <v-list 
-                      dense 
-                      subheader
-                    >
-                      <v-list-tile 
-                        v-for="[key, value] in Object.entries(alert)" 
-                        :key="key"
-                      >
-                        <v-list-tile-content>
-                          {{ key }}:
-                        </v-list-tile-content>
-                        <v-list-tile-content style="align-items: end;">
-                          {{ value }}
-                        </v-list-tile-content>
-                      </v-list-tile>
-                    </v-list>
-                  </v-card>
-                </v-flex>
-              </v-layout>
-            </v-container>
-
-            <v-flex
-              xs12
-            >
-              {{ $t('TextExamples') }}
+              {{ $t('Result') }}: {{ results[index] }}
             </v-flex>
-            <v-flex
-              v-for="(value, index) in showcase"
-              :key="index"
-              xs12
-              headerinfo
-            >
-              <v-flex 
-                xs10 
-                style="align-self: center;"
-              >
-                {{ $t('Example') }} {{ index + 1 }} 
-                <ul>
-                  <li>
-                    <v-flex 
-                      xs10
-                      style="align-self: center;"
-                    >                        
-                      {{ $t('TextFromTrigger') }}:
-                      <v-chip small>
-                        {{ value.triggerText }}
-                      </v-chip>
-                    </v-flex>
-                  </li>
-                  <li>
-                    <v-flex 
-                      xs10
-                      style="align-self: center;"
-                    >                        
-                      {{ $t('TextFromNotificationRule') }}:
-                      <v-chip small>
-                        {{ value.notificationRuleText }}
-                      </v-chip>
-                    </v-flex>
-                  </li>
-                </ul>
-              </v-flex>  
-              <v-flex 
-                xs10 
-                style="align-self: center;"
-              >
-                {{ $t('Result') }}: {{ results[index] }}
-              </v-flex>
-            </v-flex>
-          </v-container>
+          </v-flex>
         </v-card-text>
         <v-card-actions>
           <v-spacer />

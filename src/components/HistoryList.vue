@@ -7,7 +7,7 @@
       :pagination.sync="pagination"
       :total-items="pagination.totalItems"
       :rows-per-page-items="pagination.rowsPerPageItems"
-      class="alert-table"
+      class="g-table"
       :class="[ displayDensity ]"
       :style="columnWidths"
       :disable-initial-sort="true"
@@ -18,8 +18,7 @@
         slot-scope="props"
       >
         <tr
-          :style="{ 'background-color': severityColor(props.item.severity, props.item.status) }"
-          class="hover-lighten"
+          :class="[props.item.severity.toLowerCase()]"
         >
           <td
             v-for="col in customDataMap"
@@ -50,23 +49,24 @@
             <span
               v-if="col == 'severity'"
             >
-              <span
-                :class="['label', 'label-' + props.item.severity.toLowerCase()]"
+              <v-chip
+                small
+                :class="[props.item.severity.toLowerCase()]"
                 :style="fontStyle"
               >
                 {{ props.item.severity | capitalize }}
-              </span>
+              </v-chip>
             </span>
             <span
               v-if="col == 'status'"
             >
-              <span
-                class="label"
+              <v-chip
                 :style="fontStyle"
+                small
               >
                 {{ props.item.status | capitalize }}
 
-              </span>
+              </v-chip>
             </span>
             <span
               v-if="col == 'service'"
@@ -250,6 +250,9 @@ export default {
         this.$store.state.alerts.displayDensity
       )
     },
+    isDark() {
+      return this.$store.getters.getPreference('isDark')
+    },
     fontStyle() {
       const font = this.$store.getters.getPreference('font')
       return {
@@ -349,10 +352,6 @@ export default {
 </script>
 
 <style>
-.alert-table .v-table th, td {
-  padding: 0px 5px !important;
-}
-
 .value-header {
   width: var(--value-width);
   min-width: var(--value-width);
@@ -369,10 +368,6 @@ export default {
 
 .compact table.v-table tbody td, table.v-table tbody th {
   height: 34px !important;
-}
-
-.alert-table .v-table tbody td {
-  border-top: 1px solid rgb(221, 221, 221);
 }
 
 .fixed-table {
@@ -431,10 +426,6 @@ div.select-box {
 
 .label-inverse {
   background-color: #333333;
-}
-
-.hover-lighten:hover {
-  filter: brightness(0.87);
 }
 
 .btn--plain {

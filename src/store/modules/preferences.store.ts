@@ -4,7 +4,7 @@ import i18n from '@/plugins/i18n'
 
 const getDefaults = () => {
   return {
-    isDark: false,
+    isDark: true,
     isMute: true,
     languagePref: i18n.locale,
     audioURL: './audio/alert_high-intensity.ogg',

@@ -842,27 +842,53 @@
             >
               {{ $t('Save') }}
             </v-btn>
-          </v-card-actions>
+          </v-card-actions>s
         </v-card>
       </v-form>
     </v-dialog>
-
-    <v-card>
+    <h1>
+      {{ $t('NotificationRules') }}
+      <information-dialog 
+        :info="headers" 
+        :title="$t('NotificationRulesInfo')"
+        style="display: inline-flex;"
+      >
+        <triggers-information-dialog :slot="$t('Triggers')" />
+        <tags-information-dialog :slot="$t('Tags')" />
+        <excluded-tags-information-dialog :slot="$t('ExcludedTags')" />
+        <text-information-dialog :slot="('Text')" />
+      </information-dialog>
+    </h1>
+    <v-card class="section">
       <v-card-title class="title">
-        {{ $t('NotificationRules') }}
-        <information-dialog 
-          :info="headers" 
-          :title="$t('NotificationRulesInfo')"
+        <v-btn-toggle
+          v-model="status"
+          class="transparent"
+          multiple
         >
-          <triggers-information-dialog :slot="$t('Triggers')" />
-          <tags-information-dialog :slot="$t('Tags')" />
-          <excluded-tags-information-dialog :slot="$t('ExcludedTags')" />
-          <text-information-dialog :slot="('Text')" />
-        </information-dialog>
-        <v-spacer />
+          <v-btn
+            value="true"
+            flat
+          >
+            <information-tooltip
+              :info="status.includes('true') ? $t('HideActive') : $t('ShowActive')"
+              icon="notifications"
+            />
+          </v-btn>
+          <v-btn
+            value="false"
+            flat
+          >
+            <information-tooltip
+              :info="status.includes('false') ? $t('HideDeactivated') : $t('ShowDeactivated')"
+              icon="notifications_paused"
+            />
+          </v-btn>
+        </v-btn-toggle>
         <span
           v-if="selectableRows"
           class="subheading"
+          style="margin-left: 10px;"
         >
           {{ selected.length }}<span class="hidden-sm-and-down"> {{ $t('selected') }}</span>
         </span>
@@ -900,36 +926,12 @@
           <span>{{ $t('Deactivate') }}</span>
         </v-tooltip>
         <v-spacer />
-        <v-btn-toggle
-          v-model="status"
-          class="transparent"
-          multiple
-        >
-          <v-btn
-            value="true"
-            flat
-          >
-            <information-tooltip
-              :info="status.includes('true') ? $t('HideActive') : $t('ShowActive')"
-              icon="notifications"
-            />
-          </v-btn>
-          <v-btn
-            value="false"
-            flat
-          >
-            <information-tooltip
-              :info="status.includes('false') ? $t('HideDeactivated') : $t('ShowDeactivated')"
-              icon="notifications_paused"
-            />
-          </v-btn>
-        </v-btn-toggle>
-        <v-spacer />
         <v-text-field
           v-model="query"
           append-icon="search"
           clearable
           single-line
+          solo
           hide-details
           :label="$t('Search')"
           @change="setSearch"
@@ -944,7 +946,7 @@
         :pagination.sync="pagination"
         :total-items="pagination.totalItems"
         :rows-per-page-items="pagination.rowsPerPageItems"
-        class="table"
+        class="table table--plain"
         :loading="isLoading"
         must-sort
         sort-icon="arrow_drop_down"
@@ -1669,6 +1671,7 @@ export default {
           this.editedItemStart = JSON.parse(JSON.stringify(this.defaultItem))
           this.editedId = null
           this.saved = false
+          if (this.dialog) this.dialog = false
         }, 300)
       }
       else setTimeout(() => this.dialog = true, 0.1)

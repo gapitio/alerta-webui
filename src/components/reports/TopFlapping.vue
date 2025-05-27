@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-card>
+    <v-card class="section">
       <v-card-title primary-title>
         <div>
           <div class="headline">

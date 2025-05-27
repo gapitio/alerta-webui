@@ -1,7 +1,11 @@
 <template>
   <div class="about">
-    <manifest />
-    <status />
+    <v-card class="section">
+      <manifest />
+    </v-card>
+    <v-card class="section">
+      <status />
+    </v-card>
   </div>
 </template>
 

@@ -497,7 +497,10 @@
                   hide-details
                   :value="getFilter(header)"
                   :items="header.searchables"
+                  :label="header.text"
                   multiple
+                  chips
+                  solo
                   @input="(value) => {setFilter(header, value)}"
                 />
                 <v-combobox
@@ -506,8 +509,10 @@
                   hide-details
                   :value="getFilter(header)"
                   :items="header.searchables"
+                  :label="header.text"
                   multiple
                   chips
+                  solo
                   @input="(value) => {setFilter(header, value)}"
                 />
                 <v-select
@@ -516,12 +521,14 @@
                   v-model="filterDateRange"
                   hide-details
                   :items="dateRanges"
+                  solo
                   name="dateRange"
                   item-value="range"
                 />
-                <v-text-field
+                <g-text-field
                   v-else-if="header.searchType !== 'ignore'"
-                  hide-details
+                  :label="header.text"
+                  solo
                   :value="getFilter(header)"
                   @input="(value) => {setFilter(header, value)}"
                 />
@@ -565,12 +572,14 @@
 <script>
 import debounce from 'lodash/debounce'
 import DateTime from './lib/DateTime'
+import GTextField from './GTextField.vue'
 import moment from 'moment'
 import i18n from '@/plugins/i18n'
 
 export default {
   components: {
-    DateTime
+    DateTime,
+    GTextField
   },
   props: {
     alerts: {

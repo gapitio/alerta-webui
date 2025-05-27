@@ -1,61 +1,51 @@
 <template>
   <div>
-    <v-card>
-      <v-card-title class="title">
+    <h1>
+      <span>
         {{ $t('NotificationHistory') }}
-        <information-dialog 
-          :title="$t('NotificationHistory') + ': ' + $t('NotificationHistoryInfo')" 
-          :info="headers"
+      </span>
+      <information-dialog
+        :title="$t('NotificationHistory') + ': ' + $t('NotificationHistoryInfo')" 
+        :info="headers"
+        style="display: inline-flex;"
+      />
+    </h1>
+    <v-card class="section">
+      <v-card-title class="title">
+        <v-checkbox
+          v-model="showSent"
+          class="checkbox-toggle"
+          :class="{'checkbox-toggled': sent.includes(true)}"
+          :label="$t('ShowSent')"
+          hide-details
         />
-        <v-spacer />
-        <v-btn-toggle
-          v-model="sent"
-          class="transparent"
-          multiple
-        >
-          <v-btn
-            :value="true"
-            flat
-          >
-            <v-tooltip bottom>
-              <v-icon slot="activator">
-                check
-              </v-icon>
-              <span>{{ $t('Sent') }}</span>
-            </v-tooltip>
-          </v-btn>
-          <v-btn
-            :value="false"
-            flat
-          >
-            <v-tooltip bottom>
-              <v-icon slot="activator">
-                cancel
-              </v-icon>
-              <span>{{ $t('NotSent') }}</span>
-            </v-tooltip>
-          </v-btn>
-        </v-btn-toggle>
+        <v-checkbox
+          v-model="showErrors"
+          class="checkbox-toggle"
+          :label="$t('ShowErrors')"
+          :class="{'checkbox-toggled': sent.includes(false)}"
+          hide-details
+        />
         <v-spacer />
         <v-text-field
           v-model="query"
           append-icon="search"
           clearable
           single-line
+          solo
           hide-details
           :label="$t('Search')"
           @change="setSearch"
           @click:clear="clearSearch"
         />
       </v-card-title>
-
       <v-data-table
         :headers="computedHeaders"
         :items="notification_history"
         :pagination.sync="pagination"
         :total-items="pagination.totalItems"
         :rows-per-page-items="pagination.rowsPerPageItems"
-        class="alert-table"
+        class="notification-table g-table"
         :loading="isLoading"
         must-sort
         sort-icon="arrow_drop_down"
@@ -65,10 +55,17 @@
           slot-scope="props"
         > 
           <tr
-            :style="{'background-color': severityColor(props.item.confirmed, props.item.sent), 'color': 'black'}"
+            :class="{'status-error': !props.item.sent, 'status-success': props.item.sent}"
           >
             <td>{{ props.item.id }}</td>
-            <td>{{ props.item.sent }}</td>
+            <td>
+              <v-chip 
+                small
+                :class="{'status-error': !props.item.sent, 'status-success': props.item.sent}"
+              >
+                {{ props.item.sent }}
+              </v-chip>
+            </td>
             <td>{{ props.item.sent_time }}</td>
             <td>{{ props.item.message }}</td>
             <td>{{ props.item.receiver }}</td>
@@ -154,15 +151,37 @@ export default {
           return { ...b, sent_time, confirmed_time }
         })
     },
-    
+    showSent: {
+      get() {
+        return this.sent.includes(true)
+      },
+      set(value) {
+        this.sent = [value, true]
+      }
+    },
+    showErrors: {
+      get() {
+        return this.sent.includes(false)
+      },
+      set(value) {
+        this.sent = [value, false]
+      }
+    },
     sent: {
       get() {
         return this.$store.getters['notificationHistory/sent']
       },
-      set(value) {
-        this.$store.dispatch('notificationHistory/setShownSentStatus', value)
+      set([add, value]) {
+        let test = [...this.sent]
+        if (add && test.indexOf(value) < 0) test.push(value)
+        else if (!add) test.splice(test.indexOf(value), 1)
+
+        this.$store.dispatch('notificationHistory/setShownSentStatus', test)
         this.getNotificationsHistory()
       }
+    },
+    isDark() {
+      return this.$store.getters.getPreference('isDark')
     },
     pagination: {
       get() {
@@ -225,6 +244,7 @@ export default {
     },
     severityColor(confirmed, sent) {
       const config = this.$store.getters.getConfig('colors')
+      return sent  ? '#039855' : '#D92D20'
       return config.severity[confirmed ? 'ok' : sent ? 'normal' : 'critical'] || 'white'
     },
     clearSearch() {

@@ -1,15 +1,18 @@
 <template>
   <div>
-    <v-card>
+    <h1>
+      {{ $t('NotificationSend') }}
+    </h1>
+    <v-card class="section">
       <v-card-title class="title">
-        {{ $t('NotificationSend') }}
-        <v-spacer />
         <v-select
           v-model="emailChannel"
           :items="emailNotificationChannels"
           :label="$t('EmailChannel')"
           item-text="id"
           item-value="id"
+          hide-details
+          solo
         />
         <v-spacer />
         <v-select
@@ -18,14 +21,21 @@
           :label="$t('SMSChannel')"
           item-text="id"
           item-value="id"
+          hide-details
+          solo
         />
         <v-spacer />
         <v-text-field
           v-model="text"
           :label="$t('Text')"
+          hide-details
+          solo
         />
         <v-spacer />
-        <v-btn @click="send">
+        <v-btn 
+          color="primary"
+          @click="send"
+        >
           {{ $t('Send') }}
         </v-btn>
       </v-card-title>

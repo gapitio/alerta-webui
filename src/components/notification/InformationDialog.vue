@@ -2,62 +2,65 @@
   <div>
     <v-dialog
       v-model="show"
-      max-width="540px"
       scrollable
+      max-width="560px"
     >
-      <v-card>
+      <v-card class="dialog-section">
         <v-card-title>
           <span class="headline">
             {{ title }}
           </span>
         </v-card-title>
-        <v-card-text>
-          <v-flex xs12>          
-            <v-container>
-              <div 
-                v-for="(i, index) in info"
-                :key="i.text"
+        <v-flex
+          xs12
+          style="overflow: auto; padding-right:15px;"
+        >
+          <div
+            v-for="i in info"
+            :key="i.text"
+          >
+            <v-card
+              v-if="i.info !== undefined || $slots[i.text] !== undefined"
+              class="info-section"
+            >
+              <v-flex
+                xs12
               >
-                <v-flex
-                  v-if="i.info !== undefined || $slots[i.text] !== undefined"
-                  xs12
-                  headerinfo
-                >
-                  <v-layout wrap>
-                    <v-flex 
-                      xs3 
+                <v-layout wrap>
+                  <v-flex
+                    xs12
+                    style="align-self: center;"
+                    class="font-semibold"
+                  >
+                    {{ i.text }}
+                  </v-flex>
+                  <slot :name="i.text">
+                    <v-flex
+                      v-if="typeof i.info === 'string'"
+                      xs12
                       style="align-self: center;"
                     >
-                      {{ i.text }}:
+                      {{ i.info }}
                     </v-flex>
-                    <slot :name="i.text">
-                      <v-flex 
-                        v-if="typeof i.info === 'string'"
-                        xs9
-                        style="align-self: center;"
+                    <v-flex
+                      v-if="typeof i.info === 'object'"
+                      xs12
+                    >
+                      <v-flex
+                        v-for="value in i.info"
+                        :key="value"
+                        xs12
                       >
-                        {{ i.info }}
+                        {{ value }}
                       </v-flex>
-                      <v-flex 
-                        v-if="typeof i.info === 'object'"
-                        xs9
-                      >
-                        <v-flex
-                          v-for="value in i.info"
-                          :key="value"
-                          xs12
-                        >
-                          {{ value }}
-                        </v-flex>
-                      </v-flex>
-                    </slot>
-                  </v-layout>
-                </v-flex>
-                <v-divider v-if="index + 1 !== info.length" />
-              </div>
-            </v-container>
-          </v-flex>
-        </v-card-text>
+                    </v-flex>
+                  </slot>
+                </v-layout>
+              </v-flex>
+            </v-card>
+          </div>
+        </v-flex>
+
         <v-card-actions>
           <v-spacer />
           <v-btn
@@ -70,7 +73,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <v-icon 
+    <v-icon
       @click="() => show = true"
     >
       help_outline
@@ -81,7 +84,6 @@
 <script>
 
 export default {
-  
   props: {
     info: {
       type: Array,

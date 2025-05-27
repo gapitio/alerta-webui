@@ -151,10 +151,11 @@
       </v-form>
     </v-dialog>
 
-    <v-card>
+    <h1>
+      {{ $t('APIKeys') }}
+    </h1>
+    <v-card class="section">
       <v-card-title class="title">
-        {{ $t('APIKeys') }}
-        <v-spacer />
         <v-btn-toggle
           v-model="status"
           class="transparent"
@@ -189,6 +190,7 @@
           append-icon="search"
           :label="$t('Search')"
           single-line
+          solo
           hide-details
         />
       </v-card-title>

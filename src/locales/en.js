@@ -278,7 +278,7 @@ export const en = {
   NotificationHistoryError: 'Description of why the SMS/Email failed to be sent',
   EscalationRule: 'Escalation Rule',
   EscalationRuleInfo: 'Rules for escalating the severity of alerts',
-  EscalationRules: 'EscalationRules',
+  EscalationRules: 'Escalation Rules',
   NewEscalationRule: 'Add New Escalation Rule',
   EditEscalationRule: 'Edit Escalation Rule',
   NameInfo: 'User defined name for easy searchable field',

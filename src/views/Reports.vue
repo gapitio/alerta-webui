@@ -1,9 +1,10 @@
 <template>
   <div class="reports">
-    <v-card>
+    <h1>
+      {{ $t('Reports') }}
+    </h1>
+    <v-card class="section">
       <v-card-title class="title">
-        {{ $t('Reports') }}
-        <v-spacer />
         <v-flex
           xs1
         >
@@ -12,8 +13,12 @@
             :items="rowsPerPageItems"
             :prefix="$t('Top')"
             type="number"
+            solo
+            hide-details
           />
         </v-flex>
+
+        <v-spacer />
 
         <v-btn
           flat
@@ -33,12 +38,12 @@
           <v-icon>filter_list</v-icon>
         </v-btn>
       </v-card-title>
-
-      <top-offenders />
-      <top-flapping />
-      <top-standing />
     </v-card>
 
+
+    <top-offenders />
+    <top-flapping />
+    <top-standing />
     <report-filter
       :value="sidesheet"
       @close="sidesheet = false"

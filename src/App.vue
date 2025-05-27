@@ -2,106 +2,12 @@
   <v-app
     id="alerta"
     :dark="isDark"
+    class="g-app"
   >
     <div v-if="!isKiosk">
-      <v-navigation-drawer
-        v-if="isLoggedIn || !isAuthRequired || isAllowReadonly"
-        v-model="drawer"
-        :clipped="$vuetify.breakpoint.lgAndUp"
-        disable-resize-watcher
-        fixed
-        app
-      >
-        <v-toolbar
-          :color="isDark ? '#616161' : '#eeeeee'"
-          flat
-        >
-          <v-toolbar-side-icon @click.stop="drawer = !drawer" />
-
-          <router-link
-            to="/"
-            class="toolbar-title"
-          >
-            <img
-              v-if="$config.site_logo_url"
-              :src="$config.site_logo_url"
-              height="48"
-            >
-            <v-toolbar-title
-              v-else
-              class="logo"
-            >
-              alerta
-            </v-toolbar-title>
-          </router-link>
-        </v-toolbar>
-
-        <v-divider />
-        <v-list dense>
-          <template v-for="(item, index) in items">
-            <v-list-tile
-              v-if="item.icon && item.show"
-              :key="item.text"
-              v-has-perms="item.perms"
-              :to="item.path"
-            >
-              <v-list-tile-action>
-                <v-icon>{{ item.icon }}</v-icon>
-              </v-list-tile-action>
-              <v-list-tile-content>
-                <v-list-tile-title>
-                  {{ item.text }}
-                  <v-icon
-                    v-if="item.appendIcon"
-                    small
-                  >
-                    {{ item.appendIcon }}
-                  </v-icon>
-                </v-list-tile-title>
-              </v-list-tile-content>
-            </v-list-tile>
-
-            <v-list-group
-              v-else-if="item.queries && item.queries.length > 0"
-              :key="item.text"
-              :prepend-icon="item.model ? item.icon : item['icon-alt']"
-              sub-group
-              no-action
-            >
-              <template v-slot:activator>
-                <v-list-tile>
-                  <v-list-tile-title>
-                    {{ item.text }}
-                  </v-list-tile-title>
-                </v-list-tile>
-              </template>
-              <v-list-tile
-                v-for="(q, i) in item.queries"
-                :key="i"
-                @click="submitSearch(q.query)"
-              >
-                <v-list-tile-title v-text="q.text" />
-                <v-list-tile-action>
-                  <v-icon
-                    small
-                    @click.stop="deleteSearch(q)"
-                    v-text="q.icon"
-                  />
-                </v-list-tile-action>
-              </v-list-tile>
-            </v-list-group>
-
-            <v-divider
-              v-else-if="item.divider"
-              :key="index"
-            />
-          </template>
-        </v-list>
-      </v-navigation-drawer>
-
+      <navigation-drawer />
       <v-toolbar
         v-if="selected.length == 0"
-        :color="isDark ? '#616161' : '#eeeeee'"
         flat
         class="mb-1"
       >
@@ -137,7 +43,6 @@
           solo
           clearable
           height="44"
-          class="pt-2 mr-3 hidden-sm-and-down"
           @focus="hasFocus = true"
           @blur="hasFocus = false"
           @change="submitSearch"
@@ -540,6 +445,7 @@
 import Banner from '@/components/lib/Banner.vue'
 import ProfileMe from '@/components/auth/ProfileMe.vue'
 import Snackbar from '@/components/lib/Snackbar.vue'
+import NavigationDrawer from '@/components/NavigationDrawer.vue'
 
 import i18n from '@/plugins/i18n'
 
@@ -548,7 +454,8 @@ export default {
   components: {
     Banner,
     ProfileMe,
-    Snackbar
+    Snackbar,
+    NavigationDrawer
   },
   props: [],
   data: vm => ({
@@ -572,174 +479,6 @@ export default {
     error: false
   }),
   computed: {
-    items() {
-      return [
-        {
-          icon: 'list',
-          text: i18n.t('Alerts'),
-          path: '/alerts',
-          perms: 'read:alerts',
-          show: true
-        },
-        {
-          icon: 'expand_less',
-          'icon-alt': 'expand_more',
-          text: i18n.t('Searches'),
-          model: false,
-          queries: this.queries
-        },
-        {
-          icon: 'history',
-          text: i18n.t('History'),
-          path: '/history',
-          perms: 'read:alerts',
-          show: true
-        },
-        {
-          icon: 'history',
-          text: i18n.t('NotificationHistory'),
-          path: '/notificationhistory',
-          perms: 'read:notification_history',
-          show: true
-        },
-        {
-          icon: 'av_timer',
-          text: i18n.t('NotificationDelays'),
-          path: '/notificationdelays',
-          perms: 'read:notification_rules',
-          show: true
-        },
-        {
-          icon: 'arrow_upward',
-          text: i18n.t('EscalationRules'),
-          path: '/escalationrules',
-          perms: 'read:escalation_rules',
-          show: true
-        },
-        {
-          icon: 'timer',
-          text: i18n.t('Heartbeats'),
-          path: '/heartbeats',
-          perms: 'read:heartbeats',
-          show: true
-        },
-        {
-          icon: 'person',
-          text: i18n.t('Users'),
-          path: '/users',
-          perms: 'admin:users',
-          show: true
-        },
-        {
-          icon: 'people',
-          text: i18n.t('Groups'),
-          path: '/groups',
-          perms: 'read:groups',
-          show: this.$config.provider == 'basic'
-        },
-        {
-          icon: 'people',
-          text: i18n.t('NotificationGroups'),
-          path: '/notificationgroups',
-          perms: 'read:notification_groups',
-          show: true
-        },
-        {
-          icon: 'phone',
-          text: i18n.t('OnCall'),
-          path: '/oncall',
-          perms: 'read:notification_rules',
-          show: true
-        },
-        {
-          icon: 'domain',
-          text: i18n.t('Customers'),
-          path: '/customers',
-          perms: 'read:customers',
-          show: this.$config.customer_views
-        },
-        {
-          icon: 'notifications_off',
-          text: i18n.t('Blackouts'),
-          path: '/blackouts',
-          perms: 'read:blackouts',
-          show: true
-        },
-        {
-          icon: 'notifications',
-          text: i18n.t('NotificationSend'),
-          path: '/notificationsend',
-          perms: 'read:notification_channels',
-          show: true
-        },
-        {
-          icon: 'notifications',
-          text: i18n.t('NotificationChannels'),
-          path: '/notificationchannels',
-          perms: 'read:notification_channels',
-          show: true
-        },
-        {
-          icon: 'notifications',
-          text: i18n.t('NotificationRules'),
-          path: '/notificationrules',
-          perms: 'read:notification_rules',
-          show: true
-        },
-        {
-          icon: 'security',
-          text: i18n.t('Permissions'),
-          path: '/perms',
-          perms: 'read:perms',
-          show: true
-        },
-        {
-          icon: 'vpn_key',
-          text: i18n.t('APIKeys'),
-          path: '/keys',
-          perms: 'read:keys',
-          show: this.isLoggedIn || !this.isAuthRequired
-        },
-        {
-          icon: 'assessment',
-          text: i18n.t('Reports'),
-          path: '/reports',
-          perms: 'read:alerts',
-          show: true
-        },
-        { divider: true},
-        {
-          icon: 'account_circle',
-          text: i18n.t('Profile'),
-          path: '/profile',
-          perms: null,
-          show: this.isLoggedIn
-        },
-        {
-          icon: 'settings',
-          text: i18n.t('Settings'),
-          path: '/settings',
-          perms: null,
-          show: this.isLoggedIn
-        },
-        // { icon: 'chat_bubble', text: 'Send feedback' },
-        {
-          icon: 'help',
-          text: i18n.t('Help'),
-          path: '/help',
-          appendIcon: 'open_in_new',
-          perms: null,
-          show: true
-        },
-        {
-          icon: 'info',
-          text: i18n.t('About'),
-          path: '/about',
-          perms: 'read:management',
-          show: true
-        }
-      ]
-    },
     isDark() {
       return this.$store.getters.getPreference('isDark')
     },
@@ -776,17 +515,6 @@ export default {
       set(value) {
         // FIXME: offer query suggestions to user here, in future
       }
-    },
-    queries() {
-      return this.$store.getters.getUserQueries.map(query => (
-        {
-          icon: 'remove_circle_outline',
-          text: query.text,
-          path: '/alerts',
-          query: query.q,
-          perms: 'read:alerts',
-          show: true
-        }))
     },
     actions() {
       return this.$config.actions
@@ -851,9 +579,6 @@ export default {
           q: this.query
         })
       }
-    },
-    deleteSearch(query) {
-      this.$store.dispatch('removeUserQuery', query)
     },
     takeBulkAction(action) {
       Promise.all(this.selected.map(a => this.$store.dispatch('alerts/takeAction', [a.id, action, '']))).then(() => {
@@ -963,6 +688,8 @@ export default {
 <style>
 
 @import "./assets/css/fonts.css";
+@import "./assets/css/gapitDark.css";
+@import "./assets/css/gapit.css";
 
 .application {
   font-family: 'Poppins', 'Roboto', sans-serif !important;

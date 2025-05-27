@@ -77,19 +77,17 @@
         </v-card>
       </v-form>
     </v-dialog>
-
-    <v-card>
-      <v-card-title class="title">
-        {{ $t('NotificationGroups') }}
-      </v-card-title>
-
+    <h1>
+      {{ $t('NotificationGroups') }}
+    </h1>
+    <v-card class="section">
       <v-data-table
         :headers="computedHeaders"
         :items="notificationGroups"
         :pagination.sync="pagination"
         :total-items="pagination.totalItems"
         :rows-per-page-items="pagination.rowsPerPageItems"
-        class="px-2"
+        class="g-table"
         :loading="isLoading"
         must-sort
         sort-icon="arrow_drop_down"

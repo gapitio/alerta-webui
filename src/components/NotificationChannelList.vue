@@ -258,19 +258,22 @@
         </v-card>
       </v-form>
     </v-dialog>
-
-    <v-card>
+    <h1>
+      {{ $t('NotificationChannels') }}
+      <information-dialog 
+        :info="info"
+        :title="$t('NotificationChannelsInfo') "
+        style="display: inline-flex;"
+      />
+    </h1>
+    <v-card class="section">
       <v-card-title class="title">
-        {{ $t('NotificationChannels') }}
-        
-        <information-dialog 
-          :info="info"
-          :title="$t('NotificationChannelsInfo') "
-        />
-        <v-spacer />
         <v-tooltip bottom>
           <template slot="activator">
-            <v-btn @click="copyEncryptionKey">
+            <v-btn
+              color="primary"
+              @click="copyEncryptionKey"
+            >
               Get New Encryption Key
             </v-btn>
           </template>
@@ -279,11 +282,11 @@
           <span>{{ $t('NotificationKey') }}</span>
         </v-tooltip>
         <v-spacer />
-        <v-spacer />
         <v-text-field
           v-model="search"
           append-icon="search"
           :label="$t('Search')"
+          solo
           single-line
           hide-details
         />

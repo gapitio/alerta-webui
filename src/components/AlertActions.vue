@@ -8,9 +8,42 @@
       <v-layout>
         <v-flex>
           <v-btn
+            v-show="!isClosed"
+            color="orange"
+            class="white--text"
+            @click="takeAction('close')"
+          >
+            <v-icon>highlight_off</v-icon>&nbsp;{{ $t('Close') }}
+          </v-btn>
+          <v-btn
+            v-show="!(!isAcked && !isClosed)"
+            color="green"
+            class="white--text"
+            @click="takeAction('open')"
+          >
+            <v-icon>refresh</v-icon>&nbsp;{{ $t('Open') }}
+          </v-btn>
+          <v-btn
+            v-show="!isAcked"
+            :disabled="!isOpen"
+            color="primary"
+            class="white--text"
+            @click="ackAlert()"
+          >
+            <v-icon>check_circle_outline</v-icon>&nbsp;{{ $t('Ack') }}
+          </v-btn>
+
+          <v-btn
+            v-show="isAcked"
+            color="primary"
+            class="white--text"
+            @click="takeAction('unack')"
+          >
+            <v-icon>check_circle_outline</v-icon>&nbsp;{{ $t('Unack') }}
+          </v-btn>
+          <v-btn
             v-show="!isWatched"
-            outline
-            color="grey darken-2"
+            color="primary"
             @click="watchAlert"
           >
             <v-icon>visibility</v-icon>&nbsp;{{ $t('Watch') }}
@@ -18,8 +51,7 @@
 
           <v-btn
             v-show="isWatched"
-            outline
-            color="grey darken-2"
+            color="primary"
             @click="unwatchAlert"
           >
             <v-icon>visibility_off</v-icon>&nbsp;{{ $t('Unwatch') }}
@@ -27,19 +59,24 @@
 
           <v-btn
             v-if="!showForm"
-            outline
-            color="grey darken-2"
+            color="primary"
             @click="showForm = true"
           >
             <v-icon>note_add</v-icon>&nbsp;{{ $t('AddNote') }}
           </v-btn>
 
           <v-btn
-            outline
-            color="grey darken-2"
+            color="primary"
             @click="deleteAlert"
           >
             <v-icon>delete_forever</v-icon>&nbsp;{{ $t('Delete') }}
+          </v-btn>
+          
+          <v-btn
+            color="primary"
+            @click="copyAlert"
+          >
+            <v-icon>content_copy</v-icon>&nbsp;{{ $t('Copy') }}
           </v-btn>
         </v-flex>
       </v-layout>
@@ -59,7 +96,7 @@
             lazy-validation
             @submit="addNote"
           >
-            <v-card>
+            <v-card class="dialog-section">
               <v-card-text>
                 <v-text-field
                   v-model.trim="text"
@@ -230,6 +267,9 @@ export default {
     }, 200, {leading: true, trailing: false}),
     deleteAlert: debounce(function() {
       this.$emit('delete-alert', this.id)
+    }, 200, {leading: true, trailing: false}),
+    copyAlert: debounce(function() {
+      this.$emit('copy-alert')
     }, 200, {leading: true, trailing: false}),
     close() {
       this.text = null

@@ -5,35 +5,26 @@
     disable-resize-watcher
     absolute
     hide-overlay
-    width="300"
+    width="400"
     right
   >
-    <v-card tile>
-      <v-toolbar
-        :color="isDark ? '#616161' : '#eeeeee'"
-        card
-        dense
-      >
-        <v-toolbar-title>
-          {{ $t('Filters') }}
-        </v-toolbar-title>
-        <v-spacer />
-        <v-toolbar-items />
-        <v-menu
-          bottom
-          right
-          offset-y
-        >
-          <v-btn
-            slot="activator"
-            icon
-            @click="close"
-          >
-            <v-icon>close</v-icon>
-          </v-btn>
-        </v-menu>
-      </v-toolbar>
-
+    <v-card class="dialog-section">
+      <v-toolbar-title>
+        <v-layout align-center>
+          <v-flex xs10>
+            {{ $t('Filters') }}
+          </v-flex>
+          <v-flex xs2>
+            <v-btn
+              slot="activator"
+              icon
+              @click="close"
+            >
+              <v-icon>close</v-icon>
+            </v-btn>
+          </v-flex>
+        </v-layout>
+      </v-toolbar-title>
       <v-container
         fluid
         grid-list-xl
@@ -46,13 +37,13 @@
             xs12
             class="pb-0"
           >
-            <v-text-field
+            <g-text-field
               v-model="filterText"
               :label="$t('Search')"
               prepend-inner-icon="search"
-              outline
-              dense
               clearable
+              show-details=""
+              show-header
               :hint="$t('FilterDescription')"
               persistent-hint
             />
@@ -62,14 +53,15 @@
             xs12
             class="pb-0"
           >
-            <v-select
+            <g-select
               v-model="filterStatus"
               :items="statusList"
               small-chips
               :placeholder="$t('AllStatuses')"
               :label="$t('Status')"
+              show-header
+              show-details
               multiple
-              outline
               dense
               :hint="$t('StatusDescription')"
               persistent-hint
@@ -88,7 +80,6 @@
               :placeholder="$t('AllCustomers')"
               :label="$t('Customer')"
               multiple
-              outline
               dense
               :hint="$t('CustomerDescription')"
               persistent-hint
@@ -99,14 +90,16 @@
             xs12
             class="pb-0"
           >
-            <v-autocomplete
+            <g-autocomplete
               v-model="filterService"
               :items="currentServices"
               :menu-props="{ maxHeight: '400' }"
               :placeholder="$t('AllServices')"
               :label="$t('Service')"
+              show-header
+              show-details
+              chips
               multiple
-              outline
               dense
               :hint="$t('ServiceDescription')"
               persistent-hint
@@ -117,14 +110,15 @@
             xs12
             class="pb-0"
           >
-            <v-select
+            <g-select
               v-model="filterGroup"
               :items="currentGroups"
               :menu-props="{ maxHeight: '400' }"
               :placeholder="$t('AllGroups')"
               :label="$t('Group')"
+              show-details
+              show-header
               multiple
-              outline
               dense
               :hint="$t('GroupDescription')"
               persistent-hint
@@ -136,13 +130,11 @@
             class="pb-0"
           >
             <span class="body-2">{{ $t('DateTime') }}</span>
-            <v-select
+            <g-select
               v-model="filterDateRange"
               :items="dateRanges"
               name="dateRange"
               :label="$t('DateTime')"
-              solo
-              flat
               prepend-inner-icon="schedule"
               item-value="range"
               hide-details
@@ -154,13 +146,13 @@
             xs8
             class="pb-0 pr-0"
           >
-            <v-text-field
+            <g-text-field
               v-model="period.startDate"
               :label="$t('StartDate')"
               prepend-inner-icon="event"
-              outline
+              show-header
               hide-details
-              @click:prepend-inner="menu1 = !menu1"
+              @prepend-inner="menu1 = !menu1"
             />
           </v-flex>
 
@@ -169,10 +161,10 @@
             xs4
             class="pb-0 pl-1"
           >
-            <v-text-field
+            <g-text-field
               v-model="period.startTime"
               :label="$t('Time')"
-              outline
+              show-header
               hide-details
             />
           </v-flex>
@@ -196,6 +188,7 @@
               <v-date-picker
                 v-model="period.startDate"
                 no-title
+                class="date-picker"
                 @input="menu1 = false"
               />
             </v-menu>
@@ -205,13 +198,13 @@
             xs8
             class="pb-0 pr-0"
           >
-            <v-text-field
+            <g-text-field
               v-model="period.endDate"
               :label="$t('EndDate')"
               prepend-inner-icon="event"
-              outline
+              show-header
               hide-details
-              @click:prepend-inner="menu2 = !menu2"
+              @prepend-inner="menu2 = !menu2"
             />
           </v-flex>
 
@@ -220,10 +213,10 @@
             xs4
             class="pb-0 pl-1"
           >
-            <v-text-field
+            <g-text-field
               v-model="period.endTime"
               :label="$t('Time')"
-              outline
+              show-header
               hide-details
             />
           </v-flex>
@@ -246,35 +239,31 @@
               <v-date-picker
                 v-model="period.endDate"
                 no-title
+                class="date-picker"
                 @input="menu2 = false"
               />
             </v-menu>
           </v-flex>
         </v-layout>
       </v-container>
-    </v-card>
-    <v-card flat>
-      <v-flex
-        xs12
-      >
-        <v-card-actions>
-          <v-btn
-            v-show="showDateRange"
-            color="primary"
-            @click="setDateRange"
-          >
-            {{ $t('Apply') }}
-          </v-btn>
-          <v-spacer />
-          <v-btn
-            color="blue darken-1"
-            flat
-            @click="reset"
-          >
-            {{ $t('Reset') }}
-          </v-btn>
-        </v-card-actions>
-      </v-flex>
+      
+      <v-card-actions>
+        <v-btn
+          v-show="showDateRange"
+          color="primary"
+          @click="setDateRange"
+        >
+          {{ $t('Apply') }}
+        </v-btn>
+        <v-spacer />
+        <v-btn
+          color="blue darken-1"
+          flat
+          @click="reset"
+        >
+          {{ $t('Reset') }}
+        </v-btn>
+      </v-card-actions>
     </v-card>
   </v-navigation-drawer>
 </template>
@@ -282,8 +271,17 @@
 <script>
 import moment from 'moment'
 import i18n from '@/plugins/i18n'
+import GTextField from './GTextField.vue'
+import GSelect from './GSelect.vue'
+import GCombobox from './GCombobox.vue'
+import GAutocomplete from './GAutocomplete.vue'
 
 export default {
+  components: {
+    GTextField,
+    GSelect,
+    GAutocomplete
+  },
   props: {
     value: {
       type: Boolean,

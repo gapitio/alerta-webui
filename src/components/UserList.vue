@@ -246,11 +246,11 @@
         </v-card>
       </v-form>
     </v-dialog>
-
-    <v-card>
+    <h1>
+      {{ $t('Users') }}
+    </h1>
+    <v-card class="section">
       <v-card-title class="title">
-        {{ $t('Users') }}
-        <v-spacer />
         <v-btn-toggle
           v-model="status"
           class="transparent"
@@ -282,14 +282,16 @@
         <v-spacer />
         <v-flex
           xs3
-          class="mr-3 pt-3"
+          class="mr-3"
         >
           <v-autocomplete
             v-model="wantRoles"
             :items="allowedRoles"
             :label="$t('Roles')"
             chips
+            solo
             multiple
+            hide-details
           >
             <template
               slot="selection"
@@ -311,6 +313,7 @@
             append-icon="search"
             :label="$t('Search')"
             single-line
+            solo
             hide-details
           />
         </v-flex>
@@ -321,7 +324,7 @@
         :items="users"
         :rows-per-page-items="rowsPerPageItems"
         :pagination.sync="pagination"
-        class="px-2"
+        class="g-table"
         :search="search"
         :custom-filter="customFilter"
         :loading="isLoading"

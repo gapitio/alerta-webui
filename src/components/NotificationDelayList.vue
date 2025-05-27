@@ -1,10 +1,9 @@
 <template>
   <div>
-    <v-card>
-      <v-card-title class="title">
-        {{ $t('NotificationDelays') }}
-      </v-card-title>
-
+    <h1>
+      {{ $t('NotificationDelays') }}
+    </h1>
+    <v-card class="section">
       <v-data-table
         :headers="computedHeaders"
         :items="notification_delays"

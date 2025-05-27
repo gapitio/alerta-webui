@@ -1,8 +1,17 @@
 <template>
   <v-form ref="form">
+    <h1>
+      {{ $t('Settings') }}
+      <v-btn
+        color="#475467"
+        @click="reset"
+      >
+        {{ $t('Reset') }}
+      </v-btn>
+    </h1>
     <v-card
       flat
-      class="pl-3"
+      class="section"
     >
       <v-card-title
         class="pb-0"
@@ -14,28 +23,26 @@
         </div>
       </v-card-title>
       <v-card-actions>
-        <v-radio-group
-          class="mt-0"
-        >
-          <v-checkbox
-            v-model="isDark"
-            :label="$t('DarkTheme')"
-            hide-details
-            class="my-0"
-          />
-          <v-checkbox
-            v-model="isPlaySounds"
-            :label="$t('PlaySounds')"
-            hide-details
-            class="my-0"
-          />
-        </v-radio-group>
+        <v-checkbox
+          v-model="isDark"
+          :label="$t('DarkTheme')"
+          hide-details
+          class="checkbox-toggle"
+          :class="{'checkbox-toggled': isDark}"
+        />
+        <v-checkbox
+          v-model="isPlaySounds"
+          :label="$t('PlaySounds')"
+          hide-details
+          class="checkbox-toggle"
+          :class="{'checkbox-toggled': isPlaySounds}"
+        />
       </v-card-actions>
     </v-card>
 
     <v-card
       flat
-      class="pl-3"
+      class="section"
     >
       <v-flex
         sm6
@@ -52,7 +59,7 @@
         </v-card-title>
         <v-card-actions>
           <v-layout column>
-            <v-select
+            <g-select
               v-model="isLanguages"
               :items="languages"
               :label="$t('Languages')"
@@ -64,7 +71,7 @@
     
     <v-card
       flat
-      class="pl-3"
+      class="section"
     >
       <v-flex
         sm6
@@ -81,26 +88,30 @@
         </v-card-title>
         <v-card-actions>
           <v-layout column>
-            <v-select
+            <g-select
               v-model="longDate"
+              show-header
               :items="computedDateFormats"
               :label="$t('LongDate')"
             />
 
-            <v-select
+            <g-select
               v-model="mediumDate"
+              show-header
               :items="computedDateFormats"
               :label="$t('MediumDate')"
             />
 
-            <v-select
+            <g-select
               v-model="shortTime"
+              show-header
               :items="computedTimeFormats"
               :label="$t('ShortTime')"
             />
 
-            <v-select
+            <g-select
               v-model="timezone"
+              show-header
               :items="timezoneOptions"
               :label="$t('DisplayMode')"
             />
@@ -111,7 +122,7 @@
 
     <v-card
       flat
-      class="pl-3"
+      class="section"
     >
       <v-flex
         sm6
@@ -127,28 +138,27 @@
           </div>
         </v-card-title>
         <v-card-actions>
-          <v-radio-group
-            class="mt-0"
-          >
-            <v-checkbox
-              v-model="showAllowedEnvs"
-              :label="$t('ShowAllowedEnvs')"
-              hide-details
-              class="my-0"
-            />
-            <v-checkbox
-              v-model="showNotesIcon"
-              :label="$t('ShowNotesIcon')"
-              :hint="$t('ShowNotesHint')"
-              persistent-hint
-              class="my-0"
-            />
-          </v-radio-group>
+          <v-checkbox
+            v-model="showAllowedEnvs"
+            :label="$t('ShowAllowedEnvs')"
+            hide-details
+            class="checkbox-toggle"
+            :class="{'checkbox-toggled': showAllowedEnvs}"
+          />
+          <v-checkbox
+            v-model="showNotesIcon"
+            :label="$t('ShowNotesIcon')"
+            hide-details
+            persistent-hint
+            class="checkbox-toggle"
+            :class="{'checkbox-toggled': showNotesIcon}"
+          />
         </v-card-actions>
         <v-card-actions>
           <v-layout column>
-            <v-select
+            <g-select
               v-model="fontFamily"
+              show-header
               :items="computedFontFamilies"
               :label="$t('Font')"
             />
@@ -177,48 +187,54 @@
               :tick-labels="fontWeightLabels"
             />
 
-            <v-combobox
+            <g-combobox
               v-model.number="rowsPerPage"
+              show-header
               :items="rowsPerPageItems"
               :label="$t('PageRows')"
               type="number"
               :suffix="$t('rows')"
             />
 
-            <v-combobox
+            <g-combobox
               v-model.number="valueWidth"
+              show-header
               :items="valueWidthOptions"
               :label="$t('ValueWidth')"
               type="number"
               suffix="px"
             />
 
-            <v-combobox
+            <g-combobox
               v-model.number="textWidth"
+              show-header
               :items="textWidthOptions"
               :label="$t('DescriptionWidth')"
               type="number"
               suffix="px"
             />
 
-            <v-combobox
+            <g-combobox
               v-model.number="refreshInterval"
+              show-header
               :items="refreshOptions"
               :label="$t('RefreshInterval')"
               type="number"
               :suffix="$t('seconds')"
             />
 
-            <v-combobox
+            <g-combobox
               v-model.number="ackTimeout"
+              show-header
               :items="ackTimeoutOptions"
               :label="$t('AckTimeout')"
               type="number"
               :suffix="$t('minutes')"
             />
 
-            <v-combobox
+            <g-combobox
               v-model.number="shelveTimeout"
+              show-header
               :items="shelveTimeoutOptions"
               :label="$t('ShelveTimeout')"
               type="number"
@@ -231,7 +247,7 @@
 
     <v-card
       flat
-      class="pl-3"
+      class="section"
     >
       <v-flex
         sm6
@@ -247,45 +263,25 @@
           </div>
         </v-card-title>
         <v-card-actions>
-          <v-radio-group
-            class="mt-0"
-          >
-            <v-checkbox
-              v-model="blackoutStartNow"
-              :label="$t('BlackoutStartNow')"
-              hide-details
-              class="my-0"
-            />
-          </v-radio-group>
+          <v-checkbox
+            v-model="blackoutStartNow"
+            :label="$t('BlackoutStartNow')"
+            hide-details
+            :class="{'checkbox-toggled': blackoutStartNow}"
+            class="my-0 checkbox-toggle"
+          />
         </v-card-actions>
         <v-card-actions>
           <v-layout column>
-            <v-combobox
+            <g-combobox
               v-model.number="blackoutPeriod"
+              show-header
               :items="blackoutPeriodOptions"
               :label="$t('BlackoutPeriod')"
               type="number"
               :suffix="$t('hours')"
             />
           </v-layout>
-        </v-card-actions>
-      </v-flex>
-    </v-card>
-
-    <v-card flat>
-      <v-flex
-        sm6
-        md4
-      >
-        <v-card-actions>
-          <v-spacer />
-          <v-btn
-            color="blue darken-1"
-            flat
-            @click="reset"
-          >
-            {{ $t('Reset') }}
-          </v-btn>
         </v-card-actions>
       </v-flex>
     </v-card>
@@ -297,7 +293,14 @@ import moment from 'moment'
 import i18n from '@/plugins/i18n'
 import debounce from 'lodash/debounce'
 
+import GSelect from '@/components/GSelect.vue'
+import GCombobox from '@/components/GCombobox.vue'
+
 export default {
+  components: {
+    GSelect,
+    GCombobox,
+  },
   data: vm => ({
     mediumDateFormats: [
       'l',
