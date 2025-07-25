@@ -1,24 +1,27 @@
 import NotificationHistoryApi from '@/services/api/notificationHistory.service'
+import type { State, Getters, Mutations, Actions } from '../types/notificationHistory-types'
+import type { ActionTree } from 'vuex'
+import type { State as RootState } from '../types'
 
 const namespaced = true
 
-const state = {
+const state: State = {
   isLoading: false,
 
   notification_history: [],
 
   sent: [true, false],
-  query: {},
+  query: {q: ''},
   pagination: {
     page: 1,
-    rowsPerPage: 20,
-    sortBy: 'sent_time',
+    itemsPerPage: 20,
+    sortBy: [{key: 'sent_time'}],
     descending: true,
-    rowsPerPageItems: [10, 20, 50, 100, 200]
+    itemsPerPageOptions: [10, 20, 50, 100, 200]
   }
 }
 
-const mutations = {
+const mutations: Mutations = {
   SET_LOADING(state) {
     state.isLoading = true
   },
@@ -34,7 +37,7 @@ const mutations = {
     state.isLoading = false
     state.notification_history = notificationHistory
     state.pagination.totalItems = total
-    state.pagination.rowsPerPage = pageSize
+    state.pagination.itemsPerPage = pageSize
   },
   RESET_LOADING(state) {
     state.isLoading = false
@@ -44,21 +47,21 @@ const mutations = {
   }
 }
 
-const actions = {
+const actions: Actions & ActionTree<State, RootState> = {
   getNotificationHistory({commit, state}) {
     commit('SET_LOADING')
 
     const params = new URLSearchParams(state.query)
 
     //add server-side sent status
-    params.append('sent', state.sent)
+    params.append('sent', state.sent.join(','))
 
     // add server-side paging
-    params.append('page', state.pagination.page)
-    params.append('page-size', state.pagination.rowsPerPage)
+    params.append('page', state.pagination.page.toString())
+    params.append('page-size', state.pagination.itemsPerPage.toString())
 
     // add server-side sort
-    params.append('sort-by', (state.pagination.descending ? '-' : '') + state.pagination.sortBy)
+    // params.append('sort-by', (state.pagination.descending ? '-' : '') + state.pagination.sortBy)
 
     return NotificationHistoryApi.getNotificationHistory(params)
       .then(({notificationHistory: notificationHistory, total, pageSize}) =>
@@ -80,7 +83,7 @@ const actions = {
   }
 }
 
-const getters = {
+const getters: Getters = {
   pagination: state => {
     return state.pagination
   },

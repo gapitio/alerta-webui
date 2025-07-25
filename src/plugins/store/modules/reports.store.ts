@@ -1,10 +1,13 @@
 import AlertsApi from '@/services/api/alert.service'
+import type { State, Mutations, Actions } from '../types/reports-types'
+import type { ActionTree } from 'vuex'
+import type { State as RootState } from '../types'
 
 import moment from 'moment'
 
 const namespaced = true
 
-const state = {
+const state: State = {
   offenders: [],
   flapping: [],
   standing: [],
@@ -12,21 +15,23 @@ const state = {
 
   filter: {
     environment: null,
-    severity: null,
+    severity: [],
     status: ['open', 'ack'],
-    customer: null,
-    service: null,
-    group: null,
-    dateRange: [null, null]
+    customer: [],
+    service: [],
+    group: [],
+    dateRange: [null, null],
   },
+
+  query: {q: ''},
 
   pagination: {
     page: 1,
-    rowsPerPage: 10
+    itemsPerPage: 10
   }
 }
 
-const mutations = {
+const mutations: Mutations = {
   SET_TOP_OFFENDERS(state, top10) {
     state.offenders = top10
   },
@@ -40,14 +45,14 @@ const mutations = {
     state.filter = Object.assign({}, state.filter, filter)
   },
   SET_PAGE_SIZE(state, rowsPerPage) {
-    state.pagination.rowsPerPage = rowsPerPage
+    state.pagination.itemsPerPage = rowsPerPage
   },
   SET_REPORT(state, file) {
     state.report = file
   }
 }
 
-function getParams(state) {
+function getParams(state: State) {
   // get "lucene" query params (?q=)
   const params = new URLSearchParams(state.query)
 
@@ -60,36 +65,40 @@ function getParams(state) {
   state.filter.group && state.filter.group.map(g => params.append('group', g))
 
   // add server-side paging
-  params.append('page', state.pagination.page)
-  params.append('page-size', state.pagination.rowsPerPage)
+  params.append('page', state.pagination.page.toString())
+  params.append('page-size', state.pagination.itemsPerPage.toString())
 
   // apply any date/time filters
-  if (state.filter.dateRange[0] > 0) {
-    params.append(
-      'from-date',
-      moment.unix(state.filter.dateRange[0]).toISOString() // epoch seconds
-    )
-  } else if (state.filter.dateRange[0] < 0) {
-    params.append(
-      'from-date',
-      moment().utc().add(state.filter.dateRange[0], 'seconds').toISOString() // seconds offset
-    )
+  if (state.filter.dateRange[0] !== null) {
+    if (state.filter.dateRange[0] > 0) {
+        params.append(
+          'from-date',
+          moment.unix(state.filter.dateRange[0]).toISOString() // epoch seconds
+        )
+      } else if (state.filter.dateRange[0] < 0) {
+        params.append(
+          'from-date',
+          moment().utc().add(state.filter.dateRange[0], 'seconds').toISOString() // seconds offset
+        )
+      }
   }
-  if (state.filter.dateRange[1] > 0) {
-    params.append(
-      'to-date',
-      moment.unix(state.filter.dateRange[1]).toISOString() // epoch seconds
-    )
-  } else if (state.filter.dateRange[1] < 0) {
-    params.append(
-      'to-date',
-      moment().utc().add(state.filter.dateRange[1], 'seconds').toISOString() // seconds offset
-    )
+  if (state.filter.dateRange[1] !== null) {
+    if (state.filter.dateRange[1] > 0) {
+      params.append(
+        'to-date',
+        moment.unix(state.filter.dateRange[1]).toISOString() // epoch seconds
+      )
+    } else if (state.filter.dateRange[1] < 0) {
+      params.append(
+        'to-date',
+        moment().utc().add(state.filter.dateRange[1], 'seconds').toISOString() // seconds offset
+      )
+    }
   }
   return params
 }
 
-const actions = {
+const actions: Actions & ActionTree<State, RootState> = {
   getTopOffenders({commit, state}) {
     const params = getParams(state)
     return AlertsApi.getTop10Count(params).then(({top10}) => commit('SET_TOP_OFFENDERS', top10))

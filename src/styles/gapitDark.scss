@@ -1,0 +1,70 @@
+$primary-600: #1570EF;
+
+$surface-primary: #1D232A;
+$surface-tertiary: #161719;
+$border-primary: #344054;
+$border-secondary: $border-primary;
+$link-active: $primary-600;
+$text-disabled: #667085;
+
+
+$critical-color: #A33129;
+$critical-chip-color: #F04438;
+$major-color: #914C30;
+$major-chip-color: #FB6514;
+$normal-color: #193B2D;
+$normal-chip-color: #12B76A;
+$warning-color: #374967;
+$warning-chip-color: #2E90FA;
+$minor-chip-color: #FFD320;
+$minor-color: #736426;
+$severity-color: #1D2939;
+
+.v-theme--gapitDark .sidebar {
+  border-color: $border-secondary;
+}
+
+.v-theme--gapitDark .severity.critical {
+  background-color: $critical-color;
+}
+.v-theme--gapitDark .severity.major {
+  background-color: $major-color;
+}
+.v-theme--gapitDark .severity.normal {
+  background-color: $normal-color;
+}
+.v-theme--gapitDark .severity.warning {
+  background-color: $warning-color;
+}
+.v-theme--gapitDark .severity.minor {
+  background-color: $minor-color;
+}
+.v-theme--gapitDark .severity {
+  background-color: $severity-color;
+}
+
+.v-theme--gapitDark .chip.critical {
+  background-color: $critical-chip-color;
+}
+.v-theme--gapitDark .chip.major {
+  background-color: $major-chip-color;
+}
+.v-theme--gapitDark .chip.normal {
+  background-color: $normal-chip-color;
+}
+.v-theme--gapitDark .chip.warning {
+  background-color: $warning-chip-color;
+}
+.v-theme--gapitDark .chip.minor {
+  background-color: $minor-chip-color;
+  color: black;
+}
+
+.v-theme--gapitDark .chip {
+  color: $surface-primary;
+  background-color: #98A2B3;
+}
+
+.v-theme--gapitDark .table-column {
+  border-color: $surface-primary !important;
+}

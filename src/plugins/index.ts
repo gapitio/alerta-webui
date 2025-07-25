@@ -17,7 +17,7 @@ import {registerVueAuth} from '@/services/auth'
 // Types
 import type { App } from 'vue'
 import type { VueAuthenticateFix } from './store/modules/auth.store'
-
+import {makeInterceptors} from '@/services/interceptors'
 
 
 export function registerPlugins (app: App) {
@@ -30,9 +30,13 @@ export function registerPlugins (app: App) {
   const config = app.config.globalProperties.$config 
   registerVueAuth(app)
   axios.defaults.baseURL = config.endpoint
+  const interceptors = makeInterceptors(router, store)
+  axios.interceptors.request.use(interceptors.requestIdHeader)
+  axios.interceptors.response.use(undefined, interceptors.interceptErrors)
+  axios.interceptors.response.use(undefined, interceptors.redirectToLogin)
   store.dispatch('updateConfig', config)
   store.dispatch('alerts/setFilter', config.filter)
-  store.registerModule('auth', makeStore(app.config.globalProperties.$auth as VueAuthenticateFix))  
+  store.registerModule('auth', makeStore(app.config.globalProperties.$auth as VueAuthenticateFix))
 }
 registerBefore(store)
 

@@ -1,15 +1,18 @@
 import PermsApi from '@/services/api/perms.service'
+import type { State, Getters, Actions, Mutations } from '../types/perms-types'
+import type { ActionTree } from 'vuex'
+import type { State as RootState } from '../types'
 
 const namespaced = true
 
-const state = {
+const state: State = {
   isLoading: false,
 
   permissions: [],
   scopes: []
 }
 
-const mutations = {
+const mutations: Mutations = {
   SET_LOADING(state) {
     state.isLoading = true
   },
@@ -26,7 +29,7 @@ const mutations = {
   }
 }
 
-const actions = {
+const actions: Actions & ActionTree<State, RootState> = {
   getPerms({commit}) {
     commit('SET_LOADING')
     return PermsApi.getPerms({})
@@ -55,7 +58,7 @@ const actions = {
   }
 }
 
-const getters = {
+const getters: Getters = {
   roles: state => {
     return state.permissions.map(p => p.match)
   }

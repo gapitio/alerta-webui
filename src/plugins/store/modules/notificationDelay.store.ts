@@ -1,22 +1,25 @@
 import NotificationDelayApi from '@/services/api/notificationDelay.service'
+import type { State, Getters, Actions, Mutations } from '../types/notificationDelay-types'
+import type { ActionTree } from 'vuex'
+import type { State as RootState } from '../types'
 
 const namespaced = true
 
-const state = {
+const state: State = {
   isLoading: false,
 
   notification_delays: [],
 
   pagination: {
     page: 1,
-    rowsPerPage: 15,
-    sortBy: 'delay_time',
+    itemsPerPage: 15,
+    sortBy: [{key: 'delay_time'}],
     descending: true,
-    rowsPerPageItems: [10, 15, 30, 50, 100, 200]
+    itemsPerPageOptions: [10, 15, 30, 50, 100, 200]
   }
 }
 
-const mutations = {
+const mutations: Mutations = {
   SET_LOADING(state) {
     state.isLoading = true
   },
@@ -24,7 +27,7 @@ const mutations = {
     state.isLoading = false
     state.notification_delays = notificationDelays
     state.pagination.totalItems = total
-    state.pagination.rowsPerPage = pageSize
+    state.pagination.itemsPerPage = pageSize
   },
   RESET_LOADING(state) {
     state.isLoading = false
@@ -34,14 +37,14 @@ const mutations = {
   }
 }
 
-const actions = {
+const actions: Actions & ActionTree<State, RootState> = {
   getNotificationDelays({commit, state}) {
     commit('SET_LOADING')
     const params = new URLSearchParams()
 
     // add server-side paging
-    params.append('page', state.pagination.page)
-    params.append('page-size', state.pagination.rowsPerPage)
+    params.append('page', state.pagination.page.toString())
+    params.append('page-size', state.pagination.itemsPerPage.toString())
 
     // add server-side sort
     params.append('sort-by', (state.pagination.descending ? '-' : '') + state.pagination.sortBy)
@@ -62,7 +65,7 @@ const actions = {
   }
 }
 
-const getters = {
+const getters: Getters = {
   pagination: state => {
     return state.pagination
   }

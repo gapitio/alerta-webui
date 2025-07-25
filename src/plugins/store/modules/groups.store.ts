@@ -1,17 +1,24 @@
 import GroupsApi from '@/services/api/group.service'
 import i18n from '@/plugins/i18n'
+import type { State, Mutations, Actions } from '../types/groups-types'
+import type { ActionTree } from 'vuex'
+import type { State as RootState } from '../types'
 
 const namespaced = true
 
-const state = {
+const state: State = {
   isLoading: false,
 
   groups: [],
-  group: {},
+  group: {
+    id: '',
+    name: '',
+    text: ''
+  },
   users: []
 }
 
-const mutations = {
+const mutations: Mutations = {
   SET_LOADING(state) {
     state.isLoading = true
   },
@@ -34,7 +41,7 @@ const mutations = {
   }
 }
 
-const actions = {
+const actions: Actions & ActionTree<State, RootState> = {
   getGroups({commit}) {
     commit('SET_LOADING')
     return GroupsApi.getGroups({})

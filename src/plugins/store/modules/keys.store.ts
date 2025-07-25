@@ -1,20 +1,19 @@
 import KeysApi from '@/services/api/key.service'
+import type { State, Mutations, Actions } from '../types/keys-types'
+import type { ActionTree } from 'vuex'
+import type { State as RootState } from '../types'
 
 const namespaced = true
 
-const state = {
+const state: State = {
   isLoading: false,
 
   keys: []
 }
 
-const mutations = {
+const mutations: Mutations = {
   SET_LOADING(state) {
     state.isLoading = true
-  },
-  SET_USERS(state, users) {
-    state.isLoading = false
-    state.users = users
   },
   SET_KEYS(state, keys) {
     state.isLoading = false
@@ -25,7 +24,7 @@ const mutations = {
   }
 }
 
-const actions = {
+const actions: Actions & ActionTree<State, RootState> = {
   getKeys({commit}) {
     commit('SET_LOADING')
     return KeysApi.getKeys({})

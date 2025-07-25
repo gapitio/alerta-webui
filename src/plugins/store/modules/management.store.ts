@@ -1,23 +1,28 @@
 import ManagementApi from '@/services/api/management.service'
+import type { State, Mutations, Actions } from '../types/management-types'
+import type { ActionTree } from 'vuex'
+import type { State as RootState } from '../types'
 
 const namespaced = true
 
-const state = {
-  manifest: null,
+const state: State = {
+  manifest: {
+    build: '',
+    date: '',
+    release: '',
+    revision: '',
+  },
 
-  healthcheck: null,
+  healthcheck: '',
 
-  application: null,
+  application: '',
   metrics: [],
-  time: null,
-  uptime: null,
-  version: null
+  time: 0,
+  uptime: 0,
+  version: '',
 }
 
-const mutations = {
-  SET_LOADING(state) {
-    state.isLoading = true
-  },
+const mutations: Mutations = {
   SET_MANIFEST(state, manifest) {
     state.manifest = manifest
   },
@@ -33,7 +38,7 @@ const mutations = {
   }
 }
 
-const actions = {
+const actions: Actions & ActionTree<State, RootState> = {
   getManifest({commit}) {
     return ManagementApi.manifest().then(manifest => commit('SET_MANIFEST', manifest))
   },

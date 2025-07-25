@@ -1,30 +1,35 @@
 import NotificationGroupApi from '@/services/api/notificationGroup.service'
+import type { State, Getters, Actions, Mutations } from '../types/notificationGroup-types'
+import type { ActionTree } from 'vuex'
+import type { State as RootState } from '../types'
 
 const namespaced = true
 
-const state = {
+const state: State = {
   isLoading: false,
 
-  notificationGroups: [],
+  items: [],
+
+  query:{q : ''},
 
   pagination: {
     page: 1,
-    rowsPerPage: 20,
-    sortBy: 'name',
+    itemsPerPage: 20,
+    sortBy: [{key: 'name'}],
     descending: true,
-    rowsPerPageItems: [10, 20, 50, 100, 200]
+    itemsPerPageOptions: [10, 20, 50, 100, 200]
   }
 }
 
-const mutations = {
+const mutations: Mutations = {
   SET_LOADING(state) {
     state.isLoading = true
   },
   SET_NOTIFICATION_GROUP(state, [notificationGroups, total, pageSize]) {
     state.isLoading = false
-    state.notificationGroups = notificationGroups
+    state.items = notificationGroups
     state.pagination.totalItems = total
-    state.pagination.rowsPerPage = pageSize
+    state.pagination.itemsPerPage = pageSize
   },
   RESET_LOADING(state) {
     state.isLoading = false
@@ -34,18 +39,18 @@ const mutations = {
   }
 }
 
-const actions = {
+const actions: Actions & ActionTree<State, RootState> = {
   getNotificationGroups({commit, state}) {
     commit('SET_LOADING')
 
     const params = new URLSearchParams(state.query)
 
     // add server-side paging
-    params.append('page', state.pagination.page)
-    params.append('page-size', state.pagination.rowsPerPage)
+    params.append('page', state.pagination.page.toString())
+    params.append('page-size', state.pagination.itemsPerPage.toString())
 
     // add server-side sort
-    params.append('sort-by', (state.pagination.descending ? '-' : '') + state.pagination.sortBy)
+    // params.append('sort-by', (state.pagination.descending ? '-' : '') + state.pagination.sortBy)
 
     return NotificationGroupApi.getNotificationGroups(params)
       .then(({notificationGroups, total, pageSize}) =>
@@ -53,8 +58,8 @@ const actions = {
       )
       .catch(() => commit('RESET_LOADING'))
   },
-  createNotificationGroup({dispatch}, notificationrule) {
-    return NotificationGroupApi.createNotificationGroup(notificationrule).then(() => {
+  createNotificationGroup({dispatch}, notificationGroup) {
+    return NotificationGroupApi.createNotificationGroup(notificationGroup).then(() => {
       dispatch('getNotificationGroups')
     })
   },
@@ -73,7 +78,7 @@ const actions = {
   }
 }
 
-const getters = {
+const getters: Getters = {
   pagination: state => {
     return state.pagination
   }

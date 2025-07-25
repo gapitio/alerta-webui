@@ -1,19 +1,18 @@
-export default (store) => {
-  return function (el, binding) {
-    if (!store.getters.getConfig('auth_required')) {
-      return false
+import type { Store } from "@/plugins/store/types"
+import type { VueElement } from "vue"
+
+export function checkPerms(store: Store, perm: string) {
+  if (!store.getters.getConfig('auth_required')) {
+      return true
     }
     const allowReadonly = store.getters.getConfig('allow_readonly')
     const readonlyScopes = store.getters.getConfig('readonly_scopes')
-    const  authenticated = allowReadonly || store.state.auth.isAuthenticated
-
-    
+    const authenticated = allowReadonly || store.state.auth.isAuthenticated
     if (!authenticated) {
-      return false
+      return true
     }
 
-    // helper function
-    function isInScope(want: string, have: string): boolean {
+    function isInScope(want: string, have: string[]): boolean {
       if (have.includes(want) || have.includes(want.split(':')[0])) {
         return true
       } else if (want.startsWith('read')) {
@@ -24,15 +23,20 @@ export default (store) => {
       return false
     }
 
-    const perm = binding.value
     const scopes = authenticated ? store.getters['auth/scopes'] : readonlyScopes
-    const action = binding.modifiers.disable ? 'disable' : 'hide'
 
     if (!perm) {
-      return false
+      return true
     }
 
-    if (!isInScope(perm, scopes)) {
+    return isInScope(perm, scopes)
+
+}
+
+export default (store: Store) => {
+  return function (el: VueElement, binding: any) {
+    const action = binding.modifiers.disable ? 'disable' : 'hide'
+    if (!checkPerms(store, binding.value)) {
       if (action === 'disable') {
         el.setAttribute('disabled', '')
       } else {

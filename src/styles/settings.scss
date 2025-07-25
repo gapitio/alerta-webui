@@ -5,6 +5,119 @@
  */
 
 // https://vuetifyjs.com/features/sass-variables/`
-// @use 'vuetify/settings' with (
-//   $color-pack: false
-// );
+@use 'vuetify/settings' with (
+  $color-pack: false,
+  $body-font-family: (Poppins, 'Roboto', sans-serif),
+  $tab-slider-size: 4px,
+  $font-size-root: 14px,
+  $switch-inset-thumb-height: 16px,
+  $switch-inset-thumb-width: 16px,
+  $switch-inset-track-height: 20px,
+  $switch-inset-track-width: 40px,
+  $table-row-height: 57px,
+  $typography: 
+  (
+    'body-2': (
+      'size': 13px,
+      'weight': 400,
+      'line-height': 1.425,
+      'letter-spacing': .0178571429em,
+      'text-transform': none
+    ),
+    'button': (
+      'size': 13px,
+      'weight': 500,
+      'line-height': 2.6,
+      'letter-spacing': .0892857143em,
+      'text-transform': uppercase
+    ),
+  )
+);
+
+$overlay-multiplier: 2;
+
+@use 'gapitDark';
+@use 'gapitLight';
+
+.big-font {
+  font-size: 16px;
+}
+
+.header {
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.secondary-text {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.hover-lighten:hover {
+  filter: brightness(0.87);
+}
+
+.square-btn-icon {
+  border-radius: 4px;
+  margin-left: 16px;
+}
+
+.v-btn:hover > .v-btn__overlay {
+  opacity: calc(var(--v-hover-opacity) * $overlay-multiplier);
+}
+
+.v-btn:focus-visible > .v-btn__overlay {
+  opacity: calc(var(--v-focus-opacity) * $overlay-multiplier);
+}
+
+.v-ripple__container {
+  opacity: 0.3;
+}
+
+.header {
+  font-weight: 500;
+}
+
+.label {
+  align-self: center;
+  padding-right: 0px;
+  font-size: 13px;
+  font-weight: 400;
+}
+
+.sidebar {
+  border: 1px solid;
+}
+
+.table.v-table th, td {
+  padding: 0px 5px !important;
+}
+
+.table {
+  --v-border-opacity: 0.4;
+}
+
+.dialog-card-actions {
+  border-top: 1px solid;
+  text-align: center;
+  justify-content: center !important;
+}
+
+.table-column {
+  border-bottom: 1px solid !important;
+}
+
+.no-cap-btn {
+  text-transform: none;
+}
+
+.bold {
+  font-weight: 500;
+}
+
+.chip {
+  text-transform: capitalize;
+  font-weight: 500;
+  font-size: 13px !important;
+}
+

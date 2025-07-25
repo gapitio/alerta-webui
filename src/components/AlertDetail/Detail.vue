@@ -9,21 +9,24 @@
     border="top"
     variant="tonal"
     density="compact"
-    @click:close="deleteNote(item.id, note.id)"
+    @click:close="deleteNote(item?.id!, note.id)"
   >
     <template #title>
-      <span> <b>{{ note.user || 'Anonymous' }}</b> {{ $t('addedNoteOn') }}</span>
+      <span> <b>{{ note.user || 'Anonymous' }}</b> {{ t('addedNoteOn') }}</span>
       &nbsp;
       <div>
         <b><date-time
           :value="note.updateTime || note.createTime"
           format="longDate"
-        /></b> ({{ $filters.timeago(note.updateTime || note.createTime) }})<br>
+        /></b> ({{ $filters.until(note.updateTime || note.createTime) }})<br>
       </div>
     </template>
   </v-alert>
 
-  <v-container fluid v-if="item.id">
+  <v-container
+    v-if="item?.id"
+    fluid
+  >
     <v-row
       v-for="detail in alertDetails"
       :key="detail.text"
@@ -42,17 +45,36 @@
         <v-chip
           label
           size="small"
-          :color="severityColor(item.previousSeverity)"
+          class="chip"
+          :class="[item.previousSeverity]"
         >
-          {{ $filters.capitalize(item.previousSeverity) }}
+          {{ $filters.capitalize(item?.previousSeverity) }}
         </v-chip>
         &nbsp;&rarr;&nbsp;
         <v-chip
           label
           size="small"
-          :color="severityColor(item.severity)"
+          class="chip"
+          :class="[item.severity]"
         >
-          {{ $filters.capitalize(item.severity) }}
+          {{ $filters.capitalize(item?.severity) }}
+        </v-chip>
+      </v-col>
+      <v-col 
+        v-else-if="detail.value == 'tags'"
+        cols="9"
+      >
+        <v-chip
+          v-for="tag in item.tags"
+          :key="tag"
+          label
+          size="x-small"
+          class="chip"
+          style="margin-right: 10px;padding-left: 0px;"
+          @click="queryBy(detail.value, tag)"
+        >
+          <v-icon icon="label" />
+          {{ $filters.capitalize(tag) }}
         </v-chip>
       </v-col>
       <v-col 
@@ -64,14 +86,13 @@
           :value="item[detail.value]"
           format="longDate"
         />
-        ({{ $filters.timeago(item[detail.value]) }})<br>
+        ({{ $filters.until(item[detail.value as 'createTime' | 'lastReceiveTime' | 'receiveTime']) }})<br>
       </v-col>
       <v-col 
         v-else-if="detail.searchable"
         cols="9"
       >
         <div v-if="typeof item[detail.value] === 'object'">
-          
           <v-row
             style="width:fit-content;"
             dense
@@ -104,12 +125,12 @@
     </v-row>
     <v-row dense>
       <v-col>
-        <span> {{ $t('Attributes') }}</span>
+        <span> {{ t('Attributes') }}</span>
       </v-col>
     </v-row>
     <v-divider />
     <v-row
-      v-for="(value, key) in item.attributes"
+      v-for="(value, key) in item?.attributes"
       :key="key"
       dense
     >  
@@ -130,128 +151,49 @@
   </v-container>
 </template>
 
-<script lang="ts">
-import debounce from 'lodash/debounce'
+<script lang="ts" setup>
+import { computed, ref, type Ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+import type { Store } from '@/plugins/store/types'
+import { useRouter } from 'vue-router'
+import { useStore } from 'vuex'
+import type { Alert } from '@/plugins/store/types/alerts-types'
 
-export default {
-  components: {
-  },
-  data: (a) => ({
-    sheet: false,
-    active: null,
-    pagination: {
-      rowsPerPage: 10,
-      sortBy: 'updateTime',
-      descending: true
-    },
-    alertDetails: [
-      {text: a.$t('AlertId'), value: 'id'},
-      {text: a.$t('LastReceiveAlertId'), value: 'lastReceiveId'},
-      {text: a.$t('CreateTime'), value: 'createTime'},
-      {text: a.$t('ReceiveTime'), value: 'receiveTime'},
-      {text: a.$t('LastReceiveTime'), value: 'lastReceiveTime'},
-      {text: a.$t('Service'), value: 'service', searchable: true},
-      {text: a.$t('Environment'), value: 'environment', searchable: true},
-      {text: a.$t('Resource'), value: 'resource', searchable: true},
-      {text: a.$t('Event'), value: 'event', searchable: true},
-      {text: a.$t('Correlate'), value: 'correlate', searchable: true},
-      {text: a.$t('Group'), value: 'group', searchable: true},
-      {text: a.$t('Severity'), value: 'severity'},
-      {text: a.$t('Status'), value: 'status'},
-      {text: a.$t('Value'), value: 'value'},
-      {text: a.$t('Text'), value: 'text'},
-      {text: a.$t('TrendIndication'), value: 'trendIndication'},
-      {text: a.$t('Timeout'), value: 'timeout'},
-      {text: a.$t('Type'), value: 'type'},
-      {text: a.$t('DuplicateCount'), value: 'duplicateCount'},
-      {text: a.$t('Repeat'), value: 'repeat'},
-      {text: a.$t('Origin'), value: 'origin', searchable: true},
-      {text: a.$t('Tags'), value: 'tags', searchable: true},
-    ],
-    copyIconText: a.$t('Copy')
-  }),
-  computed: {
-    item() {
-      return this.$store.state.alerts.alert
-    },
-    history() {
-      return this.item.history
-        ? this.item.history.map((h, index) => ({ index: index, ...h }))
-        : []
-    },
-    notes() {
-      return this.$store.state.alerts.notes
-    },
-    statusNote() {
-      return this.history.filter(h => h.type != 'note' && h.status == this.item.status).pop()
-    },
-    ackTimeout() {
-      return this.$store.getters.getPreference('ackTimeout')
-    },
-    shelveTimeout() {
-      return this.$store.getters.getPreference('shelveTimeout')
-    },
-    username() {
-      return this.$store.getters['auth/getUsername']
-    },
-    refresh() {
-      return this.$store.state.refresh
-    }
-  },
-  methods: {
-    haveDeleteScope(){
-      const scopes = this.$store.getters['auth/scopes']
-      if (this.$config.delete_alert_scope_enforced) return scopes.includes('admin') || scopes.includes('admin:alerts') || scopes.includes('delete:alerts')
-      else return scopes.includes('admin') || scopes.includes('admin:alerts') || scopes.includes('write') || scopes.includes('write:alerts') || scopes.includes('delete:alerts')
-    },
-    isAlertAlarmModel(){
-      return !this.$config.alarm_model.name.includes('ISA 18')
-    },
-    severityColor(severity) {
-      const config = this.$store.getters.getConfig('colors')
-      return config.severity[severity]
-    },
-    isOpen(status) {
-      return status == 'open' || status == 'NORM' || status == 'UNACK' || status == 'RTNUN' || status == 'unack'
-    },
-    isWatched(tags) {
-      const tag = `watch:${this.username}`
-      return tags ? tags.indexOf(tag) > -1 : false
-    },
-    isAcked(status) {
-      return status == 'ack' || status == 'ACKED'
-    },
-    isShelved(status) {
-      return status == 'shelved' || status == 'SHLVD'
-    },
-    isClosed(status) {
-      return status == 'closed'
-    },
-    deleteNote(alertId, noteId) {
-      this.$store.dispatch('alerts/deleteNote', [alertId, noteId])
-    },
-    queryBy(attribute, value) {
-      this.$router.push({ path: "/alerts", query: {q: `${attribute}:${value}`} })  // double-quotes (") around value mean exact match
-    },
-    clipboardCopy(item) {
-      this.copyIconText = this.$t('Copied')
+const store: Store = useStore()
+const router = useRouter()
+const { t } = useI18n()
 
-      const renderedText = this.$config.clipboard_template
+const alertDetails: Ref<{text: string, value: keyof Alert, searchable?: boolean}[]> = ref([
+  {text: t('AlertId'), value: 'id'},
+  {text: t('LastReceiveAlertId'), value: 'lastReceiveId'},
+  {text: t('CreateTime'), value: 'createTime'},
+  {text: t('ReceiveTime'), value: 'receiveTime'},
+  {text: t('LastReceiveTime'), value: 'lastReceiveTime'},
+  {text: t('Service'), value: 'service', searchable: true},
+  {text: t('Environment'), value: 'environment', searchable: true},
+  {text: t('Resource'), value: 'resource', searchable: true},
+  {text: t('Event'), value: 'event', searchable: true},
+  {text: t('Correlate'), value: 'correlate', searchable: true},
+  {text: t('Group'), value: 'group', searchable: true},
+  {text: t('Severity'), value: 'severity'},
+  {text: t('Status'), value: 'status'},
+  {text: t('Value'), value: 'value'},
+  {text: t('Text'), value: 'text'},
+  {text: t('TrendIndication'), value: 'trendIndication'},
+  {text: t('Timeout'), value: 'timeout'},
+  {text: t('Type'), value: 'type'},
+  {text: t('DuplicateCount'), value: 'duplicateCount'},
+  {text: t('Repeat'), value: 'repeat'},
+  {text: t('Origin'), value: 'origin', searchable: true},
+  {text: t('Tags'), value: 'tags', searchable: true},
+])
 
-      const text = JSON.stringify(item, null, 4)
-      const textarea = document.createElement('textarea')
+const item = computed(() => store.state.alerts.alert)
+const notes = computed(() => store.state.alerts.notes)
 
-      textarea.textContent = renderedText || text
-      document.body.appendChild(textarea)
-      textarea.select()
-      document.execCommand('copy')
-      document.body.removeChild(textarea)
-      setTimeout(() => {
-        this.copyIconText = this.$t('Copy')
-      }, 2000)
-    }
-  }
-}
+
+const queryBy = (attribute: string, value: any) => router.push({ path: "/alerts", query: {q: `${attribute}:${value}`} })
+const deleteNote = (alertId: string, noteId: string) => store.dispatch('alerts/deleteNote', [alertId, noteId])
 </script>
 
 <style>

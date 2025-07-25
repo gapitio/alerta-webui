@@ -1,14 +1,17 @@
 import BlackoutsApi from '@/services/api/blackout.service'
+import type { State, Mutations, Actions } from '../types/blackout-types'
+import type { ActionTree } from 'vuex'
+import type { State as RootState } from '../types'
 
 const namespaced = true
 
-const state = {
+const state: State = {
   isLoading: false,
 
   blackouts: []
 }
 
-const mutations = {
+const mutations: Mutations = {
   SET_LOADING(state) {
     state.isLoading = true
   },
@@ -21,7 +24,7 @@ const mutations = {
   }
 }
 
-const actions = {
+const actions: Actions & ActionTree<State, RootState> = {
   getBlackouts({commit}) {
     commit('SET_LOADING')
     return BlackoutsApi.getBlackouts({})

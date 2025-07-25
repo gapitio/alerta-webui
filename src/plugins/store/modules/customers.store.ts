@@ -1,14 +1,17 @@
 import CustomersApi from '@/services/api/customer.service'
+import type { State, Mutations, Actions, Getters } from '../types/customer-types'
+import type { ActionTree } from 'vuex'
+import type { State as RootState } from '../types'
 
 const namespaced = true
 
-const state = {
+const state: State = {
   isLoading: false,
 
   customers: []
 }
 
-const mutations = {
+const mutations: Mutations = {
   SET_LOADING(state) {
     state.isLoading = true
   },
@@ -21,7 +24,7 @@ const mutations = {
   }
 }
 
-const actions = {
+const actions: Actions & ActionTree<State, RootState> = {
   getCustomers({commit}) {
     commit('SET_LOADING')
     return CustomersApi.getCustomers({})
@@ -45,7 +48,7 @@ const actions = {
   }
 }
 
-const getters = {
+const getters: Getters = {
   customers: state => {
     return state.customers.map(c => c.customer)
   }

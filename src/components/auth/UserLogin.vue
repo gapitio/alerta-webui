@@ -15,7 +15,7 @@
             name="login"
             type="text"
             :label="$t('Username')"
-            prepend-inner-icon="mdi-at"
+            prepend-inner-icon="alternate_email"
             variant="outlined"
           />
           <v-text-field
@@ -23,7 +23,7 @@
             name="password"
             :type="showPassword ? 'text' : 'password'"
             :label="$t('Password')"
-            :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
+            :append-inner-icon="showPassword ? 'visibility_off' : 'visibility'"
             variant="outlined"
             @click:append-inner="showPassword = !showPassword"
           />
@@ -160,7 +160,7 @@ export default {
       }
       this.$store
         .dispatch('auth/login', credentials)
-        .then(() => this.$router.push({ path: this.$route.query.redirect || '/login' }))
+        .then(() => this.$router.push({ path: this.$route.query.redirect || '/' }))
         .catch(error => console.log(error))
         // .catch(error => this.error = error.response.data.message)
     },

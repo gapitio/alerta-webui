@@ -1,23 +1,26 @@
 import NotificationChannelApi from '@/services/api/notificationChannel.service'
+import type { State, Getters, Actions, Mutations } from '../types/notificationChannel-types'
+import type { ActionTree } from 'vuex'
+import type { State as RootState } from '../types'
 
 const namespaced = true
 
-const state = {
+const state: State = {
   isLoading: false,
 
   notification_channels: [],
   encryptionKey: '',
-
+  query: {q: ''},
   pagination: {
     page: 1,
-    rowsPerPage: 20,
-    sortBy: 'id',
+    itemsPerPage: 20,
+    sortBy: [{key: 'id'}],
     descending: true,
-    rowsPerPageItems: [10, 20, 50, 100, 200]
+    itemsPerPageOptions: [10, 20, 50, 100, 200]
   }
 }
 
-const mutations = {
+const mutations: Mutations = {
   SET_ENCRYPTION_KEY(state, key) {
     state.encryptionKey = key
   },
@@ -28,7 +31,7 @@ const mutations = {
     state.isLoading = false
     state.notification_channels = notificationChannel
     state.pagination.totalItems = total
-    state.pagination.rowsPerPage = pageSize
+    state.pagination.itemsPerPage = pageSize
   },
   RESET_LOADING(state) {
     state.isLoading = false
@@ -38,7 +41,7 @@ const mutations = {
   }
 }
 
-const actions = {
+const actions: Actions & ActionTree<State, RootState> = {
   getEncryptionKey({commit}) {
     return NotificationChannelApi.getEncryptionKey().then(({key}) => commit('SET_ENCRYPTION_KEY', key))
   },
@@ -48,11 +51,11 @@ const actions = {
     const params = new URLSearchParams(state.query)
 
     // add server-side paging
-    params.append('page', state.pagination.page)
-    params.append('page-size', state.pagination.rowsPerPage)
+    params.append('page', state.pagination.page.toString())
+    params.append('page-size', state.pagination.itemsPerPage.toString())
 
     // add server-side sort
-    params.append('sort-by', (state.pagination.descending ? '-' : '') + state.pagination.sortBy)
+    // params.append('sort-by', (state.pagination.descending ? '-' : '') + state.pagination.sortBy)
 
     return NotificationChannelApi.getNotificationChannels(params)
       .then(({notificationChannels: notificationChannels, total, pageSize}) =>
@@ -83,7 +86,7 @@ const actions = {
   }
 }
 
-const getters = {
+const getters: Getters = {
   pagination: state => {
     return state.pagination
   },

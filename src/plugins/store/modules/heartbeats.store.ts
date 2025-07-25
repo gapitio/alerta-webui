@@ -1,27 +1,30 @@
 import HeartbeatsApi from '@/services/api/heartbeat.service'
+import type { State, Mutations, Actions } from '../types/heartbeats-types'
+import type { ActionTree } from 'vuex'
+import type { State as RootState } from '../types'
 
 const namespaced = true
 
-const state = {
+const state: State = {
   isLoading: false,
 
-  heartbeats: []
+  items: []
 }
 
-const mutations = {
+const mutations: Mutations = {
   SET_LOADING(state) {
     state.isLoading = true
   },
   SET_HEARTBEATS(state, heartbeats) {
     state.isLoading = false
-    state.heartbeats = heartbeats
+    state.items = heartbeats
   },
   RESET_LOADING(state) {
     state.isLoading = false
   }
 }
 
-const actions = {
+const actions: Actions & ActionTree<State, RootState> = {
   getHeartbeats({commit}) {
     commit('SET_LOADING')
     return HeartbeatsApi.getHeartbeats({})

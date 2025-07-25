@@ -7,12 +7,12 @@ function getRedirectUri(path: string) {
 
 export function registerVueAuth(app: App) {
   const config = app.config.globalProperties.$config
-  const basePath = config.base_path || process.env.BASE_URL
+  const basePath = config.base_path || __BASE_URL__
   app.use(VueAuthenticate, {
     tokenPath: 'token',
     tokenName: 'token',
     responseDataKey: 'data',
-    tokenPrefix: null,
+    tokenPrefix: '',
     registerUrl: '/auth/signup',
     logoutUrl: '/auth/logout',
     storageType: 'localStorage',

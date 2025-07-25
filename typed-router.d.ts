@@ -21,7 +21,15 @@ declare module 'vue-router/auto-routes' {
     '/': RouteRecordInfo<'/', '/', Record<never, never>, Record<never, never>>,
     '/Alert/[id]': RouteRecordInfo<'/Alert/[id]', '/Alert/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
     '/Alerts': RouteRecordInfo<'/Alerts', '/Alerts', Record<never, never>, Record<never, never>>,
+    '/EscalationRules': RouteRecordInfo<'/EscalationRules', '/EscalationRules', Record<never, never>, Record<never, never>>,
+    '/Heartbeats': RouteRecordInfo<'/Heartbeats', '/Heartbeats', Record<never, never>, Record<never, never>>,
+    '/History': RouteRecordInfo<'/History', '/History', Record<never, never>, Record<never, never>>,
     '/Login': RouteRecordInfo<'/Login', '/Login', Record<never, never>, Record<never, never>>,
+    '/NotificationHistory': RouteRecordInfo<'/NotificationHistory', '/NotificationHistory', Record<never, never>, Record<never, never>>,
+    '/NotificationRules/': RouteRecordInfo<'/NotificationRules/', '/NotificationRules', Record<never, never>, Record<never, never>>,
+    '/NotificationRules/[id]': RouteRecordInfo<'/NotificationRules/[id]', '/NotificationRules/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
+    '/OnCall': RouteRecordInfo<'/OnCall', '/OnCall', Record<never, never>, Record<never, never>>,
     '/Signup': RouteRecordInfo<'/Signup', '/Signup', Record<never, never>, Record<never, never>>,
+    '/Users': RouteRecordInfo<'/Users', '/Users', Record<never, never>, Record<never, never>>,
   }
 }

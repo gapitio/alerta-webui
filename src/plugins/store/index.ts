@@ -22,12 +22,12 @@ import notifications from './modules/notifications.store'
 import type { ActionContext, ActionTree } from 'vuex'
 import type { State as RootState } from './types'
 
-type State = {
+export type State = {
   multiselect: boolean;
   refresh: boolean;
 }
 
-type Mutations = {
+export type Mutations = {
   SET_SETTING<K extends keyof State>(state: State, {s, v}: {s: K, v: State[K]}): void
 }
 
@@ -44,21 +44,17 @@ const mutations: Mutations = {
   }
 }
 
-type Actions = {
+export type Actions  = {
   set<T extends keyof State>({commit}: AugmentedActionContext, [s, v]: [T, State[T]]): void
-} & ActionTree<State, RootState>
+}
 
-const actions: Actions = {
+const actions: Actions & ActionTree<State, RootState> = {
   set({commit}, [s, v]) {
     commit('SET_SETTING', {s, v})
   }
 }
 
 const store = createStore({
-  state: {
-    multiselect: false,
-    refresh: false
-  },
   mutations,
   actions,
   modules: {

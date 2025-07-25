@@ -19,21 +19,19 @@ class Config {
         return this.setEnvConfig(response)
       })
       .then(() => {
-        console.log(this.getLocalConfig())
         return this.getLocalConfig()
       })
       .then(response => {
         return this.setLocalConfig(response)
       })
       .then(() => {
-        const endpoint = this.config.endpoint ? this.config.endpoint : 'http://localhost:8080'
+        const endpoint = this.config.endpoint ? this.config.endpoint : 'http://localhost:8880'
         return this.getRemoteConfig(endpoint)
       })
       .then(response => {
         return this.setRemoteConfig(response)
       })
       .catch((error: any) => {
-        console.log(error)
         throw error
       })
   }
@@ -48,7 +46,7 @@ class Config {
   }
 
   getLocalConfig() {
-    const basePath = import.meta.env.BASE_URL
+    const basePath = __BASE_URL__
     return this.$http
       .get(`${basePath}config.json`)
       .then(response => response.data)

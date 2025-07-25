@@ -7,9 +7,10 @@
 // Composables
 import { createRouter, createWebHistory } from 'vue-router/auto'
 import { routes } from 'vue-router/auto-routes' 
+import type { Store } from './store/types'
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHistory(__BASE_URL__),
   routes,
 })
 
@@ -33,11 +34,9 @@ router.isReady().then(() => {
 })
 export default router
 
-export function registerBefore (store) {
+export function registerBefore (store: Store) {
   router.beforeEach((to, from, next) => {
-    if (store.getters.getConfig('auth_required') && to.matched.some(record => {
-        return record.meta.requiresAuth
-      })) {
+    if (store.getters.getConfig('auth_required') && to.matched.some(record => record.meta.requiresAuth)) {
       if (!store.getters['auth/isLoggedIn'] && !store.getters.getConfig('allow_readonly')) {
         next({
           path: '/login',

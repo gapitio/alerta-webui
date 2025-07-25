@@ -1,12 +1,15 @@
 import UsersApi from '@/services/api/user.service'
-import stateMerge from 'vue-object-merge'
-import i18n from '@/plugins/i18n'
+import i18n from '../../i18n'
+import type { State, Actions, Getters, Mutations } from '../types/preferences-types'
+import type { ActionTree } from 'vuex'
+import type { State as RootState } from '../types'
+import type { Query } from '../types/alerts-types'
 
-const getDefaults = () => {
+const getDefaults = (): State => {
   return {
     isDark: false,
     isMute: true,
-    languagePref: i18n.locale,
+    languagePref: i18n.global.locale,
     audioURL: './audio/alert_high-intensity.ogg',
     dates: {
       longDate: null,
@@ -22,7 +25,7 @@ const getDefaults = () => {
       'font-size': null,
       'font-weight': null
     },
-    rowsPerPage: 20,
+    itemsPerPage: 20,
     valueWidth: 50, // px
     textWidth: 400, // px
     refreshInterval: 5 * 1000, // milliseconds
@@ -34,26 +37,26 @@ const getDefaults = () => {
   }
 }
 
-const state = getDefaults()
+const state: State = getDefaults()
 
-const mutations = {
+const mutations: Mutations = {
   SET_PREFS(state, prefs) {
-    stateMerge(state, prefs)
+    state = {...state, ...prefs}
   },
   RESET_PREFS(state) {
     const q = state.queries
     Object.assign(state, getDefaults())
-    stateMerge(state, {queries: q})
+    state = {...state, queries: [ ...q ]}
   },
   SET_QUERIES(state, queries) {
-    stateMerge(state, {queries: queries || []})
+    state.queries = JSON.parse(JSON.stringify(queries)) as Query[]
   },
   RESET_QUERIES(state) {
     Object.assign(state, {queries: []})
   }
 }
 
-const actions = {
+const actions: Actions & ActionTree<State, RootState> = {
   getUserPrefs({dispatch, commit}) {
     return UsersApi.getMeAttributes()
       .then(({attributes}) => {
@@ -107,7 +110,7 @@ const actions = {
       )
   },
   addUserQuery({dispatch, state}, query) {
-    const qlist = state.queries.filter(q => q.text != query.text).concat([query])
+    const qlist = state.queries.filter(q => q.q != query.q).concat([query])
     return UsersApi.updateMeAttributes({queries: qlist})
       .then(() => dispatch('getUserQueries'))
       .then(() =>
@@ -117,7 +120,7 @@ const actions = {
       )
   },
   removeUserQuery({dispatch, state}, query) {
-    const qlist = state.queries.filter(q => q.text != query.text)
+    const qlist = state.queries.filter(q => q.q != query.q)
     return UsersApi.updateMeAttributes({queries: qlist})
       .then(() => dispatch('getUserQueries'))
       .then(() =>
@@ -137,12 +140,12 @@ const actions = {
   }
 }
 
-const getters = {
+const getters: Getters = {
   getPreference: state => pref => {
     return state[pref]
   },
   getUserQueries: state => {
-    return state.queries ? state.queries : []
+    return state.queries
   }
 }
 

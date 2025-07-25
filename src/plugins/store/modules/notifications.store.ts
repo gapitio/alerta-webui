@@ -1,6 +1,9 @@
+import type { State, Getters, Actions, Mutations, ErrorData } from "../types/notifications-types"
+import type { ActionTree } from 'vuex'
+import type { State as RootState } from '../types'
 const namespaced = true
 
-const state = {
+const state: State = {
   snackbars: [],
   banners: []
 }
@@ -20,7 +23,7 @@ const state = {
 //   text: ''
 // }
 
-const mutations = {
+const mutations: Mutations = {
   ADD_SNACKBAR(state, snackbar) {
     if (!state.snackbars.map(s => s.text).includes(snackbar.text)) {
       state.snackbars.push(snackbar)
@@ -39,7 +42,8 @@ const mutations = {
   }
 }
 
-const actions = {
+
+const actions: Actions & ActionTree<State, RootState> = {
   showSnackbar({commit}, snackbar) {
     commit('ADD_SNACKBAR', snackbar)
   },
@@ -63,8 +67,11 @@ const actions = {
   },
 
   error({commit}, error) {
+    function isAxiosError(error: any): error is ErrorData{
+      return error.hasOwnProperty('code')
+    }
     // HTTP error with status, code, message and errors.
-    if (error.hasOwnProperty('code')) {
+    if (isAxiosError(error)) {
       commit('ADD_SNACKBAR', {
         type: error.status,
         text: `${error.message} (${error.code})`,
@@ -82,7 +89,7 @@ const actions = {
   }
 }
 
-const getters = {
+const getters: Getters = {
   hasSnackbar: state => {
     return state.snackbars.length > 0
   },

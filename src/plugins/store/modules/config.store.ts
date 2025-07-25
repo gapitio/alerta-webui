@@ -1,8 +1,24 @@
-import stateMerge from 'vue-object-merge'
+import type { State, Mutations, Actions, Getters } from '../types/config-types'
+import type { ActionTree } from 'vuex'
+import type { State as RootState } from '../types'
 
-const state = {
-  endpoint: 'http://local.alerta.io:8080',
-  alarm_model: {}, // includes severity, colors and status maps
+const state: State = {
+  endpoint: 'http://local.alerta.io:8880',
+  alarm_model: {
+    colors: {
+      severity: {},
+      status: {},
+      text: '',
+    },
+    defaults: {
+      normal_severity: '',
+      previous_severity: '',
+      status: ''
+    },
+    name: 'Alerta',
+    severity: {},
+    status: {}
+  },
 
   auth_required: true,
   allow_readonly: false,
@@ -12,22 +28,25 @@ const state = {
   signup_enabled: true,
   email_verification: false,
 
-  client_id: null,
+  client_id: '',
   github_url: 'https://github.com',
   gitlab_url: 'https://gitlab.com',
-  keycloak_realm: null,
-  keycloak_url: null,
-  pingfederate_url: null,
+  keycloak_realm: '',
+  keycloak_url: '',
+  pingfederate_url: '',
 
   site_logo_url: '',
 
-  severity: {}, // moved to alarm_model
-  colors: {}, // moved to alarm_model
   clipboard_template: '',
 
-  timeouts: {}, // includes alert, heartbeat, ack and shelve timeouts
+  timeouts: {
+    ack: 0,
+    alert: 0,
+    heartbeat: 0,
+    shelve: 0,
+  },
 
-  blackouts: {}, // include default duration
+  blackouts: {duration: 0},
 
   dates: {
     longDate: 'ddd D MMM, YYYY HH:mm:ss.SSS Z',
@@ -39,11 +58,12 @@ const state = {
     'font-size': '13px',
     'font-weight': 500
   },
-  audio: {},
+  audio: {new: ''},
   columns: [],
-  sort_by: ['severity', 'lastReceiveTime'],
+  sort_by: [{key:'severity'}, {key:'lastReceiveTime'}],
   actions: [],
   filter: {
+    customer: null,
     text: null,
     environment: null,
     status: null,
@@ -54,22 +74,59 @@ const state = {
 
   tracking_id: null,
   refresh_interval: 5 * 1000, // milliseconds
-  environments: []
+  environments: [],
+
+  aws_region: '',
+  azure_tenant: '',
+  cognito_domain: '',
+  debug: false,
+  indicators: {queries: [], severity: []},
+  ldap_email_edit: false,
+  oidc_auth_url: '',
+  version: 'DEV'
 }
 
-const mutations = {
+const deepCopy = function(state: any, value: any, propName?: string) {
+	if (
+		Object.prototype.toString.call(value) === "[object Object]" &&
+		(!propName! || state.hasOwnProperty(propName))
+	) {
+		const o = !propName! ? state : state[propName]
+		if (o != null) {
+			for (const prop in value) {
+        deepCopy(o, value[prop], prop)
+			}
+			return
+		}
+	}
+	state[propName!] = value;
+};
+
+function isKeyOfState(key: string): key is keyof State {
+  return key in state
+}
+
+const mutations: Mutations = {
+  
   SET_CONFIG(state, config) {
-    stateMerge(state, config)
+    const conf: {[key: string]: any} = {}
+    for (const key in config) {
+      if (isKeyOfState(key) && config[key] !== undefined){
+        if (Object.prototype.toString.call(config[key]) === "[object Object]") deepCopy(state[key], config[key])
+        else conf[key] = config[key]
+      }
+    }
+    deepCopy(state, conf)
   }
 }
 
-const actions = {
+const actions: Actions & ActionTree<State, RootState> = {
   updateConfig({commit}, config) {
     commit('SET_CONFIG', config)
   }
 }
 
-const getters = {
+const getters: Getters = {
   getConfig: state => setting => {
     return state[setting]
   }

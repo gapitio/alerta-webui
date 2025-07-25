@@ -1,8 +1,10 @@
 import AlertsApi from '@/services/api/alert.service'
-import type { Mutations, Actions, Getters, State } from './alerts-types'
+import type { Mutations, Actions, Getters, State } from '../types/alerts-types'
+import type { State as RootState } from '../types'
 
 import moment from 'moment'
 import utils from '@/common/utils'
+import type { ActionTree } from 'vuex'
 
 const namespaced = true
 
@@ -14,11 +16,12 @@ const state: State = {
   history: [],
   selected: [], // used by multi-select checkboxes
   environments: [],
+  historyEnvironments: {},
   services: [],
   groups: [],
   tags: [],
 
-  alert: {},
+  alert: null,
   notes: [],
 
   // not persisted
@@ -28,7 +31,7 @@ const state: State = {
   displayDensity: 'comfortable', // 'comfortable' or 'compact'
 
   // query, filter and pagination
-  query: {}, // URLSearchParams
+  query: {q: ''}, // URLSearchParams
   historyFilter: {
     environment: null
   },
@@ -46,17 +49,17 @@ const state: State = {
   historyPagination: {
     page: 1,
     totalItems: 0,
-    rowsPerPage: 20,
-    rowsPerPageItems: [10, 20, 50, 100, 200, 500, 1000]
+    itemsPerPage: 20,
+    itemsPerPageOptions: [10, 20, 50, 100, 200, 500, 1000]
   },
 
   pagination: {
     page: 1,
-    rowsPerPage: 20,
+    itemsPerPage: 20,
     sortBy: [],
     descending: false,
     totalItems: 0,
-    rowsPerPageItems: [5, 10, 20, 50, 100, 200]
+    itemsPerPageOptions: [5, 10, 20, 50, 100, 200]
   }
 }
 
@@ -71,13 +74,16 @@ const mutations: Mutations = {
   SET_ALERTS(state, [alerts, total, pageSize]) {
     state.alerts = alerts
     state.pagination.totalItems = total
-    state.pagination.rowsPerPage = pageSize
+    state.pagination.itemsPerPage = pageSize
     state.isLoading = false
     state.isSearching = false
   },
   SET_HISTORY(state, [history, total]) {
     state.history = history
     state.historyPagination.totalItems = total
+  },
+  SET_HISTORY_ENVIRONMENTS(state, [environments, total]) {
+    state.historyEnvironments = {All: total, ...environments}
   },
   RESET_LOADING(state) {
     state.isLoading = false
@@ -127,9 +133,10 @@ const mutations: Mutations = {
   }
 }
 
-const actions: Actions = {
+const actions: Actions & ActionTree<State, RootState> = {
   async getAlerts({ rootGetters, commit, state }) {
     await commit('SET_LOADING')
+    commit('SET_ALERT')
     // get "lucene" query params (?q=)
     const params = new URLSearchParams(state.query)
 
@@ -144,7 +151,7 @@ const actions: Actions = {
     // add server-side sorting
     let sortBy = state.pagination.sortBy
     if (sortBy?.length === 0 || !sortBy) {
-      sortBy = await rootGetters['getConfig']('sort_by').map(b => {return {'key': b}})
+      sortBy = await rootGetters['getConfig']('sort_by')
       commit('SET_PAGINATION', { sortBy })
     }
 
@@ -163,7 +170,7 @@ const actions: Actions = {
 
     // add server-side paging
     params.append('page', state.pagination.page.toString())
-    params.append('page-size', state.pagination.rowsPerPage.toString())
+    params.append('page-size', state.pagination.itemsPerPage.toString())
 
     // apply any date/time filters
     if (state.filter.dateRange [0]) {
@@ -207,15 +214,18 @@ const actions: Actions = {
 
     state.historyFilter.environment && params.append('environment', state.historyFilter.environment)
 
-    console.log(typeof state.historyPagination.page)
-
     params.append('page', state.historyPagination.page.toString())
-    params.append('page-size', state.historyPagination.rowsPerPage.toString())
+    params.append('page-size', state.historyPagination.itemsPerPage.toString())
 
     return AlertsApi.getAlertHistory(params).then(({history, total}) => commit('SET_HISTORY', [history, total]))
   },
+  getAlertHistoryCount({commit}) {
+    return AlertsApi.getAlertHistoryCount().then(({environments, total}) =>
+      commit('SET_HISTORY_ENVIRONMENTS', [environments, total])
+    )
+  },
   setHistoryFilter({commit}, filter) {
-    commit('SET_FILTER', filter)
+    commit('SET_HISTORY_FILTER', filter)
   },
   updateQuery({commit}, query) {
     commit('SET_SEARCH_QUERY', query)
@@ -365,24 +375,27 @@ const getters: Getters = {
   history: (state) => {
     return state.history
   },
-  environments: (state, rootState) =>
-    (showAllowedEnvs = true) => {
+  environments: (state, rootState) => 
+  (showAllowedEnvs = true) => {
       if (showAllowedEnvs) {
         return [
-          ...new Set([...(rootState.config.environments || []), ...state.environments.map(e => e.environment)])
+          ...new Set([...(rootState.config?.environments || []), ...state.environments.map(e => e.environment)])
         ].sort()
       }
       return state.environments.map(e => e.environment).sort()
-    },
+  },
   counts: (state) => {
     return state.environments.reduce(
-      (grp: {ALL: number, [key: string]: number}, e) => {
+      (grp: {All: number, [key: string]: number}, e) => {
         grp[e.environment] = e.count
-        grp['ALL'] = grp['ALL'] + e.count
+        grp['All'] = grp['All'] + e.count
         return grp
       },
-      {ALL: 0}
+      {All: 0}
     )
+  },
+  historyCounts: state => {
+    return state.historyEnvironments
   },
   services: (state) => {
     return state.services.map(s => s.service).sort()

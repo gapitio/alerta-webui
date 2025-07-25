@@ -1,390 +1,307 @@
 <template>
-  <div class="alerts">
-    <v-dialog
-      v-model="densityDialog"
-      max-width="340px"
+  <g-combobox
+    v-model="query"
+    prepend-inner-icon="search"
+    append-inner-icon="push_pin"
+    :label="t('Search')"
+    variant="outlined"
+    clearable
+    hide-details
+    :items="userQueries"
+    validate-on="submit"
+    style="position: absolute; top: 2.5px;right: calc(25vw); width: 40vw; background: white;"
+    delete-items
+    @keydown.enter="(e: any) => setSearch(e.target.value)"
+    @click:prepend-inner="setSearch(query ?? '')"
+    @click:append-inner="saveSearch(query ?? '')"
+    @click:clear="clearSearch"
+    @select-item="(item: any) => setSearch(item.value)"
+    @delete-item="(item: any) => deleteSearch(item.value)"
+  />
+
+  <v-card variant="flat">
+    <h1> {{ t('Alerts') }} </h1>
+    <v-tabs
+      v-model="currentTab"
+      slider-color="secondary"
     >
-      <v-form ref="form">
-        <v-card>
-          <v-card-title class="justify-center">
-            <span class="title">
-              {{ $t('ChooseDisplayDensity') }}
-            </span>
-          </v-card-title>
-          <v-card-actions class="justify-center">
-            <v-btn
-              value="comfortable"
-              :class="{ primary: displayDensity == 'comfortable' }"
-              @click="displayDensity = 'comfortable'"
-            >
-              {{ $t('Comfortable') }}
-            </v-btn>
-            <v-btn
-              value="compact"
-              :class="{ primary: displayDensity == 'compact' }"
-              @click="displayDensity = 'compact'"
-            >
-              {{ $t('Compact') }}
-            </v-btn>
-          </v-card-actions>
-          <v-card-actions>
-            <v-spacer />
-            <v-btn
-              color="blue darken-1"
-              flat
-              @click="ok"
-            >
-              {{ $t('OK') }}
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-form>
-    </v-dialog>
-
-    <Transition name="expand">
-      <div
-        v-if="showPanel"
-        class="px-1"
+      <v-tab
+        v-for="env in environments"
+        :key="env"
+        :value="env"
+        class="big-font bold no-cap-btn"
+        @click="setEnv(env)"
       >
-        <v-row no-gutters>
-          <v-col
-            v-for="(indicator, index) in indicators"
-            :key="index"
-          >
-            <alert-indicator
-              :title="indicator.text"
-              :query="indicator.query"
-            />
-          </v-col>
-        </v-row>
-        <v-divider />
-      </div>
-    </Transition>
-
-    <v-card>
-      <v-toolbar>
-        <v-toolbar-title :text="$t('Alerts')" />
-        {{ $vuetify }}
-        <v-text-field />
-      </v-toolbar>
-      <v-tabs
-        v-model="currentTab"
-        align-tabs="center"
-        grow
-      >
-        <v-tab
-          v-for="env in environments"
-          :key="env"
-          :value="env"
-          @click="setEnv(env)"
-        >
-          {{ env }}&nbsp;({{ environmentCounts[env] || 0 }})
-        </v-tab>
+        {{ env }}&nbsp;({{ environmentCounts[env] || 0 }})
+      </v-tab>
+      <div style="position: absolute; right: 0px;">
         <v-btn
           flat
           icon
           :class="{ 'filter-active': isActive }"
           @click="sidesheet = !sidesheet"
         >
-          <v-icon>mdi-filter-variant</v-icon>
+          <v-icon>filter_list</v-icon>
         </v-btn>
 
-        <v-menu
-          bottom
-          left
-        >
-          <template #activator="{ props }">
-            <v-btn
-              flat
-              icon
-              v-bind="props"
-            >
-              <v-icon>mdi-dots-vertical</v-icon>
-            </v-btn>
-          </template>
-
-          <v-list>
-            <v-list-item
-              :disabled="!indicators.length"
-              @click="showPanel = !showPanel"
-            >
-              <v-list-item-title>
-                {{ showPanel ? $t('Hide') : $t('Show') }} {{ $t('Panel') }}
-              </v-list-item-title>
-            </v-list-item>
-            <v-list-item
-              @click="densityDialog = true"
-            >
-              {{ $t('DisplayDensity') }}
-            </v-list-item>
-            <v-list-item
+        <v-tooltip :text="t('DownloadAsCsv')">
+          <template #activator="{props}">
+            <v-btn 
+              v-bind="props" 
+              icon="download"
+              variant="text"
               @click="toCsv(alerts)"
-            >
-              {{ $t('DownloadAsCsv') }}
-            </v-list-item>
-          </v-list>
-        </v-menu>
-      </v-tabs>
-      
-
-      <v-tabs-window v-model="currentTab">
-        <v-tabs-window-item
-          v-for="env in environments"
-          :key="env"
-          :value="env"
-          class="fill-height"
-        >
-          <v-container fluid>
-            <alert-list
-              :filter="filter"
             />
-          </v-container>
-        </v-tabs-window-item>
-      </v-tabs-window>
-    </v-card>
-
-    <alert-list-filter
-      :value="sidesheet"
-      @close="sidesheet = false"
+          </template>
+        </v-tooltip>
+      </div>
+    </v-tabs>
+    <alert-list
+      :filter="filter"
     />
-  </div>
+  </v-card>
+
+  <alert-list-filter
+    :value="sidesheet"
+    @close="sidesheet = false"
+  />
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
+import { onBeforeUnmount, onMounted, ref, computed, watch } from 'vue'
+import { useStore } from 'vuex'
+import { useRoute, useRouter } from 'vue-router'
+import { generateCsv, download, mkConfig } from 'export-to-csv'
+import { useI18n } from 'vue-i18n'
+// import utils from '@/common/utils'
+import type { Query } from '@/plugins/store/types/alerts-types'
+import type { State, Store } from '@/plugins/store/types'
 
-import {  } from 'export-to-csv'
-import utils from '@/common/utils'
+definePage({
+  meta: {
+    title: "Alerts",
+    requiresAuth: true
+  }
+});
+const store: Store = useStore<State>()
+const route = useRoute()
+const router = useRouter()
+const {t} = useI18n()
 
-export default {
-  data: () => ({
-    currentTab: null,
-    densityDialog: false,
-    selectedId: null,
-    selectedItem: {},
-    sidesheet: false,
-    timer: null,
-    tab: null,
-  }),
-  computed: {
-    audioURL() {
-      return this.$config.audio.new || this.$store.getters.getPreference('audioURL')
-    },
-    defaultTab() {
-      return this.filter.environment ? `${this.filter.environment}` : 'ALL'
-    },
-    filter() {
-      return this.$store.state.alerts.filter
-    },
-    isActive() {
-      return this.filter.text || this.filter.status || this.filter.customer || this.filter.service || this.filter.group || this.filter.dateRange[0] || this.filter.dateRange[1]
-    },
-    indicators() {
-      return this.$config.indicators ? this.$config.indicators.queries  : []
-    },
-    alerts() {
-      if (this.filter.text) {
-        return this.$store.getters['alerts/alerts']
-          .filter(alert =>
-            Object.keys(alert).some(k => alert[k] && alert[k].toString().toLowerCase().includes(this.filter.text.toLowerCase()))
-          )
-      } else {
-        return this.$store.getters['alerts/alerts'].map((b) => { return {...b, service: b.service.join(', ')}})
-      }
-    },
-    isNewOpenAlerts() {
-      return this.alerts
-        .filter(alert => this.filter.environment ? this.filter.environment == alert.environment : true)
-        .filter(alert => alert.status == 'open')
-        .reduce((acc, alert) => acc || !alert.repeat, false)
-    },
-    showAllowedEnvs() {
-      return this.$store.getters.getPreference('showAllowedEnvs')
-    },
-    environments() {
-      return ['ALL'].concat(this.$store.getters['alerts/environments'](this.showAllowedEnvs))
-    },
-    environmentCounts() {
-      return this.$store.getters['alerts/counts']
-    },
-    refreshInterval() {
-      return (
-        this.$store.getters.getPreference('refreshInterval') ||
-        this.$store.getters.getConfig('refresh_interval')
-      )
-    },
-    autoRefresh() {
-      return true // FIXME: autoRefresh setting comes from server in alert response
-    },
-    refresh() {
-      return this.$store.state.refresh
-    },
-    isLoggedIn() {
-      return this.$store.getters['auth/isLoggedIn']
-    },
-    isMute() {
-      return this.$store.getters.getPreference('isMute')
-    },
-    showPanel: {
-      get() {
-        return this.$store.state.alerts.showPanel
-      },
-      set(value) {
-        this.$store.dispatch('alerts/toggle', ['showPanel', value])
-      }
-    },
-    displayDensity: {
-      get() {
-        return (
-          this.$store.getters.getPreference('displayDensity') ||
-          this.$store.state.alerts.displayDensity
-        )
-      },
-      set(value) {
-        if (this.isLoggedIn) {
-          this.$store.dispatch('setUserPrefs', {displayDensity: value})
-        } else {
-          this.$store.dispatch('alerts/set', ['displayDensity', value])
-        }
-      }
-    },
-  },
-  watch: {
-    currentTab() {
-      this.setPage(1)
-    },
-    filter: {
-      handler() {
-        history.replaceState(history.state, '', this.$store.getters['alerts/getHash'])
-        this.currentTab = this.defaultTab
-        this.cancelTimer()
-        this.refreshAlerts()
-      },
-      deep: true
-    },
-    refresh(val) {
-      val || this.getAlerts() && this.getEnvironments()
-    },
-    showPanel() {
-      history.replaceState(history.state, '', this.$store.getters['alerts/getHash'])
-    }
-  },
-  created() {
-    this.setSearch(this.$route.query)
-    if (this.hash) {
-      const hashMap = utils.fromHash(this.hash)
-      this.setFilter(hashMap)
-      this.setSort(hashMap)
-      this.setPanel(hashMap)
-    }
-    this.currentTab = this.defaultTab
-    this.setKiosk(this.$route.query.isKiosk)
-    this.cancelTimer()
-    this.refreshAlerts()
-  },
-  beforeUnmount() {
-    this.cancelTimer()
-  },
-  methods: {
-    setSearch(query) {
-      this.$store.dispatch('alerts/updateQuery', query)
-    },
-    setFilter(filter) {
-      this.$store.dispatch('alerts/setFilter', {
-        environment: filter.environment,
-        text: filter.text,
-        status: filter.status ? filter.status.split(',') : null,
-        customer: filter.customer ? filter.customer.split(',') : null,
-        service: filter.service ? filter.service.split(',') : null,
-        group: filter.group ? filter.group.split(',') : null,
-        dateRange: filter.dateRange ? filter.dateRange.split(',').map(n => n ? parseInt(n) : null) : [null, null]
-      })
-    },
-    setSort(sort) {
-      this.$store.dispatch('alerts/setPagination', {
-        descending: sort.sd == '1',
-        sortBy: sort.sb
-      })
-    },
-    setPage(page) {
-      this.$store.dispatch('alerts/setPagination', {page: page})
-    },
-    setPanel(panel) {
-      this.$store.dispatch('alerts/setPanel', panel.asi == '1')
-    },
-    setKiosk(isKiosk) {
-      this.$store.dispatch('alerts/updateKiosk', isKiosk)
-    },
-    async getAlerts() {
-      const res = await this.$store.dispatch('alerts/getAlerts')
-      return res
-    },
-    getEnvironments() {
-      this.$store.dispatch('alerts/getEnvironments')
-    },
-    playSound() {
-      !this.isMute && this.$refs.audio.play()
-    },
-    setEnv(env) {
-      this.$store.dispatch('alerts/setFilter', {
-        environment: env === 'ALL' ? null : env
-      })
-    },
-    async refreshAlerts() {
-      this.getEnvironments()
-      await this.getAlerts()
-      this.isNewOpenAlerts && this.playSound()
-      this.timer = setTimeout(() => this.refreshAlerts(), this.refreshInterval)
-    },
-    cancelTimer() {
-      if (this.timer) {
-        clearTimeout(this.timer)
-        this.timer = null
-      }
-    },
-    ok() {
-      this.densityDialog = false
-    },
-    toCsv(data) {
-      const options = {
-        fieldSeparator: ',',
-        filename: `Alerts_${this.filter.environment || 'ALL'}`,
-        quoteStrings: '"',
-        decimalSeparator: 'locale',
-        showLabels: true,
-        useTextFile: false,
-        useBom: true,
-        useKeysAsHeaders: true,
-      }
-      const attrs = {}
-      data.map(d => Object.keys(d.attributes).forEach((attr) => attrs['attributes.'+attr] = d.attributes[attr]))
+const currentTab = ref('')
+const sidesheet = ref(false)
+const timer = ref<ReturnType<typeof setTimeout> | null>(null)
+const tab = ref('All')
 
-      const csvExporter = new ExportToCsv(options)
-      csvExporter.generateCsv(data.map(({ correlate, service, tags, rawData, ...item }) => ({
-        correlate: correlate.join(','),
-        service: service.join(','),
-        tags: tags.join(','),
-        ...attrs,
-        ...item,
-        rawData: rawData ? rawData.toString() : ''
-      })))
-    }
+const filter = computed(() => store.state.alerts.filter)
+const storeQuery = computed(() => store.state.alerts.query.q)
+const query = ref<string | null>(null)
+const routeQuery = computed(() => route.query)
+
+watch(storeQuery, (val) => query.value = val)
+
+
+watch(routeQuery, (val) => setQuery(val as Query))
+
+setQuery(route.query as Query)
+
+const userQueries = computed(() => store.getters.getUserQueries.map(
+  (q) => ({title: q.q, value: q.q, props: {appendIcon: 'delete'}})
+))
+
+
+const defaultTab = computed(() => filter.value.environment || 'All')
+
+const isActive = computed(() =>
+  filter.value.text || filter.value.status || filter.value.customer ||
+  filter.value.service || filter.value.group || filter.value.dateRange[0] || filter.value.dateRange[1]
+)
+
+const alerts = computed(() => {
+  const allAlerts = store.getters['alerts/alerts']
+  const filterText = filter.value.text
+  return filterText
+    ? allAlerts.filter(alert =>{
+        const alertKeys = Object.keys(alert) as [keyof typeof alert]
+        return alertKeys.some((k: keyof typeof alert) => alert[k]?.toString().toLowerCase().includes(filterText.toLowerCase()))
+      })
+    : allAlerts.map(b => ({ ...b, service: b.service?.join(', ') }))
+})
+
+const isNewOpenAlerts = computed(() =>
+  alerts.value
+    .filter(alert => !filter.value.environment || filter.value.environment === alert.environment)
+    .filter(alert => alert.status === 'open')
+    .some(alert => !alert.repeat)
+)
+
+const showAllowedEnvs = computed(() => store.getters.getPreference('showAllowedEnvs'))
+
+const environments = computed(() => ['All', ...store.getters['alerts/environments'](showAllowedEnvs.value)])
+
+const environmentCounts = computed(() => store.getters['alerts/counts'])
+
+const refreshInterval = computed(() =>
+  store.getters.getPreference('refreshInterval') ||
+  store.getters.getConfig('refresh_interval')
+)
+
+const refresh = computed(() => store.state.refresh)
+const isMute = computed(() => store.getters.getPreference('isMute'))
+
+const showPanel = computed({
+  get: () => store.state.alerts.showPanel,
+  set: (val: boolean) => store.dispatch('alerts/toggle', ['showPanel', val])
+})
+
+function setQuery(q: Query) {
+  store.dispatch('alerts/updateQuery', q)
+  getAlerts()
+}
+
+function setSearch(q: string) {
+  store.dispatch('alerts/updateQuery', { q })
+  router.push({ query: { ...route.query, q } })
+  getAlerts()
+}
+
+function saveSearch(q: string) {
+  store.dispatch('addUserQuery', { q })
+}
+
+function deleteSearch(q: string) {
+  store.dispatch('removeUserQuery', { q })
+}
+
+function clearSearch() {
+  store.dispatch('alerts/updateQuery', { q: '' })
+  router.push({ query: { ...route.query, q: undefined } })
+  getAlerts()
+}
+
+// function setFilter(f: any) {
+//   store.dispatch('alerts/setFilter', {
+//     environment: f.environment,
+//     text: f.text,
+//     status: f.status ? f.status.split(',') : null,
+//     customer: f.customer ? f.customer.split(',') : null,
+//     service: f.service ? f.service.split(',') : null,
+//     group: f.group ? f.group.split(',') : null,
+//     dateRange: f.dateRange ? f.dateRange.split(',').map(n => (n ? parseInt(n) : null)) : [null, null]
+//   })
+// }
+
+function setPage(page: number) {
+  store.dispatch('alerts/setPagination', { page })
+}
+
+function setKiosk(isKiosk: boolean) {
+  store.dispatch('alerts/updateKiosk', isKiosk)
+}
+
+async function getAlerts() {
+  return await store.dispatch('alerts/getAlerts')
+}
+
+function getQueries() {
+  store.dispatch('getUserQueries')
+}
+
+
+function getEnvironments() {
+  store.dispatch('alerts/getEnvironments')
+}
+
+function playSound(audioRef: HTMLAudioElement | null) {
+  if (!isMute.value && audioRef) audioRef.play()
+}
+
+function setEnv(env: string) {
+  store.dispatch('alerts/setFilter', {
+    environment: env === 'All' ? null : env
+  })
+}
+
+async function refreshAlerts(audioRef: HTMLAudioElement | null) {
+  getEnvironments()
+  getQueries()
+  await getAlerts()
+  if (isNewOpenAlerts.value) playSound(audioRef)
+  timer.value = setTimeout(() => refreshAlerts(audioRef), refreshInterval.value)
+}
+
+function cancelTimer() {
+  if (timer.value) {
+    clearTimeout(timer.value)
+    timer.value = null
   }
 }
-</script>
 
-<script setup lang="ts">
-  import { useRoute } from 'vue-router';
-  definePage({
-    meta: {
-      requiresAuth: true,
-      title: "Alerts",
-    },
-    
-  });
-  const route = useRoute();
-  const query = route.query
-  const isKiosk = route.query.kiosk
-  const hash = route.hash
+function toCsv(data: typeof alerts.value) {
+  const options = mkConfig({
+    filename: `Alerts_${filter.value.environment || 'All'}`,
+    quoteCharacter: '"',
+    decimalSeparator: 'locale',
+    showTitle: true,
+    useBom: true,
+    useKeysAsHeaders: true,
+  })
+
+  const attrs: any = {}
+  data.forEach(d => Object.keys(d.attributes).forEach(attr => attrs[`attributes.${attr}`] = d.attributes[attr]))
+  const csvContent = data.map(
+    ({ correlate, service, tags, rawData, ...item }) => ({
+      correlate: correlate?.join(','),
+      service: typeof service == 'object' ? service?.join(',') : service,
+      tags: tags?.join(','),
+      ...attrs,
+      ...item,
+      rawData: rawData ? rawData.toString() : ''
+    })
+  )
+  download(options)(generateCsv(options)(csvContent))
+}
+
+// Lifecycle hooks
+onMounted(() => {
+  setQuery(route.query as Query)
+  // const hash = route.hash?.replace(/^#/, '')
+  // if (hash) {
+  //   const hashMap = utils.fromHash(hash)
+  //   setFilter(hashMap)
+  //   setSort(hashMap)
+  //   setPanel(hashMap.asi === '1')
+  // }
+  setKiosk(route.query.isKiosk === 'true')
+  cancelTimer()
+  refreshAlerts(null)
+})
+
+onBeforeUnmount(() => {
+  cancelTimer()
+})
+
+watch(() => tab.value, () => {
+  setPage(1)
+})
+
+watch(filter, () => {
+  history.replaceState(history.state, '', store.getters['alerts/getHash'])
+  tab.value = defaultTab.value
+  cancelTimer()
+  refreshAlerts(null)
+}, { deep: true })
+
+watch(refresh, async (val) => {
+  if (!val) {
+    await getAlerts()
+    getEnvironments()
+  }
+})
+
+watch(showPanel, () => {
+  history.replaceState(history.state, '', store.getters['alerts/getHash'])
+})
 </script>
 
 <style>

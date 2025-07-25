@@ -1,15 +1,9 @@
 import AuthApi from '@/services/api/auth.service'
-import type {State, Mutations, Actions, Getters, Payload} from './auth-types'
+import type {State, Payload} from '../types/auth-types'
 import type { VueAuthenticate, AuthenticateOptions } from 'vue-authenticate-2'
 import type { AxiosRequestConfig } from 'axios'
-
-interface Store {
-  namespaced: boolean;
-  state: State;
-  mutations: Mutations;
-  actions: Actions;
-  getters: Getters;
-}
+import type { Module } from 'vuex'
+import type {State as RootState} from '../types'
 
 export interface VueAuthenticateFix extends Omit<VueAuthenticate, 'authenticate'> {
   getPayload(): Payload;
@@ -21,7 +15,7 @@ export interface VueAuthenticateFix extends Omit<VueAuthenticate, 'authenticate'
   options: AuthenticateOptions;
 }
 
-export function makeStore(vueAuth: VueAuthenticateFix): Store {
+export function makeStore(vueAuth: VueAuthenticateFix): Module<State, RootState> {
   return {
     namespaced: true,
 
@@ -35,7 +29,6 @@ export function makeStore(vueAuth: VueAuthenticateFix): Store {
 
     mutations: {
       SET_AUTH(state, [token, payload]) {
-        console.log(payload)
         state.isAuthenticated = true
         state.token = token
         state.payload = payload

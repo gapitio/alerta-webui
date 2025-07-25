@@ -8,10 +8,16 @@ export default {
     return api.get(`/notificationrules/${id}`)
   },
   getNotificationRules(query: object) {
-    let config = {
+    const config = {
       params: query
     }
     return api.get('/notificationrules', config)
+  },
+  getNotificationRuleHistory(id: string, params: object) {
+    const config = {
+      params: params
+    }
+    return api.get(`/notificationrules/${id}/history`, config)
   },
   updateNotificationRule(id: string, data: object) {
     return api.put(`/notificationrules/${id}`, data)

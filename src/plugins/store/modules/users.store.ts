@@ -1,24 +1,28 @@
 import UsersApi from '@/services/api/user.service'
 import i18n from '@/plugins/i18n'
 import codes from 'country-calling-code'
+import type { State, Mutations, Actions, Getters } from '../types/users-types'
+import type { ActionTree } from 'vuex'
+import type { State as RootState } from '../types'
+
 const namespaced = true
 
-const state = {
+const state: State = {
   isLoading: false,
   countryCodes: Array.from(codes, x => `${x.country} (+${x.countryCodes[0]})`),
 
   domains: [],
-  users: [],
+  items: [],
   groups: []
 }
 
-const mutations = {
+const mutations: Mutations = {
   SET_LOADING(state) {
     state.isLoading = true
   },
-  SET_USERS(state, users) {
+  SET_ITEMS(state, users) {
     state.isLoading = false
-    state.users = users
+    state.items = users
   },
   SET_USER_GROUPS(state, groups) {
     state.groups = groups
@@ -31,11 +35,11 @@ const mutations = {
   }
 }
 
-const actions = {
+const actions: Actions & ActionTree<State, RootState> = {
   getUsers({commit}) {
     commit('SET_LOADING')
     return UsersApi.getUsers({})
-      .then(({users}) => commit('SET_USERS', users))
+      .then(({users}) => commit('SET_ITEMS', users))
       .catch(() => commit('RESET_LOADING'))
   },
   createUser({dispatch}, user) {
@@ -79,7 +83,7 @@ const actions = {
   }
 }
 
-const getters = {
+const getters: Getters = {
   countryCodes: state => {
     return state.countryCodes
   }

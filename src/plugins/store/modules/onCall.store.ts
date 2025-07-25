@@ -1,30 +1,34 @@
 import OnCallApi from '@/services/api/onCall.service'
+import type { State, Getters, Actions, Mutations } from '../types/onCall-types'
+import type { ActionTree } from 'vuex'
+import type { State as RootState } from '../types'
 
 const namespaced = true
 
-const state = {
+const state: State = {
   isLoading: false,
 
-  on_calls: [],
-
+  items: [],
+  
+  query: {q: ''},
   pagination: {
     page: 1,
-    rowsPerPage: 20,
-    sortBy: 'startTime',
+    itemsPerPage: 20,
+    sortBy: [{key: 'startTime'}],
     descending: true,
-    rowsPerPageItems: [10, 20, 50, 100, 200]
+    itemsPerPageOptions: [10, 20, 50, 100, 200]
   }
 }
 
-const mutations = {
+const mutations: Mutations = {
   SET_LOADING(state) {
     state.isLoading = true
   },
   SET_ON_CALL(state, [onCalls, total, pageSize]) {
     state.isLoading = false
-    state.on_calls = onCalls
+    state.items = onCalls
     state.pagination.totalItems = total
-    state.pagination.rowsPerPage = pageSize
+    state.pagination.itemsPerPage = pageSize
   },
   RESET_LOADING(state) {
     state.isLoading = false
@@ -34,18 +38,24 @@ const mutations = {
   }
 }
 
-const actions = {
+const actions: Actions & ActionTree<State, RootState> = {
   getOnCalls({commit, state}) {
     commit('SET_LOADING')
 
     const params = new URLSearchParams(state.query)
 
     // add server-side paging
-    params.append('page', state.pagination.page)
-    params.append('page-size', state.pagination.rowsPerPage)
+    params.append('page', state.pagination.page.toString())
+    params.append('page-size', state.pagination.itemsPerPage.toString())
 
-    // add server-side sort
-    params.append('sort-by', (state.pagination.descending ? '-' : '') + state.pagination.sortBy)
+    const sortBy = state.pagination.sortBy
+    if (typeof sortBy === 'string') {
+      params.append('sort-by', (state.pagination.descending ? '-' : '') + sortBy)
+    } else {
+      sortBy?.map(sb => {
+        params.append('sort-by', (sb.order === 'desc' ? '-' : '') + sb.key)
+      })
+    }
 
     return OnCallApi.getOnCalls(params)
       .then(({onCalls, total, pageSize}) => commit('SET_ON_CALL', [onCalls, total, pageSize]))
@@ -71,7 +81,7 @@ const actions = {
   }
 }
 
-const getters = {
+const getters: Getters = {
   pagination: state => {
     return state.pagination
   }
