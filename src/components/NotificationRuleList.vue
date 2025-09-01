@@ -1,6 +1,47 @@
 <template>
   <div>
     <v-dialog
+      v-model="alertsDialog"
+      scrollable
+      max-width="90vw"
+    >
+      <v-card>
+        <v-card-text>
+          <v-data-table
+            v-model="selected"
+            :headers="alertsHeaders"
+            :items="alerts"
+            :loading="alertsIsLoading"
+            :pagination.sync="alertsPagination"
+            :total-items="alertsPagination.totalItems"
+            :rows-per-page-items="alertsPagination.rowsPerPageItems"
+            disable-initial-sort
+            class="table"
+          >
+            <template v-slot:items="props">
+              <td>{{ props.item.environment }}</td>
+              <td>{{ props.item.service }}</td>
+              <td>{{ props.item.resource }}</td>
+              <td>{{ props.item.event }}</td>
+              <td>{{ props.item.group }}</td>
+              <td>{{ props.item.tags }}</td>
+              <td>{{ props.item.text }}</td>
+            </template>
+          </v-data-table>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn
+            color="blue darken-1"
+            flat
+            @click="alertsDialog=false"
+          >
+            {{ $t('Close') }}
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <v-dialog
       v-model="active_dialog"
       max-width="540px"
     >
@@ -827,6 +868,13 @@
           </v-card-text>
 
           <v-card-actions>
+            <v-btn
+              flat
+              color="blue darken-1"
+              @click="openAlertsDialog()"
+            >
+              {{ $t('ViewAlerts') }}
+            </v-btn>
             <v-spacer />
             <v-btn
               color="blue darken-1"
@@ -1292,6 +1340,16 @@ export default {
     search: '',
     dialog: false,
     active_dialog: false,
+    alertsDialog: false,
+    alertsHeaders: [
+      { text: i18n.t('Environment'), value: 'environment', sortable: false},
+      { text: i18n.t('Service'), value: 'service', sortable: false},
+      { text: i18n.t('Resource'), value: 'resource', sortable: false},
+      { text: i18n.t('Event'), value: 'event', sortable: false},
+      { text: i18n.t('Group'), value: 'group', sortable: false},
+      { text: i18n.t('Tags'), value: 'tags' , sortable: false},
+      { text: i18n.t('Description'), value: 'text' , sortable: false},
+    ],
     headers: [
       { text: i18n.t('Active'), value: 'active', info: [i18n.t('ActiveInfoTrue'), i18n.t('ActiveInfoFalse') ] },
       { text: i18n.t('Reactivate'), value: 'reactivate', info: i18n.t('ReactivateDateInfo')},
@@ -1397,6 +1455,9 @@ export default {
     }
   }),
   computed: {
+    alerts() {
+      return this.$store.state.notificationRules.alerts
+    },
     notification_rules() {
       return this.$store.state.notificationRules.notification_rules
         .filter(b => !this.status  || this.status.includes(String(b.active)))
@@ -1453,6 +1514,14 @@ export default {
         // FIXME: offer query suggestions to user here, in future
       }
     },
+    alertsPagination: {
+      get() {
+        return this.$store.getters['notificationRules/alertsPagination']
+      },
+      set(value) {
+        this.$store.dispatch('notificationRules/setAlertsPagination', value)
+      }
+    },
     pagination: {
       get() {
         return this.$store.getters['notificationRules/pagination']
@@ -1489,6 +1558,9 @@ export default {
     },
     currentGroups() {
       return this.$store.getters['alerts/groups']
+    },
+    alertsIsLoading() {
+      return this.$store.state.notificationRules.isLoadingAlerts
     },
     isLoading() {
       return this.$store.state.notificationRules.isLoading
@@ -1539,6 +1611,9 @@ export default {
     dialog(val) {
       val || this.close()
     },
+    alertsDialog(val) {
+      val || this.$store.dispatch('notificationRules/resetAlerts')
+    },
     refresh(val) {
       if (val) return
       this.getNotificationRules()
@@ -1556,6 +1631,11 @@ export default {
         this.getNotificationRules()
       },
       deep: true
+    },
+    alertsPagination: {
+      handler() {
+        this.getNotificationRuleAlerts()
+      },
     }
   },
   created() {
@@ -1572,6 +1652,14 @@ export default {
     this.editedItemStart = JSON.parse(JSON.stringify(this.defaultItem))
   },
   methods: {
+    openAlertsDialog() {
+      if (!this.editedItem.environment) return
+      this.getNotificationRuleAlerts()
+      this.alertsDialog = true
+    },
+    getNotificationRuleAlerts() {
+      if (this.editedItem.environment) this.$store.dispatch('notificationRules/getAlerts', this.editedItem)
+    },
     compareDict(a, b) {
       if (a === null) return true
       for (const key in a) {

@@ -250,6 +250,7 @@ export const en = {
   NewNotificationChannel: 'Add New Notification Channel',
   NotificationChannelsInfo: 'Channels/Authentication for SMS/Mail providers',
   EditNotificationChannel: 'Edit Notification Channel',
+  ViewAlerts: 'View Alerts',
   NotificationRuleHistoryId: 'Index of Notification Rule History',
   NotificationRuleHistoryUser: 'User that updated/created the Notification Rule',
   NotificationRuleHistory: 'Notification Rule History For',

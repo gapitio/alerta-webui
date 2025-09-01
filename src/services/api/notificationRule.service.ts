@@ -4,6 +4,12 @@ export default {
   createNotificationRule(data: object) {
     return api.post('/notificationrules', data)
   },
+  getNotificationAlerts(data: object, params: object) {
+    let config = {
+      params: params
+    }
+    return api.post('/notificationrule/alerts', data, config)
+  },
   getNotificationRule(id: string) {
     return api.get(`/notificationrules/${id}`)
   },
