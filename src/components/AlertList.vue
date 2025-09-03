@@ -174,6 +174,18 @@
                 :style="fontStyle"
               >{{ tag }}</span>&nbsp;</span>
             </span>
+            
+            <span
+              v-if="col == 'customTags'"
+            >
+              <span
+                v-for="tag in props.item.customTags"
+                :key="tag"
+              ><span
+                class="label"
+                :style="fontStyle"
+              >{{ tag }}</span>&nbsp;</span>
+            </span>
             <span
               v-if="props.item.attributes.hasOwnProperty(col)"
             >
@@ -303,7 +315,7 @@
               </v-btn>
 
               <v-btn
-                v-if="!isWatched(props.item.tags)"
+                v-if="!isWatched(props.item.customTags)"
                 flat
                 icon
                 small
@@ -317,7 +329,7 @@
                 </v-icon>
               </v-btn>
               <v-btn
-                v-if="isWatched(props.item.tags)"
+                v-if="isWatched(props.item.customTags)"
                 flat
                 icon
                 small

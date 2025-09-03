@@ -36,7 +36,7 @@
 
         <v-tooltip bottom>
           <v-btn
-            v-show="!isWatched(item.tags)"
+            v-show="!isWatched(item.customTags)"
             slot="activator"
             icon
             class="btn--plain px-1 mx-0"
@@ -53,7 +53,7 @@
 
         <v-tooltip bottom>
           <v-btn
-            v-show="isWatched(item.tags)"
+            v-show="isWatched(item.customTags)"
             slot="activator"
             icon
             class="btn--plain px-1 mx-0"
@@ -707,6 +707,30 @@
                     </div>
                   </div>
                 </div>
+                <div class="flex xs12 ma-1">
+                  <div class="d-flex align-top">
+                    <div class="flex xs3 text-xs-left">
+                      <div class="grey--text">
+                        {{ $t('CustomTags') }}
+                      </div>
+                    </div>
+                    <div class="flex xs6 text-xs-left">
+                      <div>
+                        <v-chip
+                          v-for="tag in item.customTags"
+                          :key="tag"
+                          label
+                          small
+                          @click="queryBy('customTags', tag)"
+                        >
+                          <v-icon left>
+                            label
+                          </v-icon>{{ tag }}
+                        </v-chip>
+                      </div>
+                    </div>
+                  </div>
+                </div>
                 <span> {{ $t("Attributes") }} </span>
                 <v-divider />
                 <div
@@ -849,7 +873,7 @@
         v-if="item.id"
         :id="item.id"
         :status="item.status"
-        :is-watched="isWatched(item.tags)"
+        :is-watched="isWatched(item.customTags)"
         @take-action="takeAction"
         @ack-alert="ackAlert"
         @shelve-alert="shelveAlert"

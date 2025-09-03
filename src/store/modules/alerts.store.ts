@@ -372,7 +372,7 @@ const getters = {
     if (state.isWatch) {
       const username = rootState.auth.payload.preferred_username
       const tag = `watch:${username}`
-      return state.alerts.filter(a => a.tags.includes(tag))
+      return state.alerts.filter(a => a.customTags.includes(tag))
     } else {
       return state.alerts
     }

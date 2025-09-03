@@ -326,7 +326,7 @@ export default {
     },
     isWatched() {
       const tag = `watch:${this.username}`
-      return this.item.tags.indexOf(tag) > -1
+      return this.item.customTags.indexOf(tag) > -1
     },
     statusList() {
       // FIXME - remove defaultStatusMap from v7.0 onwards
