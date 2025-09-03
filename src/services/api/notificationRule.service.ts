@@ -10,6 +10,9 @@ export default {
     }
     return api.post('/notificationrule/alerts', data, config)
   },
+  getNotificationRulesByNGroup(groupId: string){
+    return api.get(`/notificationrules/group/${groupId}`)
+  },
   getNotificationRule(id: string) {
     return api.get(`/notificationrules/${id}`)
   },
