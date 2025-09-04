@@ -893,7 +893,7 @@ export default {
     },
     toggleWatch() {
       var map
-      if (this.selected.some(x => !this.isWatched(x.tags))) {
+      if (this.selected.some(x => !this.isWatched(x.customTags))) {
         map = this.selected.map(a => this.watchAlert(a.id))
       } else {
         map = this.selected.map(a => this.unwatchAlert(a.id))
