@@ -1038,12 +1038,25 @@
           <td>{{ props.item.channelId }}</td>
           <td>
             <v-chip
-              v-for="number in [...props.item.receivers, ...users.filter(b => props.item.userIds.includes(b.id)).map(b => b.name), ...groups.filter(b => props.item.groupIds.includes(b.id)).map(b => b.name)]"
+              v-for="number in [
+                ...props.item.receivers,
+                ...users.filter(b => props.item.userIds.includes(b.id)).map(b => b.name),
+                ...props.item.groupIds.map((a) => a.name).filter((a) => a !== undefined)
+              ]"
               :key="number"
               outline
               small
             >
               {{ number }}
+            </v-chip>
+            <v-chip
+              v-for="receiver in props.item.groupIds.filter((a) => groups.filter((b) => a.id === b.id).length === 0)"
+              :key="receiver"
+              outline
+              small
+              color="red"
+            >
+              {{ receiver }}
             </v-chip>
           </td>
           <td>{{ props.item.useOnCall }}</td>
