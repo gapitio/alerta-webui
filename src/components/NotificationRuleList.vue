@@ -457,7 +457,7 @@
                         </v-flex>
 
                         <v-flex xs12>
-                          <v-select
+                          <v-combobox
                             v-model="editedItem.groupIds"
                             :items="groups"
                             item-text="name"
@@ -1490,6 +1490,7 @@ export default {
             { ...b },
             {
               period: period,
+              groupIds: b.groupIds.map((b) => this.groups.filter((a) => a.id === b)[0] ?? b),
               timeObj: {
                 time: b.delayTime,
                 interval: 'second'
@@ -1534,7 +1535,7 @@ export default {
       return this.$store.state.users.users
     },
     groups() {
-      return this.$store.state.notificationGroups.notificationGroups
+      return this.$store.state.notificationGroups.notificationGroups.map(({name, id}) => ({name, id}) )
     },
     computedHeaders() {
       return this.headers.filter(h =>
@@ -1857,7 +1858,7 @@ export default {
             delayTime: this.editedItem.timeObj.time ? `${this.editedItem.timeObj.time} ${this.editedItem.timeObj.interval}` : null,
             receivers: this.editedItem.receivers,
             userIds: this.editedItem.userIds,
-            groupIds: this.editedItem.groupIds,
+            groupIds: this.editedItem.groupIds.map((a) => a.id ?? a),
             useOnCall: this.editedItem.useOnCall,
             service: this.editedItem.service,
             resource: this.editedItem.resource,
@@ -1883,6 +1884,7 @@ export default {
           Object.assign(this.editedItem, {
             id: null,
             startTime: sTimeStr,
+            groupIds: this.editedItem.groupIds.map((a) => a.id ?? a),
             endTime: eTimeStr,
             delayTime: this.editedItem.timeObj.time ? `${this.editedItem.timeObj.time} ${this.editedItem.timeObj.interval}` : null,
             text: this.editedItem.text.replace(/\{([\w\[\]\. ]*)\}/g, '%($1)s'),
