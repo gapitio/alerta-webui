@@ -348,8 +348,14 @@ export default {
       this.dialog = true
     },
     deleteItem(item) {
-      confirm(i18n.t('ConfirmDelete')) &&
-        this.$store.dispatch('notificationGroups/deleteNotificationGroup', item.id)
+      this.$store.dispatch('notificationRules/getNoificationRulesGroup', item.id).then(
+        (value) => {
+          const rules = value.notificationRules.map(({id, name}) => name ?? id)
+          confirm(`${i18n.t('ConfirmDelete')}\nNotification Rules affected:\n - ${rules.join('\n  - ')}`) &&
+            this.$store.dispatch('notificationGroups/deleteNotificationGroup', item.id)
+        }
+      )
+      
     },    
     close() {
       let change = !this.compareDict(this.editedItem, this.editedItemStart)

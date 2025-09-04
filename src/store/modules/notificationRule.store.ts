@@ -94,6 +94,7 @@ const actions = {
       commit('SET_ALERTS', [total, alerts, pageSize])
     )
   },
+
   resetAlerts({commit, state}) {
     commit('SET_ALERTS', [0, [], state.alertsPagination.rowsPerPag])
   },
@@ -113,6 +114,9 @@ const actions = {
         commit('SET_NOTIFICATION_RULES', [notificationRules, total, pageSize])
       )
       .catch(() => commit('RESET_LOADING'))
+  },
+  getNoificationRulesGroup(_, id) {
+    return NotificationRuleApi.getNotificationRulesByNGroup(id)
   },
   getNotificationRuleHistory({commit, state}, id) {
     let params = new URLSearchParams(state.query)
