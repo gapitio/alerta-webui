@@ -121,7 +121,7 @@ const mutations: Mutations = {
     state.filter = Object.assign({}, {dateRange: {}}, filter)
   },
   SET_HISTORY_FILTER(state, filter) {
-    state.historyFilter = Object.assign({}, state.historyFilter, filter)
+    state.historyFilter = Object.assign({}, {dateRange: {}}, filter)
   },
   SET_PAGINATION(state, pagination) {
     state.pagination = Object.assign({}, state.pagination, pagination)
