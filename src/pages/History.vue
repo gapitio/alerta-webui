@@ -254,6 +254,7 @@ function selectItem(item: History) {
 
 function setEnv(env: string) {
   store.dispatch('alerts/setHistoryFilter', {
+    ...filter.value,
     environment: env === 'All' ? null : env
   })
   refreshAll()
