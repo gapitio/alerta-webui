@@ -390,6 +390,7 @@ function playSound(audioRef: HTMLAudioElement | null) {
 
 function setEnv(env: string) {
   store.dispatch('alerts/setFilter', {
+    ...filter.value,
     environment: env === 'All' ? null : env
   })
 }
