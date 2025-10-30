@@ -57,19 +57,17 @@ export function makeStore(vueAuth: VueAuthenticateFix): Module<State, RootState>
         commit('RESET_SENDING')
       },
       async login({commit, dispatch}, credentials) {
+        console.log('login')
         const res = await vueAuth.login(credentials)
         vueAuth.setToken(res)
         await commit('SET_AUTH', [vueAuth.getToken(), vueAuth.getPayload()])
         dispatch('getUserPrefs', {}, {root: true})
       },
-      authenticate({commit, dispatch}, provider) {
-        return vueAuth
-          .authenticate(provider)
-          .then(() => commit('SET_AUTH', [vueAuth.getToken(), vueAuth.getPayload()]))
-          .then(() => dispatch('getUserPrefs', {}, {root: true}))
-          .catch(error => {
-            throw error
-          })
+      async authenticate({commit, dispatch}, provider) {
+        console.log('authenticate')
+        await vueAuth.authenticate(provider)
+        await commit('SET_AUTH', [vueAuth.getToken(), vueAuth.getPayload()])
+        await dispatch('getUserPrefs', {}, {root: true})
       },
       setToken({commit, dispatch}, token) {
         vueAuth.setToken(token)
