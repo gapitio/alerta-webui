@@ -179,11 +179,14 @@ async function login() {
   router.push({ path: redirect || '/' })
 }
 
-function authenticate(){
+async function authenticate(){
   if (authProvider.value) {
     message.value = `Authenticating with ${authProvider.value} ...`
     try {
-      store.dispatch('auth/authenticate', provider.value)
+      await store.dispatch('auth/authenticate', provider.value)
+      theme.global.name.value = isDark.value ? 'gapitDark' : 'gapitLight'
+      const redirect = !(route.query.redirect instanceof Array) ? route.query.redirect?.toString() : null
+      router.push({ path: redirect || '/' })
     } catch (e) {
       if (e instanceof AxiosError) error.value = (e.response?.data as {message: string}).message
       else throw e
