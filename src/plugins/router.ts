@@ -10,7 +10,7 @@ import {routes} from 'vue-router/auto-routes'
 import type {Store} from './store/types'
 
 const router = createRouter({
-  history: createWebHistory(__BASE_URL__),
+  history: createWebHistory(__BASE_URL__ ?? '/'),
   routes
 })
 

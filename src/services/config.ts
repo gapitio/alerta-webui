@@ -54,7 +54,7 @@ class Config {
   }
 
   getLocalConfig() {
-    const basePath = __BASE_URL__ ?? ''
+    const basePath = import.meta.env.BASE_URL ?? '/'
     return this.$http
       .get(`${basePath}config.json`)
       .then(response => {

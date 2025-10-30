@@ -43,7 +43,7 @@ export default defineConfig({
       include: resolve(dirname(fileURLToPath(import.meta.url)), './path/to/src/locales/**'),
     }),
   ],
-  define: { __APP_VERSION__: JSON.stringify(version), __BASE_URL__:  process.env.BASE_URL},
+  define: { __APP_VERSION__: JSON.stringify(version), __BASE_URL__:  JSON.stringify(process.env.BASE_URL)},
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
