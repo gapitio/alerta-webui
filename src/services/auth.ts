@@ -5,10 +5,13 @@ function getRedirectUri(path: string) {
   return window.location.origin + (path || '')
 }
 
+type AuthenticateOptionsFix = AuthenticateOptions & {tokenPath: string}
+
 export function registerVueAuth(app: App) {
   const config = app.config.globalProperties.$config
   const basePath = __BASE_URL__ ?? '/'
-  const options: AuthenticateOptions = {
+  const options: AuthenticateOptionsFix = {
+    tokenPath: 'token',
     tokenName: 'token',
     responseDataKey: 'data',
     tokenPrefix: '',
