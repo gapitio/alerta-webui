@@ -14,11 +14,12 @@ import App from './App.vue'
 
 // Composables
 import {createApp} from 'vue'
+import type { State } from './plugins/store/types/config-types'
 
 async function makeApp() {
   const app = createApp(App)
   const config = await bootstrap.getConfig()
-  app.config.globalProperties.$config = config
+  app.config.globalProperties.$config = config as State
 
   registerPlugins(app)
 

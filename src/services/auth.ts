@@ -1,4 +1,4 @@
-import VueAuthenticate from 'vue-authenticate-2'
+import VueAuthenticate, { type AuthenticateOptions } from 'vue-authenticate-2'
 import type {App} from 'vue'
 
 function getRedirectUri(path: string) {
@@ -8,8 +8,7 @@ function getRedirectUri(path: string) {
 export function registerVueAuth(app: App) {
   const config = app.config.globalProperties.$config
   const basePath = __BASE_URL__ ?? '/'
-  app.use(VueAuthenticate, {
-    tokenPath: 'token',
+  const options: AuthenticateOptions = {
     tokenName: 'token',
     responseDataKey: 'data',
     tokenPrefix: '',
@@ -21,7 +20,7 @@ export function registerVueAuth(app: App) {
       azure: {
         name: 'Azure Active Directory',
         url: '/auth/azure',
-        clientId: config.client_id,
+        clientId: config.client_id!,
         authorizationEndpoint: `https://login.microsoftonline.com/${config.azure_tenant}/oauth2/v2.0/authorize`,
         redirectUri: getRedirectUri(basePath),
         requiredUrlParams: ['scope'],
@@ -36,7 +35,7 @@ export function registerVueAuth(app: App) {
       cognito: {
         name: 'Amazon Cognito',
         url: '/auth/openid',
-        clientId: config.client_id,
+        clientId: config.client_id!,
         authorizationEndpoint: `https://${config.cognito_domain}.auth.${config.aws_region}.amazoncognito.com/login`,
         redirectUri: getRedirectUri(basePath),
         requiredUrlParams: ['scope'],
@@ -51,7 +50,7 @@ export function registerVueAuth(app: App) {
       github: {
         name: 'GitHub',
         url: '/auth/github',
-        clientId: config.client_id,
+        clientId: config.client_id!,
         authorizationEndpoint: `${config.github_url}/login/oauth/authorize`,
         redirectUri: getRedirectUri(basePath),
         scope: ['user:email', 'read:org']
@@ -59,7 +58,7 @@ export function registerVueAuth(app: App) {
       gitlab: {
         name: 'GitLab',
         url: '/auth/gitlab',
-        clientId: config.client_id,
+        clientId: config.client_id!,
         authorizationEndpoint: `${config.gitlab_url}/oauth/authorize`,
         redirectUri: getRedirectUri(basePath),
         requiredUrlParams: ['scope'],
@@ -73,13 +72,13 @@ export function registerVueAuth(app: App) {
       google: {
         name: 'Google',
         url: '/auth/google',
-        clientId: config.client_id,
+        clientId: config.client_id!,
         redirectUri: getRedirectUri(basePath)
       },
       keycloak: {
         name: 'Keycloak',
         url: '/auth/keycloak',
-        clientId: config.client_id,
+        clientId: config.client_id!,
         authorizationEndpoint: `${config.keycloak_url}/auth/realms/${config.keycloak_realm}/protocol/openid-connect/auth`,
         redirectUri: getRedirectUri(basePath),
         requiredUrlParams: ['scope'],
@@ -94,8 +93,8 @@ export function registerVueAuth(app: App) {
       openid: {
         name: 'OpenID',
         url: '/auth/openid',
-        clientId: config.client_id,
-        authorizationEndpoint: config.oidc_auth_url,
+        clientId: config.client_id!,
+        authorizationEndpoint: config.oidc_auth_url!,
         redirectUri: getRedirectUri(basePath),
         requiredUrlParams: ['scope'],
         optionalUrlParams: ['display', 'state'],
@@ -109,8 +108,8 @@ export function registerVueAuth(app: App) {
       pingfederate: {
         name: 'PingFederate',
         url: '/auth/pingfederate',
-        clientId: config.client_id,
-        authorizationEndpoint: config.pingfederate_url,
+        clientId: config.client_id!,
+        authorizationEndpoint: config.pingfederate_url!,
         redirectUri: getRedirectUri(basePath || '/'),
         requiredUrlParams: ['pfidpadapterid', 'scope'],
         scope: ['openid', 'profile', 'email'],
@@ -119,5 +118,6 @@ export function registerVueAuth(app: App) {
         oauthType: '2.0'
       }
     }
-  })
+  }
+  app.use(VueAuthenticate,  options)
 }
