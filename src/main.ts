@@ -14,7 +14,7 @@ import App from './App.vue'
 
 // Composables
 import {createApp} from 'vue'
-import type { State } from './plugins/store/types/config-types'
+import type {State} from './plugins/store/types/config-types'
 
 async function makeApp() {
   const app = createApp(App)

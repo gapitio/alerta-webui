@@ -1,4 +1,4 @@
-import type { State } from '@/plugins/store/types/config-types'
+import type {State} from '@/plugins/store/types/config-types'
 import Axios from 'axios'
 import type {AxiosInstance} from 'axios'
 
