@@ -1,11 +1,12 @@
+import type { State } from '@/plugins/store/types/config-types'
 import Axios from 'axios'
 import type {AxiosInstance} from 'axios'
 
 class Config {
-  private config: any = {}
-  private envConfig: any = {}
-  private localConfig: any = {}
-  private remoteConfig: any = {}
+  private config: State | undefined = undefined
+  private envConfig: Partial<State> = {}
+  private localConfig: Partial<State> = {}
+  private remoteConfig: State | undefined = undefined
 
   private $http: AxiosInstance
 
@@ -13,7 +14,7 @@ class Config {
     this.$http = Axios.create()
   }
 
-  getConfig(): Promise<any> {
+  getConfig(): Promise<State> {
     return this.getEnvConfig()
       .then(response => {
         return this.setEnvConfig(response)
@@ -25,7 +26,7 @@ class Config {
         return this.setLocalConfig(response)
       })
       .then(() => {
-        const endpoint = this.config.endpoint
+        const endpoint = {...this.envConfig, ...this.localConfig}!.endpoint
         if (!endpoint) {
           const errorText =
             `ERROR: Failed to retrieve client config from Alerta API endpoint ${endpoint}/config.\n\n` +
@@ -45,10 +46,10 @@ class Config {
       })
   }
 
-  getEnvConfig() {
+  getEnvConfig(): Promise<{endpoint?: string}> {
     return new Promise(resolve => {
       const endpoint = import.meta.env.VITE_APP_ALERTA_ENDPOINT
-      const envConfig = endpoint ? {endpoint} : {}
+      const envConfig: {endpoint?: string} = endpoint ? {endpoint} : {}
       resolve(envConfig)
     })
   }
@@ -84,23 +85,21 @@ class Config {
 
   mergeConfig() {
     return (this.config = {
-      ...this.remoteConfig,
+      ...this.remoteConfig!,
       ...this.localConfig,
       ...this.envConfig
     })
   }
 
-  setEnvConfig(data: any) {
+  setEnvConfig(data: {endpoint?: string}) {
     this.envConfig = data
-    return this.mergeConfig()
   }
 
-  setLocalConfig(data: any) {
+  setLocalConfig(data: {endpoint?: string} | string) {
     if (typeof data === 'object') this.localConfig = data
-    return this.mergeConfig()
   }
 
-  setRemoteConfig(data: any) {
+  setRemoteConfig(data: State) {
     this.remoteConfig = data
     return this.mergeConfig()
   }

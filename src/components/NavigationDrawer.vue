@@ -301,14 +301,14 @@ const items = computed(
 )
 
 const gapitVersion = computed(() => {
-  const version = $config.version
+  const version = $config?.version ?? 'dev'
   return version == 'dev' ? version : version.replace('v', '') || 'dev'
 })
 
 const isDark = computed(() => store.getters.getPreference('isDark'))
 const isLoggedIn = computed(() => store.getters['auth/isLoggedIn'])
-const isAuthRequired = computed(() => $config.auth_required)
-const isAllowReadonly = computed(() => $config.allow_readonly)
+const isAuthRequired = computed(() => store.getters.getConfig('auth_required'))
+const isAllowReadonly = computed(() => store.getters.getConfig('allow_readonly'))
 
 function showGroup(ref: string) {
   for (const item of items.value) {

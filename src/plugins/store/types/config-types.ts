@@ -9,12 +9,12 @@ interface StatusMap {
   [key: string]: string
 }
 
-interface Query {
+type Query = {
   query: string[][]
   text: string
 }
 
-interface Indicators {
+type Indicators = {
   queries: Query[]
   severity: string[]
 }
@@ -43,20 +43,20 @@ export interface AlarmModel {
   status: StatusMap
 }
 
-interface Timeouts {
+type Timeouts = {
   ack: number
   alert: number
   heartbeat: number
   shelve: number
 }
 
-interface DateFormats {
+type DateFormats = {
   longDate: string
   mediumDate: string
   shortTime: string
 }
 
-interface FontSettings {
+type FontSettings = {
   'font-family': string
   'font-size': string
   'font-weight': number
