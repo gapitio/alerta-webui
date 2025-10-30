@@ -1,4 +1,4 @@
-import VueAuthenticate, { type AuthenticateOptions } from 'vue-authenticate-2'
+import VueAuthenticate, {type AuthenticateOptions} from 'vue-authenticate-2'
 import type {App} from 'vue'
 
 function getRedirectUri(path: string) {
@@ -119,5 +119,5 @@ export function registerVueAuth(app: App) {
       }
     }
   }
-  app.use(VueAuthenticate,  options)
+  app.use(VueAuthenticate, options)
 }
