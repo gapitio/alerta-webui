@@ -241,7 +241,7 @@
 
 <script lang="ts" setup>
 import debounce from 'lodash/debounce'
-import { computed, ref } from 'vue'
+import { computed, onUnmounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { Store } from '@/plugins/store/types'
 import { useRoute, useRouter } from 'vue-router'
@@ -277,6 +277,9 @@ const refresh = () => {
   getNotes()
   timeout.value = setTimeout(refresh, interval.value)
 }
+
+onUnmounted(() => clearTimeout(timeout.value))
+
 function getAlert() {
   store.dispatch('alerts/getAlert', props.id)
 }
