@@ -3,7 +3,9 @@
     <span
       v-if="showHeader" 
       class="text-secondary"
-    >{{ label }}</span>
+    >{{ label }}
+      <slot name="infoDialog" />
+    </span>
     <span
       v-if="required"
       :class="getColorClass()"
@@ -38,6 +40,8 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import type { VTextField } from 'vuetify/components';
+
+defineSlots()
 
 const emits = defineEmits(['click:appendInner', 'click:clear'])
 

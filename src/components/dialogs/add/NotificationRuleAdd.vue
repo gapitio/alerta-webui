@@ -137,7 +137,11 @@
                 v-model.trim="editedItem.text"
                 show-header
                 :label="t('Text')"
-              />
+              >
+                <template #infoDialog>
+                  <text-information-dialog />
+                </template>
+              </g-text-field>
             </v-col>
 
             <v-col
