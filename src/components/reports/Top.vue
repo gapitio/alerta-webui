@@ -33,7 +33,7 @@
         {{ item[desc as 'environments'].join(', ') }}
       </template>
       <template #[`item.resources`]="{item}">
-        <v-row>
+        <v-row class="mt-1 mb-1">
           <v-col 
             v-for="a in item.resources"
             :key="a.id"
