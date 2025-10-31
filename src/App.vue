@@ -156,38 +156,3 @@ function refresh() {
 <style lang="scss">
 @use "@/styles/main.scss";
 </style>
-
-<!-- <style>
-
-@import "./assets/css/fonts.css";
-
-.application {
-  font-family: 'Poppins', 'Roboto', sans-serif !important;
-}
-
-.title {
-  font-family: 'Poppins', 'Roboto', sans-serif !important;
-}
-
-.toolbar-title {
-  color: inherit;
-  text-decoration: inherit;
-}
-
-.logo {
-  font-family: "Sonsie One", cursive;
-  font-size: 26px;
-}
-
-.btn--plain {
-  padding: 0;
-  opacity: 0.6;
-}
-.btn--plain:before {
-  background-color: transparent !important;
-  transition: none !important;
-}
-.btn--plain:hover {
-  opacity: 1;
-}
-</style> -->
