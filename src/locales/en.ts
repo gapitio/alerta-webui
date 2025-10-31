@@ -227,7 +227,7 @@ export const en = {
   NotificationSend: 'Notification Send',
   SendNotification: 'Send Notification',
   PrepareNotification: 'Prepare Notification',
-  NotificationText: 'NotificationText',
+  NotificationText: 'Notification Text',
   NotificationGroups: 'Notification Groups',
   Sent: 'Sent',
   NotSent: 'Not Sent',
@@ -365,21 +365,21 @@ export const en = {
   TextFields:
     'Both text fields are built up by plain text and references to alert details. Alert details are referenced by putting brackets around the alert detail field.',
   TextFieldObject:
-    'If the detail field is of type object ({}), each value of a key inide of the object can be accessed by ".". For example "This is the ip: {attributes.ip}" wil result in "This is the ip: 127.0.0.1".',
+    'If the detail field is of type object ({\'{}\'}), each value of a key inide of the object can be accessed by ".". For example "This is the ip: {\'attributes.ip\'}" will result in "This is the ip: 127.0.0.1".',
   TextFieldFullObject:
-    'If objects are referenced, the entire object is inserted. For example "this is the all the attributes: {attributes}" will result in: "this is all the attibutes: {\'ip\': \'127.0.0.1\'}"',
+    'If objects are referenced, the entire object is inserted. For example "this is the all the attributes: {attributes}" will result in: "this is all the attibutes: {\'{\"ip\": \"127.0.0.1\"}\'}"',
   TextFieldArray:
-    'If the detail field is of type array ([]), each entry can be accessed by index. For example "this is a tag: {tags[0]}" will result in "this is a tag: test". If arrays are referenced a comma seperated list are inserted.',
-  TextFieldFullArray: 'For example "this is all tags: {tags}" will result in "this is all tags: test, a, b"',
+    'If the detail field is of type array ([]), each entry can be accessed by index. For example "this is a tag: {\'{tags[0]}\'}" will result in "this is a tag: test". If arrays are referenced a comma seperated list are inserted.',
+  TextFieldFullArray: 'For example "this is all tags: {\'{tags}\'}" will result in "this is all tags: test, a, b"',
   TextExplained:
     'The content of the sms/mail is decided from the notification rule text field and text field in the trigger that triggered the notificatoin rule',
   TextNotificationRule:
-    'The notification rule text field is added to the trigger text if trigger text is empty or trigger text includes "{default}" ',
+    'The notification rule text field is added to the trigger text if trigger text is empty or trigger text includes ',
   TextTrigger:
-    'The trigger text is the main content and only adds the notification rule text field if it is empty or includes "{default}"',
+    'The trigger text is the main content and only adds the notification rule text field if it is empty or includes ',
   TextBothEmpty:
-    'If both the trigger text and notification rule text is empty the default text:"{environment}: {severity} alert for {service} - {resource} is {event}" is used',
-  TextExamples: 'Here is some examples of how the content of the notification sent is processed',
+    "If both the trigger text and notification rule text is empty the default text:\"{'{environment}'}: {'{severity}'} alert for {'{service}'} - {'{resource}'} is {'{event}'}\" is used",
+  TextExamples: 'Here are some examples of how the content of the notification sent is processed',
   TextFromNotificationRule: 'Text from notification rule',
   TextFromTrigger: 'Text from trigger',
   TagsInfo: 'Tags are organized into groups using a combination of AND and OR logic',

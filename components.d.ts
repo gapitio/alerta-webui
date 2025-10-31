@@ -57,10 +57,11 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     Snackbar: typeof import('./src/components/lib/Snackbar.vue')['default']
     TagsInformation: typeof import('./src/components/dialogs/information/TagsInformation.vue')['default']
+    TextInformation: typeof import('./src/components/dialogs/information/TextInformation.vue')['default']
+    TextInformationDialog: typeof import('./src/components/dialogs/information/TextInformationDialog.vue')['default']
     Top: typeof import('./src/components/reports/Top.vue')['default']
     TriggerInformation: typeof import('./src/components/dialogs/information/TriggerInformation.vue')['default']
     UserAdd: typeof import('./src/components/dialogs/add/UserAdd.vue')['default']
-    UserLogin: typeof import('./src/components/auth/UserLogin.vue')['default']
     UsersFilter: typeof import('./src/components/dialogs/filters/UsersFilter.vue')['default']
   }
 }
