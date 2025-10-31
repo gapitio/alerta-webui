@@ -117,6 +117,13 @@
           {{ item[detail.value] }}
         </span>
       </v-col>
+      <v-col
+        v-else-if="detail.value == 'text'"
+        cols="9"
+        style="white-space: pre-wrap;"
+      >
+        {{ item[detail.value] }}
+      </v-col>
       <v-col 
         v-else
         cols="9"
