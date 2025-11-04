@@ -10,7 +10,7 @@
       style="position: absolute; top: 2.5px;right: calc(25vw); width: 40vw; background: white;"
     />
     <v-btn
-      perms="write:blackouts"
+      v-has-perms:disabled="'write:blackouts'"
       prepend-icon="add"
       class="no-cap-btn bg-primary-600"
       style="position: absolute; right: 10px;"
@@ -117,21 +117,21 @@
       </template>
       <template #[`item.actions`]="{item}">
         <v-btn
-          v-has-perms.disable="'write:notification_rules'"
+          v-has-perms.disable="'write:blackouts'"
           icon="edit"
           density="compact"
           variant="text"
           @click="editItem(item)"
         />
         <v-btn
-          v-has-perms.disable="'write:notification_rules'"
+          v-has-perms.disable="'write:blackouts'"
           icon="content_copy"
           density="compact"
           variant="text"
           @click="copyItem(item)"
         />
         <v-btn
-          v-has-perms.disable="'write:notification_rules'"
+          v-has-perms.disable="'write:blackouts'"
           icon="delete"
           density="compact"
           variant="text"

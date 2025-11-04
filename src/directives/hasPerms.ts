@@ -13,7 +13,7 @@ export function checkPerms(store: Store, perm: string) {
   }
 
   function isInScope(want: string, have: string[]): boolean {
-    if (have.includes(want) || have.includes(want.split(':')[0])) {
+    if (have.includes(want) || have.includes(want.split(':')[0]) || have.includes(want.split('.')[0])) {
       return true
     } else if (want.startsWith('read')) {
       return isInScope(want.replace('read', 'write'), have)
@@ -37,7 +37,8 @@ export default (store: Store) => {
     const action = binding.modifiers.disable ? 'disable' : 'hide'
     if (!checkPerms(store, binding.value)) {
       if (action === 'disable') {
-        el.setAttribute('disabled', '')
+        el.classList.add('v-input--disabled', 'v-selection-control--disabled')
+        // el.setAttribute('disabled', '')
       } else {
         el.style.display = 'none'
       }

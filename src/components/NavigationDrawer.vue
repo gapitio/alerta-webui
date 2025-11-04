@@ -149,7 +149,7 @@ const items = computed(
           icon: 'manage_history',
           text: t('NotificationHistory'),
           path: '/notificationhistory',
-          perms: 'read:notification_history',
+          perms: 'read:notification.history',
           show: true
         },
       ]
@@ -184,7 +184,7 @@ const items = computed(
           icon: 'phone',
           text: t('OnCall'),
           path: '/oncall',
-          perms: 'read:notification_rules',
+          perms: 'read:on_calls',
           show: true
         },
         // {
@@ -219,21 +219,21 @@ const items = computed(
           icon: 'people',
           text: t('NotificationGroups'),
           path: '/notificationgroups',
-          perms: 'read:notification_groups',
+          perms: 'read:notification.groups',
           show: true
         },
         {
           icon: 'playlist_add_check',
           text: t('NotificationChannels'),
           path: '/notificationchannels',
-          perms: 'read:notification_channels',
+          perms: 'read:notification.channels',
           show: true
         },
         {
           icon: 'send',
           text: t('NotificationSend'),
           path: '/notificationsend',
-          perms: 'read:notification_channels',
+          perms: 'write:notification.sends',
           show: true
         },
         {
@@ -247,14 +247,14 @@ const items = computed(
           icon: 'add_alert',
           text: t('NotificationRules'),
           path: '/notificationrules',
-          perms: 'read:notification_rules',
+          perms: 'read:notification.rules',
           show: true
         },
         {
           icon: 'snooze',
           text: t('NotificationDelays'),
           path: '/notificationdelays',
-          perms: 'read:notification_rules',
+          perms: 'read:notification.rules',
           show: true
         },
       ]

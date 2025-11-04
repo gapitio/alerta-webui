@@ -5,7 +5,7 @@
         {{ t('NotificationSend') }}
         
         <v-btn
-          perms="write:notificationSend"
+          v-has-perms="'write:notification.send'"
           prepend-icon="add"
           class="no-cap-btn bg-primary-600"
           style="position: absolute; right: 10px;"

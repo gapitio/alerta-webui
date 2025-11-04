@@ -17,7 +17,7 @@
         />
         
         <v-btn
-          perms="write:notificationChannelNotificationChannels"
+          v-has-perms="'write:notification.channel'"
           prepend-icon="add"
           class="no-cap-btn bg-primary-600"
           style="position: absolute; right: 10px;"

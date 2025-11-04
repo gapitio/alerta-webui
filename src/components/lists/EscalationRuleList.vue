@@ -15,7 +15,7 @@
           </template>
         </information-dialog>
         <v-btn
-          perms="write:notification_rules"
+          v-has-perms="'write:escalation_rules'"
           prepend-icon="add"
           class="no-cap-btn bg-primary-600"
           color=""
@@ -135,7 +135,7 @@
       <template #[`item.active`]="{item}">
         <g-switch
           v-model="item.active"
-          v-has-perms.disable="'write:notification_rules'"
+          v-has-perms.disable="'write:escalation_rules'"
           @update:model-value="(val: boolean) => editActive({...item, active: val})"
         />
       </template>
@@ -249,21 +249,21 @@
       </template>
       <template #[`item.actions`]="{item}">
         <v-btn
-          v-has-perms.disable="'write:notification_rules'"
+          v-has-perms.disable="'write:escalation_rules'"
           icon="edit"
           density="compact"
           variant="text"
           @click="editItem(item)"
         />
         <v-btn
-          v-has-perms.disable="'write:notification_rules'"
+          v-has-perms.disable="'write:escalation_rules'"
           icon="content_copy"
           density="compact"
           variant="text"
           @click="copyItem(item)"
         />
         <v-btn
-          v-has-perms.disable="'write:notification_rules'"
+          v-has-perms.disable="'write:escalation_rules'"
           icon="delete"
           density="compact"
           variant="text"
