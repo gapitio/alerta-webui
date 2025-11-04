@@ -67,6 +67,7 @@
                 v-model="editedItem.apiSid"
                 show-details
                 show-header
+                :type="labels[editedItem.type].sid != t('Username') ? 'password' : ''"
                 :rules="[rules.required]"
                 required
                 :label="labels[editedItem.type].sid"
@@ -80,6 +81,7 @@
                 v-model="editedItem.apiToken"
                 show-details
                 show-header
+                type="password"
                 :rules="[rules.required]"
                 required
                 :label="labels[editedItem.type].token"
@@ -186,9 +188,9 @@ const labels = {
   sendgrid: {token: t('APIKey')},
   smtp: {token: t('Password'), sid: t('Username')},
   link_mobility_xml: {token: t('Password'), sid: t('Username')},
-  twilio_call: {token: t('ApiSid'), sid: t('ApiToken')},
-  twilio_sms: {token: t('ApiSid'), sid: t('ApiToken')},
-  my_link: {token: t('ClientID'), sid: t('ClientSecret')}
+  twilio_call: {token: t('ApiToken'), sid: t('ApiSid')},
+  twilio_sms: {token: t('ApiToken'), sid: t('ApiSid')},
+  my_link: {token: t('ClientSecret'), sid: t('ClientID')}
 }
 
 const edit = ref(false)
