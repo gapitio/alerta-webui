@@ -70,16 +70,16 @@
     fixed-header
     :items="items"
   >
-    <template #[`item.users`]="{item}">
+    <template #[`item.usersEmails`]="{item}">
       <v-chip
-        v-for="user in getUserNames(item.users)"
-        :key="user"
+        v-for="email in item.usersEmails"
+        :key="email"
         outline
         size="small"
         variant="flat"
         class="chip"
       >
-        {{ user }}
+        {{ email }}
       </v-chip>
     </template>
     <template
@@ -140,13 +140,12 @@ const headers = ref<{
   }[]>
 ([
   { title: t('Name'), key: 'name'},
-  { title: t('Users'), key: 'users'},
+  { title: t('Users'), key: 'usersEmails'},
   { title: t('PhoneNumbers'), key: 'phoneNumbers'},
   { title: t('Emails'), key: 'mails'},
   { title: t('Actions'), key: 'actions', align:'end' }
 ])
 const items = computed(() => store.state.notificationGroups.items)
-const users = computed(() => store.state.users.items)
 const filter = computed(() => store.state.notificationGroups.filter)
 const refresh = computed(() => store.state.refresh)
 
@@ -157,10 +156,6 @@ watch(refresh, (val) => {
 
 function getItems() {
   store.dispatch('notificationGroups/getNotificationGroups')
-}
-
-function getUsers() {
-  store.dispatch('users/getUsers')
 }
 
 async function deleteItem(item: NotificationGroup) {
@@ -175,8 +170,6 @@ function editItem(item: NotificationGroup) {
   selectedItem.value =  item
   dialog.value = true
 }
-
-const getUserNames = (ids: string[]) => ids.map((a) => users.value.filter((b) => b.id === a)[0]?.name ?? a)
 
 function renumber(name: string): string {
   const replace = name.replace(/_(\d+)$/, (_, n) => `_${+n + 1}`)
@@ -195,5 +188,4 @@ function close() {
 
 
 getItems()
-getUsers()
 </script>

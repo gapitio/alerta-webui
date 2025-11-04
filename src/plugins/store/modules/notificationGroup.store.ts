@@ -53,7 +53,7 @@ const actions: Actions & ActionTree<State, RootState> = {
     params.append('page', state.pagination.page.toString())
     params.append('page-size', state.pagination.itemsPerPage.toString())
 
-    const notWildcards = ['users']
+    const notWildcards = ['usersEmails']
     for (const key of Object.keys(state.filter)) {
       const typedKey = key as keyof Filter
       if (!state.filter[typedKey]) continue

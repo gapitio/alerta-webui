@@ -21,13 +21,13 @@
               class="pb-0"
             >
               <g-combobox
-                v-model="editedItem.userIds"
+                v-model="editedItem.usersEmails"
                 :ruels="[rules.length]"
                 show-header
                 multiple
-                item-value="id"
+                item-value="email"
                 item-title="name"
-                :items="users"
+                :items="emails"
                 :label="t('Users')"
               />
             </v-col>
@@ -198,7 +198,7 @@ const props = defineProps<{
 const emit = defineEmits(['close'])
 
 const defaultItem: OnCall = {
-  userIds: [],
+  usersEmails: [],
   groupIds: [],
   startTime: null,
   endTime: null,
@@ -242,7 +242,7 @@ const months = [
 ]
 
 const formTitle = computed(() => props.item?.id !== undefined ? t('EditOnCall') : t('NewOnCall'))
-const users = computed(() => store.state.users.items)
+const emails = computed(() => store.state.users.emails)
 const groups = computed(() => store.state.notificationGroups.items)
 const times = computed(() => Array.from(
   {
@@ -348,4 +348,7 @@ async function validate() {
 function getRoles() {
   store.dispatch('perms/getPerms')
 }
+
+const getEmails = () => store.dispatch('users/getEmails')
+getEmails()
 </script>

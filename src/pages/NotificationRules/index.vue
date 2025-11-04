@@ -80,7 +80,6 @@ function refreshAll() {
   getEnvironments()
   getServices()
   getTags()
-  getUsers()
   getGroups()
   getNotificaitonGroups()
   timeout.value = setTimeout(refreshAll, interval.value)
@@ -97,9 +96,6 @@ function getNotificationChannels() {
 }
 function getCustomers() {
   if (store.getters.getConfig('customer_views')) store.dispatch('customers/getCustomers')
-}
-function getUsers() {
-  store.dispatch('users/getUsers')
 }
 function getGroups() {
   store.dispatch('groups/getGroups')

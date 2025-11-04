@@ -13,6 +13,7 @@ const state: State = {
 
   domains: [],
   items: [],
+  emails: [],
   groups: [],
   filter: {},
   activeFilter: {
@@ -28,6 +29,9 @@ const mutations: Mutations = {
   SET_ITEMS(state, users) {
     state.isLoading = false
     state.items = users
+  },
+  SET_EMAILS(state, emails) {
+    state.emails = emails
   },
   SET_FILTER(state, filter) {
     state.filter = filter
@@ -68,6 +72,10 @@ const actions: Actions & ActionTree<State, RootState> = {
     return UsersApi.getUsers(params)
       .then(({users}) => commit('SET_ITEMS', users))
       .catch(() => commit('RESET_LOADING'))
+  },
+  async getEmails({commit}) {
+    const {emails} = await UsersApi.getEmails()
+    commit('SET_EMAILS', emails)
   },
   createUser({dispatch}, user) {
     return UsersApi.createUser(user).then(() => {

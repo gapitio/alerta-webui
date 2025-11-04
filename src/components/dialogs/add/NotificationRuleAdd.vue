@@ -161,11 +161,11 @@
             </v-col>
             <v-col cols="12">
               <g-select
-                v-model="editedItem.userIds"
+                v-model="editedItem.usersEmails"
                 show-header
-                :items="users"
+                :items="emails"
                 item-title="name"
-                item-value="id"
+                item-value="email"
                 :label="t('Users')"
                 chips
                 closable-chips
@@ -323,7 +323,7 @@ const defaultItem: NotificationRule = {
   name: null,
   environment: '',
   receivers: [],
-  userIds: [],
+  usersEmails: [],
   groupIds: [],
   useOnCall: false,
   service: [],
@@ -466,7 +466,7 @@ const currentServices = computed(() => store.getters['alerts/services'])
 const currentChannelsIds = computed(() => store.getters['notificationChannels/ids'])
 const currentTags = computed(() => store.getters['alerts/tags'])
 const currentGroups = computed(() => store.getters['alerts/groups'])
-const users = computed(() => store.state.users.items)
+const emails = computed(() => store.state.users.emails)
 const groups = computed(() => store.state.notificationGroups.items)
 const severities = computed(() => Object.keys(store.getters.getConfig('alarm_model').severity))
 const statuses = computed(() => Object.keys(store.getters.getConfig('alarm_model').status))
@@ -501,7 +501,7 @@ async function save() {
         environment: editedItem.value.environment,
         delayTime: editedItem.value.timeObj.time ? `${editedItem.value.timeObj.time} ${editedItem.value.timeObj.interval}` : null,
         receivers: editedItem.value.receivers,
-        userIds: editedItem.value.userIds,
+        usersEmails: editedItem.value.usersEmails,
         groupIds: editedItem.value.groupIds,
         useOnCall: editedItem.value.useOnCall,
         service: editedItem.value.service,
@@ -573,4 +573,7 @@ async function validate() {
     save()
   }
 }
+
+const getEmails = () => store.dispatch('users/getEmails')
+getEmails()
 </script>

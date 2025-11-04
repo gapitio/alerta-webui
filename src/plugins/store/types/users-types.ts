@@ -42,6 +42,13 @@ export type Attributes = {
   queries: Query[]
 }
 
+export type EmailsResponse = {
+  emails: {name: string; email: string}[]
+  status: 'ok'
+  total: number
+  message?: 'not found'
+}
+
 export type Preferences = {
   ackTimeout?: number
   blackoutPeriod?: number
@@ -66,6 +73,7 @@ export interface State {
   isLoading: boolean
   countryCodes: string[]
   domains: string[]
+  emails: {name: string; email: string}[]
   items: User[]
   groups: Group[]
   filter: Filter
@@ -78,6 +86,7 @@ export type Mutations<S = State> = {
   SET_FILTER(state: S, filter: Filter): void
   SET_ACTIVE_FILTER(state: S, filter: Partial<ActiveFilter>): void
   SET_ITEMS(state: S, users: User[]): void
+  SET_EMAILS(state: S, emails: {name: string; email: string}[]): void
   SET_USER_GROUPS(state: S, groups: Group[]): void
   RESET_USER_GROUPS(state: S): void
 }
@@ -86,6 +95,7 @@ type AugmentedActionContext = ActionContext<Mutations, Actions, State>
 
 export type Actions = {
   getUsers({commit}: AugmentedActionContext): void
+  getEmails({commit}: AugmentedActionContext): void
   createUser({dispatch}: AugmentedActionContext, user: User): void
   setFilter({commit}: AugmentedActionContext, filter: Filter): void
   setActiveFilter({commit}: AugmentedActionContext, filter: Partial<ActiveFilter>): void

@@ -1,3 +1,4 @@
+import type {EmailsResponse} from '@/plugins/store/types/users-types'
 import api from './index'
 
 export default {
@@ -6,6 +7,9 @@ export default {
   },
   getUser(userId: string) {
     return api.get(`/user/${userId}`)
+  },
+  getEmails(): Promise<EmailsResponse> {
+    return api.get('users/emails')
   },
   getUserAttributes(userId: string) {
     return api.get(`/user/${userId}/attributes`)
