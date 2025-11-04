@@ -79,7 +79,7 @@
         variant="flat"
         class="chip"
       >
-        {{ email }}
+        {{ emails[email] ?? email }}
       </v-chip>
     </template>
     <template
@@ -148,7 +148,9 @@ const headers = ref<{
 const items = computed(() => store.state.notificationGroups.items)
 const filter = computed(() => store.state.notificationGroups.filter)
 const refresh = computed(() => store.state.refresh)
-
+const emails = computed(() => 
+  Object.fromEntries(store.state.users.emails.map(e => [e.email, e.name]))
+)
 watch(refresh, (val) => {
   if (!val) return
   getItems()
