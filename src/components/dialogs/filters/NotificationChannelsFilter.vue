@@ -158,8 +158,6 @@ function reset() {
 }
 
 const getNotificationChannels = () => store.dispatch('notificationChannels/getNotificationChannels')
-const getUsers = () => store.dispatch('users/getUsers')
-getUsers()
 
 async function validate(close?: boolean) {
   const validation = await form.value?.validate()
