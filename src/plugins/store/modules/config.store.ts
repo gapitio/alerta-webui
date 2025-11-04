@@ -87,15 +87,18 @@ const state: State = {
 }
 
 export const deepCopy = function (state: any, value: any, propName?: string) {
+  const isDangerousKey = (key: string | undefined) => key && ['constructor', '__proto__', 'prototype'].includes(key)
   if (Object.prototype.toString.call(value) === '[object Object]' && (!propName! || state.hasOwnProperty(propName))) {
     const o = !propName! ? state : state[propName]
     if (o != null) {
       for (const prop in value) {
+        if (isDangerousKey(prop)) continue
         deepCopy(o, value[prop], prop)
       }
       return
     }
   }
+  if (isDangerousKey(propName)) return
   state[propName!] = value
 }
 
