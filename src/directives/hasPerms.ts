@@ -1,28 +1,18 @@
-import Vue from 'vue'
+import type {Store} from '@/plugins/store/types'
+import type {VueElement} from 'vue'
 
-import {store} from '@/main'
-
-// v-has-perms.disable="write:keys"
-// v-has-perms="admin:users" (hide is default)
-
-export default Vue.directive('has-perms', function (el, binding) {
-  let authRequired = store.getters.getConfig('auth_required')
-  let allowReadonly = store.getters.getConfig('allow_readonly')
-  let readonlyScopes = store.getters.getConfig('readonly_scopes')
-  let authenticated = store.state.auth.isAuthenticated
-
-  if (!authRequired) {
+export function checkPerms(store: Store, perm: string) {
+  if (!store.getters.getConfig('auth_required')) {
     return true
   }
-  if (allowReadonly) {
-    authenticated = true
-  }
+  const allowReadonly = store.getters.getConfig('allow_readonly')
+  const readonlyScopes = store.getters.getConfig('readonly_scopes')
+  const authenticated = allowReadonly || store.state.auth.isAuthenticated
   if (!authenticated) {
-    return false
+    return true
   }
 
-  // helper function
-  function isInScope(want, have): Boolean {
+  function isInScope(want: string, have: string[]): boolean {
     if (have.includes(want) || have.includes(want.split(':')[0])) {
       return true
     } else if (want.startsWith('read')) {
@@ -33,19 +23,24 @@ export default Vue.directive('has-perms', function (el, binding) {
     return false
   }
 
-  let perm = binding.value
-  let scopes = authenticated ? store.getters['auth/scopes'] : readonlyScopes
-  let action = binding.modifiers.disable ? 'disable' : 'hide'
+  const scopes = authenticated ? store.getters['auth/scopes'] : readonlyScopes
 
   if (!perm) {
-    return false
+    return true
   }
 
-  if (!isInScope(perm, scopes)) {
-    if (action === 'disable') {
-      el.setAttribute('disabled', '')
-    } else {
-      el.style.display = 'none'
+  return isInScope(perm, scopes)
+}
+
+export default (store: Store) => {
+  return function (el: VueElement, binding: any) {
+    const action = binding.modifiers.disable ? 'disable' : 'hide'
+    if (!checkPerms(store, binding.value)) {
+      if (action === 'disable') {
+        el.setAttribute('disabled', '')
+      } else {
+        el.style.display = 'none'
+      }
     }
   }
-})
+}

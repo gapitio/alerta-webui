@@ -1,58 +1,33 @@
 import bootstrap from './services/config'
 
-import Vue from 'vue'
+// Plugins
+import {registerPlugins} from '@/plugins'
 
-import {createStore} from './store'
-import {createRouter} from './router'
-import {sync} from 'vuex-router-sync'
-import axios from 'axios'
-import {makeStore} from '@/store/modules/auth.store'
-import {makeInterceptors} from '@/services/api/interceptors'
-import {vueAuth} from '@/services/auth'
-import GoogleAnalytics from '@/plugins/analytics'
-import i18n from '@/plugins/i18n'
+// Filters
+import {registerFilters} from './filters'
 
-import '@/plugins/vuetify'
-import './stylus/main.styl'
+// Directives
+import {registerDirectives} from './directives'
+
+// Components
 import App from './App.vue'
 
-import '@/directives/hasPerms'
+// Composables
+import {createApp} from 'vue'
+import type {State} from './plugins/store/types/config-types'
 
-import '@/filters/capitalize'
-import '@/filters/date'
-import '@/filters/days'
-import '@/filters/hhmmss'
-import '@/filters/shortId'
-import '@/filters/splitCaps'
-import '@/filters/timeago'
-import '@/filters/until'
+async function makeApp() {
+  const app = createApp(App)
+  const config = await bootstrap.getConfig()
+  app.config.globalProperties.$config = config as State
 
-export const store = createStore()
+  registerPlugins(app)
 
-bootstrap.getConfig().then(config => {
-  const router = createRouter(config.base_path)
+  registerFilters(app)
 
-  Vue.prototype.$config = config
-  store.dispatch('updateConfig', config)
-  store.dispatch('alerts/setFilter', config.filter)
-  store.registerModule('auth', makeStore(vueAuth(config)))
-  axios.defaults.baseURL = config.endpoint
+  registerDirectives(app)
 
-  const interceptors = makeInterceptors(router)
-  axios.interceptors.request.use(interceptors.requestIdHeader, undefined)
-  axios.interceptors.response.use(undefined, interceptors.interceptErrors)
-  axios.interceptors.response.use(undefined, interceptors.redirectToLogin)
+  app.mount('#app')
+}
 
-  Vue.use(GoogleAnalytics, {
-    trackingId: config.tracking_id,
-    router
-  })
-  sync(store, router)
-
-  new Vue({
-    router,
-    store,
-    i18n,
-    render: (h: any) => h(App)
-  }).$mount('#app')
-})
+makeApp()

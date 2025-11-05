@@ -1,15 +1,30 @@
 import moment from 'moment'
-import Vue from 'vue'
+function pad(s: number) {
+  return ('0' + s).slice(-2)
+}
 
-export default Vue.filter('hhmmss', function (value) {
-  function pad(s) {
-    return ('0' + s).slice(-2)
-  }
+export function hhmmLocalToUtc(value: string) {
+  const date = new Date()
+  date.setHours(Number(value.substring(0, 2)), Number(value.substring(3)))
+  const hours = pad(date.getUTCHours())
+  const minutes = pad(date.getUTCMinutes())
+  return `${hours}:${minutes}`
+}
+
+export function hhmmUtcToLocal(value: string) {
+  const date = new Date()
+  date.setUTCHours(Number(value.substring(0, 2)), Number(value.substring(3)))
+  const hours = pad(date.getHours())
+  const minutes = pad(date.getMinutes())
+  return `${hours}:${minutes}`
+}
+
+export function hhmmss(value: moment.DurationInputArg1) {
   if (value) {
-    let duration = moment.duration(value, 'seconds')
-    let seconds = pad(duration.seconds())
-    let minutes = pad(duration.minutes())
-    let hours = Math.floor(duration.as('h'))
+    const duration = moment.duration(value, 'seconds')
+    const seconds = pad(duration.seconds())
+    const minutes = pad(duration.minutes())
+    const hours = Math.floor(duration.as('h'))
     return `${hours}:${minutes}:${seconds}`
   }
-})
+}

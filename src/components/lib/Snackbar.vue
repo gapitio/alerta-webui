@@ -1,47 +1,53 @@
 <template>
   <v-snackbar
     v-model="show"
-    auto-height
     :color="snackbar.type"
-    :timeout="snackbar.timeout"
   >
-    {{ snackbar.text | capitalize }}
-    <v-btn
-      flat
-      @click="close"
-    >
-      {{ snackbar.action }}
-    </v-btn>
+    <v-row>
+      <v-col cols="12">
+        {{ filters.capitalize(snackbar.text) }}
+      </v-col>
+      <v-col 
+        cols="12" 
+        style="text-align: center;"
+      >
+        <v-btn
+          variant="text"
+          @click="close"
+        >
+          {{ snackbar.action }}
+        </v-btn>
+      </v-col>
+    </v-row>
   </v-snackbar>
 </template>
 
-<script>
-export default {
-  data: () => ({
-    show: false
-  }),
-  computed: {
-    snackbar() {
-      return this.$store.state.notifications.snackbars[0] || {}
-    }
-  },
-  watch: {
-    snackbar() {
-      if (this.$store.getters['notifications/hasSnackbar']) {
-        this.$nextTick(() => (this.show = true))
-      }
-    },
-    show(val) {
-      val || this.close()
-    }
-  },
-  methods: {
-    close() {
-      this.show = false
-      this.$store.dispatch('notifications/closeSnackbar')
-    }
-  }
-}
-</script>
+<script lang="ts" setup>
+import { computed, nextTick, ref, watch } from 'vue'
+import { useStore } from 'vuex'
+import type { Store } from '@/plugins/store/types'
+import { useFilters } from '@/filters'
 
-<style></style>
+const store: Store = useStore()
+const filters = useFilters()
+
+const show = ref(false)
+
+const snackbar = computed(() => store.state.notifications.snackbars[0] || {})
+
+watch(snackbar, () => {
+  if (store.getters['notifications/hasSnackbar']) {
+    nextTick(() => show.value = true)
+  }
+})
+
+watch(show, (val) => {
+  val || close()
+})
+
+function close() {
+  show.value = false
+  store.dispatch('notifications/closeSnackbar')
+}
+
+</script>

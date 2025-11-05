@@ -11,7 +11,7 @@ export default {
     return api.get('notificationchannels/keygen')
   },
   getNotificationChannels(query: object) {
-    let config = {
+    const config = {
       params: query
     }
     return api.get('/notificationchannels', config)
