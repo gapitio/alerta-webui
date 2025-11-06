@@ -96,7 +96,7 @@ function getNotificationChannels() {
   store.dispatch('notificationChannels/getNotificationChannels')
 }
 function getCustomers() {
-  store.dispatch('customers/getCustomers')
+  if (store.getters.getConfig('customer_views')) store.dispatch('customers/getCustomers')
 }
 function getUsers() {
   store.dispatch('users/getUsers')

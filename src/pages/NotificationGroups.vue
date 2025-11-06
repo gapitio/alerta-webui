@@ -5,7 +5,7 @@
         {{ t('NotificationGroups') }}
         
         <v-btn
-          perms="write:notificationGroups"
+          v-has-perms="'write:notification.groups'"
           prepend-icon="add"
           class="no-cap-btn bg-primary-600"
           style="position: absolute; right: 10px;"

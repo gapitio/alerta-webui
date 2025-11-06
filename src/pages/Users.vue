@@ -12,7 +12,7 @@
       <h1>
         {{ t('Users') }}
         <v-btn
-          perms="write:notification_rules"
+          v-has-perms="'admin:users'"
           prepend-icon="add"
           class="no-cap-btn bg-primary-600"
           style="position: absolute; right: 10px;"
@@ -131,7 +131,7 @@
     </template>
     <template #[`item.actions`]="{item}">
       <v-btn
-        v-has-perms.disable="'write:notification_rules'"
+        v-has-perms.disable="'admin:users'"
         icon="edit"
         density="compact"
         variant="text"
@@ -139,7 +139,7 @@
       />
       
       <v-btn
-        v-has-perms.disable="'write:notification_rules'"
+        v-has-perms.disable="'admin:users'"
         icon="delete"
         density="compact"
         variant="text"
