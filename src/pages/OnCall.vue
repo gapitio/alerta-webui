@@ -38,14 +38,22 @@
     >
       {{ item[desc as 'repeatDays'].join(', ') }}
     </template>
-    <template #[`item.userIds`]="{ item }">
+    <template #[`item.usersEmails`]="{ item }">
       <v-chip
-        v-for="user in item.userIds"
-        :key="user"
+        v-for="email in item.usersEmails.filter((e) => emails[e] !== undefined)"
+        :key="email"
         class="chip"
         size="x-small"
         variant="flat"
-        :text="getUserName(user) ?? user"
+        :text="emails[email]"
+      />
+      <v-chip
+        v-for="email in item.usersEmails.filter((e) => emails[e] === undefined)"
+        :key="email"
+        class="chip critical"
+        size="x-small"
+        variant="flat"
+        :text="email"
       />
     </template>
     <template #[`item.groupIds`]="{ item }">
@@ -108,7 +116,7 @@ const dialog = ref(false)
 const selectedItem = ref<OnCall | null>(null)
 
 const headers = ref<{title: string, key: keyof OnCall | 'actions', info?: string | string[], align?: 'end'}[]>([
-  { title: t('Users'), key: 'userIds'},
+  { title: t('Users'), key: 'usersEmails'},
   { title: t('Groups'), key: 'groupIds'},
   { title: t('Start'), key: 'startTime', },
   { title: t('End'), key: 'endTime' },
@@ -121,6 +129,9 @@ const headers = ref<{title: string, key: keyof OnCall | 'actions', info?: string
 ])
 const items = computed(() => store.state.onCalls.items)
 const computedHeaders = computed(() => headers.value.filter(h => store.state.config.customer_views ? true : h.key != 'customer'))
+const emails = computed(() => 
+  Object.fromEntries(store.state.users.emails.map(e => [e.email, e.name]))
+)
 
 const pagination = computed({
   get:() => store.getters['onCalls/pagination'],
@@ -144,17 +155,12 @@ function setPagination(value: Pagination) {
   getItems()
 }
 
-function getUsers() {
-  store.dispatch('users/getUsers')
+function getEmails() {
+  store.dispatch('users/getEmails')
 }
 
 function getGroups() {
   store.dispatch('notificationGroups/getNotificationGroups')
-}
-
-function getUserName(id: string) {
-  const user = store.state.users.items.find((u) => u.id == id)
-  return user?.name ?? id
 }
 
 function deleteItem(item: OnCall) {
@@ -190,6 +196,6 @@ function close() {
 
 
 getItems()
-getUsers()
+getEmails()
 getGroups()
 </script>

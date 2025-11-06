@@ -15,7 +15,7 @@ export type OnCall = {
   startDate: string | null
   startTime: string | null
   user?: string
-  userIds: string[]
+  usersEmails: string[]
 }
 
 export interface State {

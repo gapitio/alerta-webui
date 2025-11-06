@@ -173,7 +173,8 @@
         <v-chip
           v-for="number in [
             ...item.receivers,
-            ...users.filter(b => item.userIds.includes(b.id!)).map(b => b.name),
+            ...item.usersEmails.filter((e) => emails [e] !== undefined).map((e) => emails[e]),
+            // ...users.filter(b => item.userIds.includes(b.id!)).map(b => b.name),
             ...groups.filter(b => item.groupIds.includes(b.id!)).map(b => b.name)
           ]"
           :key="number!"
@@ -186,7 +187,8 @@
         <v-chip
           v-for="rec in [
             ...item.groupIds.filter(id => !groups.map(({id}) => id).includes(id)),
-            ...item.userIds.filter(id => !users.map(({id}) => id).includes(id))
+            ...item.usersEmails.filter((e) => emails[e] === undefined)
+            // ...item.userIds.filter(id => !users.map(({id}) => id).includes(id))
           ]"
           :key="rec"
           class="chip critical"
@@ -470,15 +472,17 @@ const notificationRules = computed(() =>
       )
     })
 )
+
 const pagination = computed({
   get:() => store.getters['notificationRules/pagination'],
   set: (value) => store.dispatch('notificationRules/setPagination', value)
 })
-const users = computed(() => store.state.users.items)
 const groups = computed(() => store.state.notificationGroups.items)
 const computedHeaders = computed(() => headers.value.filter(h => store.state.config.customer_views ? true : h.key != 'customer'))
 const isLoading = computed(() => store.state.notificationRules.isLoading)
-
+const emails = computed(() => 
+  Object.fromEntries(store.state.users.emails.map(e => [e.email, e.name]))
+)
 const selected = computed({
   get: () => store.state.notificationRules.selected,
   set: (value) => store.dispatch('notificationRules/updateSelected', value)

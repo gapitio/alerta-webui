@@ -58,9 +58,9 @@
               <g-combobox
                 v-model="editedItem.users"
                 multiple
-                :items="users"
+                :items="emails"
                 item-title="name"
-                item-value="id"
+                item-value="email"
                 show-header
                 :label="t('Users')"
               />
@@ -115,7 +115,7 @@ const props = defineProps<{
 
 const emit = defineEmits(['close'])
 
-const users = computed(() => store.state.users.items)
+const emails = computed(() => store.state.users.emails)
 const groups = computed(() => store.state.notificationGroups.items)
 
 const defaultItem: NotificationSend = {
@@ -188,8 +188,8 @@ async function validate() {
 }
 
 const getGroups = () => store.dispatch('notificationGroups/getNotificationGroups')
-const getUsers = () => store.dispatch('users/getUsers')
+const getEmails = () => store.dispatch('users/getEmails')
 
-getUsers()
+getEmails()
 getGroups()
 </script>

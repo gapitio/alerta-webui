@@ -34,12 +34,12 @@
               class="pb-0"
             >
               <g-select
-                v-model="editedItem.users"
+                v-model="editedItem.usersEmails"
                 show-header
                 multiple
                 item-title="name"
                 item-value="id"
-                :items="users"
+                :items="emails"
                 :label="t('Users')"
               />
             </v-col>
@@ -122,7 +122,7 @@ const emit = defineEmits(['close'])
 
 const defaultItem: NotificationGroupAdd = {
   name: '',
-  users: [],
+  usersEmails: [],
   phoneNumbers: [],
   mails: []
 }
@@ -138,7 +138,7 @@ const valueStart = ref<NotificationGroupAdd>({
 })
 
 const formTitle = computed(() => props.item?.id !== undefined ? t('EditNotificationGroup') : t('NewNotificationGroup'))
-const users = computed(() => store.state.users.items.map((a) => ({id: a.id, name: a.name})))
+const emails = computed(() => store.state.users.emails)
 const dialog = computed({
   get: () => props.dialog,
   set: (val) => {if(!val) close(false)}
@@ -147,7 +147,7 @@ const dialog = computed({
 
 watch(dialog, (val) => {
   if (val) {
-    getUsers()
+    getEmails()
     if (props.item) {
       const obj = {
         ...props.item!,
@@ -212,7 +212,7 @@ async function validate() {
   }
 }
 
-function getUsers() {
-  store.dispatch('users/getUsers')
+function getEmails() {
+  store.dispatch('users/getEmails')
 }
 </script>

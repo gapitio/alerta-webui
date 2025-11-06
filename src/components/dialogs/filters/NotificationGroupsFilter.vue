@@ -56,12 +56,12 @@
               cols="12"
             >
               <g-select
-                v-model="editedItem.users"
+                v-model="editedItem.usersEmails"
                 show-header
-                :items="users"
+                :items="emails"
                 item-title="name"
                 item-value="id"
-                :label="t('Login')"
+                :label="t('Users')"
                 clearable
                 multiple
               />
@@ -146,7 +146,7 @@ const { t } = useI18n()
 const dialog = ref(false)
 const form = ref<VForm | null>(null)
 
-const users = computed(() => store.state.users.items)
+const emails = computed(() => store.state.users.emails)
 const filter = computed({
   get: () => store.state.notificationGroups.filter,
   set: (val) => store.dispatch('notificationGroups/setFilter', val)
@@ -164,8 +164,8 @@ function reset() {
 }
 
 const getNotificationGroups = () => store.dispatch('notificationGroups/getNotificationGroups')
-const getUsers = () => store.dispatch('users/getUsers')
-getUsers()
+const getEmails = () => store.dispatch('users/getEmails')
+getEmails()
 
 async function validate(close?: boolean) {
   const validation = await form.value?.validate()

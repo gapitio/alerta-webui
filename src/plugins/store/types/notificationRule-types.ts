@@ -29,7 +29,7 @@ export type NotificationRule = {
   triggers: Trigger[]
   useOnCall: boolean
   user?: string
-  userIds: string[]
+  usersEmails: string[]
 }
 
 export type Filter = {

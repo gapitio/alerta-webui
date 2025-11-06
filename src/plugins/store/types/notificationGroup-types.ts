@@ -3,7 +3,7 @@ import type {Pagination, Query} from './alerts-types'
 
 export type NotificationGroup = {
   id: string
-  users: string[]
+  usersEmails: string[]
   mails: string[]
   phoneNumbers: string[]
   name: string
@@ -13,7 +13,7 @@ export type NotificationGroupAdd = Omit<NotificationGroup, 'id'> & {id?: string}
 
 export type Filter = {
   name?: string[]
-  users?: string[]
+  usersEmails?: string[]
   phoneNumbers?: string[]
   mails?: string[]
 }
