@@ -13,13 +13,13 @@
       <v-btn 
         icon="add"
         class="text-primary-600 square-btn-icon"
-        @click="() => model = [...model!, defaultItem]"
+        @click="() => model = [...model!, getNewItem()]"
       />
       <v-btn 
         icon="delete_outline"
         style="color:white"
         class="bg-critical-600 square-btn-icon"
-        @click="() => model = [defaultItem]"
+        @click="() => model = [getNewItem()]"
       />
     </v-col>
   </v-row>
@@ -73,7 +73,6 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue';
 
 interface Item {
   items?:  string[],
@@ -83,11 +82,7 @@ interface Item {
 const model = defineModel<{[key: string]: string | string[]}[]>()
 const props = defineProps<{items: {[key: string]: Item}, header: string}>()
 
-const defaultItem = computed(() => {
-  const ditem:{[key: string]: [] | ''} = {}
-  for (const key in props.items) {
-    ditem[key] = props.items[key].type == 'select' ? [] : ''
+function getNewItem() {
+  return Object.fromEntries(Object.keys(props.items).map((key) => [key, props.items[key].type == 'select' ? [] : '']))
   }
-  return ditem
-})
 </script>
