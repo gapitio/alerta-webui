@@ -46,7 +46,7 @@
               cols="12"
               class="pb-0"
             >
-              <g-text-field
+              <g-textarea 
                 v-model="editedItem.text"
                 show-header
                 :label="t('Message')"

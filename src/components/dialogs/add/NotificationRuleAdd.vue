@@ -133,7 +133,7 @@
               />
             </v-col>
             <v-col cols="12">
-              <g-text-field
+              <g-textarea
                 v-model.trim="editedItem.text"
                 show-header
                 :label="t('Text')"
@@ -141,7 +141,7 @@
                 <template #infoDialog>
                   <text-information-dialog />
                 </template>
-              </g-text-field>
+              </g-textarea>
             </v-col>
 
             <v-col
