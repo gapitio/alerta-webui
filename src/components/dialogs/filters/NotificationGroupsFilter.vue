@@ -60,7 +60,7 @@
                 show-header
                 :items="emails"
                 item-title="name"
-                item-value="id"
+                item-value="email"
                 :label="t('Users')"
                 clearable
                 multiple

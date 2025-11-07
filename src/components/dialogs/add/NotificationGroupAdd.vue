@@ -38,7 +38,7 @@
                 show-header
                 multiple
                 item-title="name"
-                item-value="id"
+                item-value="email"
                 :items="emails"
                 :label="t('Users')"
               />
