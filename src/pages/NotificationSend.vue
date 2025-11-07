@@ -82,11 +82,6 @@ function getItems() {
   store.dispatch('notificationSends/getNotificationSends')
 }
 
-function getUsers() {
-  store.dispatch('users/getUsers')
-}
-
-
 function updateNotifcationSend(item: NotificationSend) {
   store.dispatch(
     'notificationSends/updateNotificationSend',
@@ -105,5 +100,4 @@ function close() {
 
 
 getItems()
-getUsers()
 </script>
