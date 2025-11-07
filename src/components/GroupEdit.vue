@@ -45,10 +45,11 @@
             chips
             multiple
           />
-          <g-text-field
+          <g-textarea
             v-else
             v-model="item.text"
             show-header
+            :rows="1"
             :label="setup?.label"
           />
         </v-col>
