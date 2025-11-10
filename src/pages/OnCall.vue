@@ -36,7 +36,7 @@
       v-for="desc in ['repeatDays', 'repeatWeeks', 'repeatMonths']"
       #[`item.${desc}`]="{ item }"
     >
-      {{ item[desc as 'repeatDays'].join(', ') }}
+      {{ item[desc as 'repeatDays']?.join(', ') ?? '' }}
     </template>
     <template #[`item.usersEmails`]="{ item }">
       <v-chip
