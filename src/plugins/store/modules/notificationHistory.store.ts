@@ -64,7 +64,7 @@ const mutations: Mutations = {
 }
 
 const actions: Actions & ActionTree<State, RootState> = {
-  getNotificationHistory({commit, state}) {
+  async getNotificationHistory({commit, state}) {
     commit('SET_LOADING')
 
     const params = new URLSearchParams(state.query)
@@ -100,12 +100,14 @@ const actions: Actions & ActionTree<State, RootState> = {
 
     // add server-side sort
     // params.append('sort-by', (state.pagination.descending ? '-' : '') + state.pagination.sortBy)
-
-    return NotificationHistoryApi.getNotificationHistory(params)
-      .then(({notificationHistory, total, pageSize}) =>
-        commit('SET_NOTIFICATION_HISTORY', [notificationHistory, total, pageSize])
-      )
-      .catch(() => commit('RESET_LOADING'))
+    try {
+      const {notificationHistory, total, pageSize} = await NotificationHistoryApi.getNotificationHistory(params)
+      commit('SET_NOTIFICATION_HISTORY', [notificationHistory, total, pageSize])
+      return notificationHistory
+    } catch {
+      commit('RESET_LOADING')
+      return state.notification_history
+    }
   },
 
   updateQuery({commit}, query) {

@@ -27,6 +27,12 @@
     >
       <notification-history-filter />
     </v-col>
+    <v-col
+      cols="auto"
+      align-self="center"
+    >
+      <notification-history-export />
+    </v-col>
   </v-row>
   <v-row>
     <v-col
