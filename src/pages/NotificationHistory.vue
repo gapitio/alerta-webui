@@ -115,7 +115,7 @@
     v-model:items-per-page="pagination.itemsPerPage"
     :headers="headers"
     fixed-header
-    style="max-height: calc(99vh - calc(43px + 64px))"
+    style="max-height: calc(99vh - calc(64px + 64px + 74px))"
     :items="history"
     :items-length="pagination.totalItems!"
     :items-per-page-options="pagination.itemsPerPageOptions"
