@@ -64,7 +64,7 @@ export type Mutations<S = State> = {
 type AugmentedActionContext = ActionContext<Mutations, Actions, State>
 
 export type Actions = {
-  getNotificationHistory({commit, state}: AugmentedActionContext): void
+  getNotificationHistory({commit, state}: AugmentedActionContext): Promise<NotificationHistory[]>
   updateQuery({commit}: AugmentedActionContext, query: Query): void
   setShownSentStatus({commit}: AugmentedActionContext, status: boolean[]): void
   setPagination({commit}: AugmentedActionContext, status: Pagination): void
