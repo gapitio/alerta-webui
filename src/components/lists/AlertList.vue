@@ -238,7 +238,7 @@ function timeoutLeft(item: any) {
 
 function rowProps({ item }: { item: any }) {
   return {
-    class: `${item.status == 'open' ? item.severity : ''} severity hover-lighten text-no-wrap table-row`,
+    class: `${item.status == 'open' ? item.severity : item.status == 'ack' ? 'ack' : ''} severity hover-lighten text-no-wrap table-row`,
     onClick: () => selectItem(item),
   }
 }

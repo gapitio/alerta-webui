@@ -16,11 +16,14 @@ $critical-600: #D92D20;
 $major-color: #914C30;
 $major-chip-color: #FB6514;
 $normal-color: #193B2D;
+$ack-color: #193B2D;
 $normal-chip-color: #12B76A;
-$warning-color: #374967;
-$warning-chip-color: #2E90FA;
+$informational-color: #374967;
+$informational-chip-color: #2E90FA;
 $minor-color: #736426;
 $minor-chip-color: #FFD320;
+$warning-color: $minor-color;
+$warning-chip-color: $minor-chip-color;
 $minor-500: #FFD320;
 $severity-color: #1D2939;
 
@@ -164,6 +167,12 @@ $severity-color: #1D2939;
 .v-theme--gapitDark .severity.minor {
   background-color: $minor-color;
 }
+.v-theme--gapitDark .severity.informational {
+  background-color: $informational-color;
+}
+.v-theme--gapitDark .severity.ack {
+  background-color: $ack-color;
+}
 .v-theme--gapitDark .severity {
   background-color: $severity-color;
 }
@@ -179,10 +188,15 @@ $severity-color: #1D2939;
 }
 .v-theme--gapitDark .chip.warning {
   background-color: $warning-chip-color;
+  color: #000000 !important;
 }
 .v-theme--gapitDark .chip.minor {
   background-color: $minor-chip-color;
   color: #000000 !important;
+}
+
+.v-theme--gapitDark .chip.informational {
+  background-color: $informational-chip-color;
 }
 
 .v-theme--gapitDark .chip.ok {

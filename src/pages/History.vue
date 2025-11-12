@@ -241,7 +241,7 @@ function setPagination(value: Pagination) {
 function rowProps({ item }: { item: any }) {
   return {
     style: 'min-height: 40px',
-    class: `${item.status == 'open' ? item.severity : ''} severity hover-lighten text-no-wrap table-row`,
+    class: `${item.status == 'open' ? item.severity : item.status == 'ack' ? 'ack' : ''} severity hover-lighten text-no-wrap table-row`,
     onClick: () => selectItem(item),
   }
 }
