@@ -208,10 +208,10 @@ const route = useRoute()
 const router = useRouter()
 const {t} = useI18n()
 
-const currentTab = ref('')
 const timeout = ref<ReturnType<typeof setTimeout> | undefined>(undefined)
 const tab = ref('All')
 const audio = ref<null | HTMLAudioElement>(null)
+const currentTab = computed(() => store.state.alerts.filter.environment ?? 'All')
 
 const filter = computed(() => store.state.alerts.filter)
 const storeQuery = computed(() => store.state.alerts.query.q)
