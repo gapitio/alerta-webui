@@ -7,7 +7,7 @@
       :row-props="rowProps"
       :cell-props="columnsProps"
       fixed-header
-      style="max-height: calc(80vh - 74px); overflow: auto"
+      style="max-height: calc(100vh - calc(74px + 64px + 48px + 48px + 80px)); overflow: auto"
       item-value="index"
     >
       <template #[`header.updateTime`]="{column}">
