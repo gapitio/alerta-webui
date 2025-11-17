@@ -31,6 +31,8 @@
     style="max-height: calc(99vh - calc(43px + 64px))"
     fixed-header
     :items="items"
+    sort-desc-icon="arrow_drop_down"
+    sort-asc-icon="arrow_drop_up"
   >
     <template 
       v-for="desc in ['sms', 'mail']"

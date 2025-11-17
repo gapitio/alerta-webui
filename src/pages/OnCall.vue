@@ -31,6 +31,8 @@
     :items-per-page-options="pagination.itemsPerPageOptions"
     :row-props="{class: 'bg-surface-tertiary table-row'}"
     :cell-props="{class: 'table-column'}"
+    sort-desc-icon="arrow_drop_down"
+    sort-asc-icon="arrow_drop_up"
     @update:options="setPagination"
   >
     <template 
