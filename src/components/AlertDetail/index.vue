@@ -192,7 +192,7 @@
             value="detail"
             :transition="false"
             :reverse-transition="false"
-            style="max-height: 80vh; overflow: auto;"
+            style="max-height: calc(100vh - calc(74px + 64px + 48px + 48px + 80px)); overflow: auto;"
           >
             <detail />
           </v-tabs-window-item>
