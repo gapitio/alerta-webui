@@ -145,10 +145,19 @@
             </v-col>
 
             <v-col
-              cols="12"
+              cols="8"
               class="header"
             >
               {{ t('Receivers') }}
+            </v-col>
+
+            <v-col
+              cols="3"
+            >
+              <g-switch
+                v-model="editedItem.useOnCall"
+                :label="t('UseOncall')"
+              />
             </v-col>
             <v-col cols="12">
               <g-combobox
