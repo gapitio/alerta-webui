@@ -115,7 +115,9 @@ function isKeyOfState(key: string): key is keyof State {
 
 const mutations: Mutations = {
   SET_CONFIG(state, config) {
-    config.sort_by = config.sort_by?.map(s => (typeof s === 'string' ? {key: s, order: 'asc'} : s))
+    config.sort_by = config.sort_by?.map(s =>
+      typeof s === 'string' ? (s[0] === '-' ? {key: s.replace(/^-/, ''), order: 'desc'} : {key: s, order: 'asc'}) : s
+    )
     const conf: {[key: string]: any} = {}
     for (const key in config) {
       if (isKeyOfState(key) && config[key] !== undefined) {
