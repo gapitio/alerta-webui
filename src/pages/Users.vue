@@ -173,7 +173,7 @@ const dialog = ref(false)
 const selectedItem = ref<User | null>(null)
 const search = ref('')
 const status = computed(() => store.state.users.activeFilter)
-const sortBy = ref<SortBy[]>([{key: 'name'}])
+const sortBy = ref<SortBy[]>([{key: 'name', order: 'asc'}])
 
 const filter = computed(() => store.state.users.filter )
 const users = computed(() => store.state.users.items)

@@ -23,7 +23,7 @@ const state: State = {
     page: 1,
     itemsPerPage: 20,
     totalItems: 0,
-    sortBy: [{key: 'sent_time'}],
+    sortBy: [{key: 'sent_time', order: 'asc'}],
     descending: true,
     itemsPerPageOptions: [10, 20, 50, 100, 200]
   }

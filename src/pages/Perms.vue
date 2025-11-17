@@ -112,7 +112,7 @@ definePage({
 const { t } = useI18n()
 const store: Store = useStore()
 
-const sortBy = ref<SortBy[]>([{key: 'role'}])
+const sortBy = ref<SortBy[]>([{key: 'role', order: 'asc'}])
 const dialog = ref(false)
 const selectedItem = ref<Partial<Permission> | null>(null)
 const search = ref('')

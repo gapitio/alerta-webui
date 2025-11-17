@@ -142,7 +142,7 @@ const selectedItem = ref<Partial<Key> | null>(null)
 const showExpired = ref(true)
 const keyTooltip = ref(t('Copy'))
 const search = ref('')
-const sortBy = ref<SortBy[]>([{key: 'key'}])
+const sortBy = ref<SortBy[]>([{key: 'key', order: 'asc'}])
 
 const headers = ref<{title: string, key: keyof Key | 'actions', info?: string | string[], maxWidth?: number}[]>([
   { title: t('APIKey'), key: 'key'},

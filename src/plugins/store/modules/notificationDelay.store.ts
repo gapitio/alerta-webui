@@ -13,7 +13,7 @@ const state: State = {
   pagination: {
     page: 1,
     itemsPerPage: 15,
-    sortBy: [{key: 'delay_time'}],
+    sortBy: [{key: 'delay_time', order: 'asc'}],
     descending: true,
     itemsPerPageOptions: [10, 15, 30, 50, 100, 200]
   }

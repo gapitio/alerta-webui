@@ -156,7 +156,7 @@ const headers = ref<{title: string, key: keyof NotificationChannel | 'actions', 
   { title: t('Verify'), key: 'verify', info: t('VerifyInfo')},
   { title: t('Actions'), key: 'actions', align:'end' }
 ])
-const sortBy = ref<SortBy[]>([{key: 'id'}])
+const sortBy = ref<SortBy[]>([{key: 'id', order: 'asc'}])
 
 const items = computed(() => store.state.notificationChannels.items)
 const refresh = computed(() => store.state.refresh)

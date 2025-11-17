@@ -87,7 +87,7 @@ definePage({
 })
 
 const refresh = computed(() => store.state.refresh)
-const sortBy = ref<SortBy[]>([{key: 'origin'}])
+const sortBy = ref<SortBy[]>([{key: 'origin', order: 'asc'}])
 
 watch(refresh, (val) => {
   if (!val) return

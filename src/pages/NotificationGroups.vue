@@ -136,7 +136,7 @@ const store: Store = useStore()
 
 const dialog = ref(false)
 const selectedItem = ref<Partial<NotificationGroup> | null>(null)
-const sortBy = ref<SortBy[]>([{key: 'name'}])
+const sortBy = ref<SortBy[]>([{key: 'name', order: 'asc'}])
 
 const headers = ref<{
   title: string, key: keyof NotificationGroup | 'actions', info?: string | string[], align?: "start" | "end" | "center" | undefined
