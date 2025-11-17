@@ -89,6 +89,7 @@
     @close="close"
   />
   <v-data-table
+    v-model:sort-by="sortBy"
     :headers="headers"
     fixed-header
     style="max-height: calc(100vh - calc(74px + 64px + 64px))"
@@ -151,6 +152,7 @@
 
 <script lang="ts" setup>
 import type { Store } from '@/plugins/store/types';
+import type { SortBy } from '@/plugins/store/types/alerts-types';
 import type { User } from '@/plugins/store/types/users-types';
 import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -171,6 +173,7 @@ const dialog = ref(false)
 const selectedItem = ref<User | null>(null)
 const search = ref('')
 const status = computed(() => store.state.users.activeFilter)
+const sortBy = ref<SortBy[]>([{key: 'name', order: 'asc'}])
 
 const filter = computed(() => store.state.users.filter )
 const users = computed(() => store.state.users.items)

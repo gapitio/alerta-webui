@@ -43,6 +43,7 @@
   />
 
   <v-data-table
+    v-model:sort-by="sortBy"
     class="table"
     :row-props="{class: 'bg-surface-tertiary table-row'}"
     :cell-props="{class: 'table-column'}"
@@ -50,6 +51,8 @@
     :headers="headers"
     style="max-height: calc(99vh - calc(43px + 64px))"
     fixed-header
+    sort-desc-icon="arrow_drop_down"
+    sort-asc-icon="arrow_drop_up"
     :items="items"
   >
     <template #[`item.key`]="{item}">
@@ -120,6 +123,7 @@
 
 <script lang="ts" setup>
 import type { Store } from '@/plugins/store/types';
+import type { SortBy } from '@/plugins/store/types/alerts-types';
 import type { Key } from '@/plugins/store/types/keys-types';
 import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -140,6 +144,7 @@ const selectedItem = ref<Partial<Key> | null>(null)
 const showExpired = ref(true)
 const keyTooltip = ref(t('Copy'))
 const search = ref('')
+const sortBy = ref<SortBy[]>([{key: 'key', order: 'asc'}])
 
 const headers = ref<{title: string, key: keyof Key | 'actions', info?: string | string[], maxWidth?: number}[]>([
   { title: t('APIKey'), key: 'key'},

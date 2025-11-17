@@ -60,7 +60,10 @@ const state: State = {
   },
   audio: {new: ''},
   columns: [],
-  sort_by: [{key: 'severity'}, {key: 'lastReceiveTime'}],
+  sort_by: [
+    {key: 'severity', order: 'asc'},
+    {key: 'lastReceiveTime', order: 'asc'}
+  ],
   actions: [],
   filter: {
     customer: null,
@@ -112,7 +115,9 @@ function isKeyOfState(key: string): key is keyof State {
 
 const mutations: Mutations = {
   SET_CONFIG(state, config) {
-    config.sort_by = config.sort_by?.map(s => (typeof s === 'string' ? {key: s} : s))
+    config.sort_by = config.sort_by?.map(s =>
+      typeof s === 'string' ? (s[0] === '-' ? {key: s.replace(/^-/, ''), order: 'desc'} : {key: s, order: 'asc'}) : s
+    )
     const conf: {[key: string]: any} = {}
     for (const key in config) {
       if (isKeyOfState(key) && config[key] !== undefined) {

@@ -16,7 +16,7 @@ export interface Query {
 
 export interface SortBy {
   key: string
-  order?: boolean | 'desc' | 'asc' | undefined
+  order: boolean | 'desc' | 'asc'
 }
 
 interface SeverityCount {

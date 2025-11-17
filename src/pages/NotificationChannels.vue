@@ -81,6 +81,7 @@
   
 
   <v-data-table
+    v-model:sort-by="sortBy"
     class="table"
     :row-props="{class: 'bg-surface-tertiary table-row'}"
     :cell-props="{class: 'table-column'}"
@@ -88,6 +89,8 @@
     :headers="headers"
     style="max-height: calc(99vh - calc(43px + 64px))"
     fixed-header
+    sort-desc-icon="arrow_drop_down"
+    sort-asc-icon="arrow_drop_up"
     :items="items"
   >
     <template #[`item.actions`]="{item}">
@@ -125,6 +128,7 @@
 
 <script lang="ts" setup>
 import type { Store } from '@/plugins/store/types';
+import type { SortBy } from '@/plugins/store/types/alerts-types';
 import type { NotificationChannel } from '@/plugins/store/types/notificationChannel-types';
 import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -154,6 +158,7 @@ const headers = ref<{title: string, key: keyof NotificationChannel | 'actions', 
   { title: t('Verify'), key: 'verify', info: t('VerifyInfo')},
   { title: t('Actions'), key: 'actions', align:'end' }
 ])
+const sortBy = ref<SortBy[]>([{key: 'id', order: 'asc'}])
 
 const items = computed(() => store.state.notificationChannels.items)
 const refresh = computed(() => store.state.refresh)

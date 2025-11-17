@@ -90,6 +90,7 @@
     </v-card-title>
 
     <v-data-table
+      v-model:sort-by="sortBy"
       class="table"
       :search="search"
       :row-props="{class: 'bg-surface-tertiary table-row'}"
@@ -98,6 +99,8 @@
       style="max-height: calc(99vh - calc(43px + 64px))"
       fixed-header
       :items="items"
+      sort-desc-icon="arrow_drop_down"
+      sort-asc-icon="arrow_drop_up"
     > 
       <template 
         v-for="desc in ['service', 'tags']"
@@ -148,6 +151,7 @@ import { useStore } from 'vuex';
 import type { Store } from '@/plugins/store/types';
 import { useI18n } from 'vue-i18n';
 import type { Blackout } from '@/plugins/store/types/blackout-types';
+import type { SortBy } from '@/plugins/store/types/alerts-types';
 
 definePage({
   meta: {
@@ -183,6 +187,7 @@ const headers = ref<{title: string, key: keyof Blackout | 'actions', info?: stri
   { title: 'Description', key: 'text' },
   { title: t('Actions'), key: 'actions', sortable: false }
 ])
+const sortBy = ref<SortBy[]>([{key: 'startTime', order: 'asc'}])
 
 const items = computed(() =>
   store.state.blackouts.items

@@ -36,6 +36,7 @@
   </v-row>
 
   <v-data-table
+    v-model:sort-by="sortBy"
     class="table"
     :row-props="{class: 'bg-surface-tertiary table-row'}"
     :cell-props="{class: 'table-column'}"
@@ -43,6 +44,8 @@
     :headers="headers"
     style="max-height: calc(99vh - calc(43px + 64px))"
     fixed-header
+    sort-desc-icon="arrow_drop_down"
+    sort-asc-icon="arrow_drop_up"
     :items="items"
   >
     <template #[`item.match`]="{item}">
@@ -94,6 +97,7 @@
 
 <script lang="ts" setup>
 import type { Store } from '@/plugins/store/types';
+import type { SortBy } from '@/plugins/store/types/alerts-types';
 import type { Permission } from '@/plugins/store/types/perms-types';
 import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -110,7 +114,7 @@ definePage({
 const { t } = useI18n()
 const store: Store = useStore()
 
-
+const sortBy = ref<SortBy[]>([{key: 'role', order: 'asc'}])
 const dialog = ref(false)
 const selectedItem = ref<Partial<Permission> | null>(null)
 const search = ref('')

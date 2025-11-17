@@ -113,6 +113,7 @@
     </v-card-title>
 
     <v-data-table-server
+      v-model:sort-by="pagination.sortBy"
       v-model:items-per-page="pagination.itemsPerPage"
       v-model="selected"
       show-select

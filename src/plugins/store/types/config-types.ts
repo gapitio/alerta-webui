@@ -103,14 +103,16 @@ export interface State {
   pingfederate_url: string | null
 }
 
+export type ExternalConfig = {sort_by: (SortBy | string)[]} & Omit<State, 'sort_by'>
+
 export type Mutations<S = State> = {
-  SET_CONFIG(state: S, config: {[T in keyof S]?: S[T]}): void
+  SET_CONFIG(state: S, config: {[T in keyof ExternalConfig]?: ExternalConfig[T]}): void
 }
 
 type AugmentedActionContext = ActionContext<Mutations, Actions, State>
 
 export type Actions = {
-  updateConfig({commit}: AugmentedActionContext, config: State): void
+  updateConfig({commit}: AugmentedActionContext, config: ExternalConfig | State): void
 }
 
 export type Getters = {

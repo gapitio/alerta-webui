@@ -22,7 +22,7 @@ const state: State = {
   pagination: {
     page: 1,
     itemsPerPage: 20,
-    sortBy: [{key: 'startTime'}],
+    sortBy: [{key: 'startTime', order: 'asc'}],
     descending: true,
     itemsPerPageOptions: [10, 20, 50, 100, 200]
   }

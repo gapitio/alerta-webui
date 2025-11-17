@@ -22,6 +22,7 @@
   </h1>
 
   <v-data-table-server
+    v-model:sort-by="pagination.sortBy"
     v-model:items-per-page="pagination.itemsPerPage"
     class="table"
     :headers="computedHeaders"
@@ -30,6 +31,8 @@
     :items-per-page-options="pagination.itemsPerPageOptions"
     :row-props="{class: 'bg-surface-tertiary table-row'}"
     :cell-props="{class: 'table-column'}"
+    sort-desc-icon="arrow_drop_down"
+    sort-asc-icon="arrow_drop_up"
     @update:options="setPagination"
   >
     <template 
