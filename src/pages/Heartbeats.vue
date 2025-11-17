@@ -10,6 +10,7 @@
   />
   <h1>{{ t('Heartbeats') }}</h1>
   <v-data-table
+    v-model:sort-by="sortBy"
     class="table"
     :row-props="{class: 'table-row bg-surface-tertiary'}"
     :cell-props="{class: 'table-column'}"
@@ -55,6 +56,7 @@
 
 <script lang="ts" setup>
 import type { Store } from '@/plugins/store/types';
+import type { SortBy } from '@/plugins/store/types/alerts-types';
 import { computed, onUnmounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useStore } from 'vuex';
@@ -85,6 +87,7 @@ definePage({
 })
 
 const refresh = computed(() => store.state.refresh)
+const sortBy = ref<SortBy[]>([{key: 'origin'}])
 
 watch(refresh, (val) => {
   if (!val) return

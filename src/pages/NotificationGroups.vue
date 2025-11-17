@@ -62,6 +62,7 @@
  
 
   <v-data-table
+    v-model:sort-by="sortBy"
     class="table"
     :row-props="{class: 'bg-surface-tertiary table-row'}"
     :cell-props="{class: 'table-column'}"
@@ -117,6 +118,7 @@
 
 <script lang="ts" setup>
 import type { Store } from '@/plugins/store/types';
+import type { SortBy } from '@/plugins/store/types/alerts-types';
 import type { NotificationGroup } from '@/plugins/store/types/notificationGroup-types';
 import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -134,6 +136,7 @@ const store: Store = useStore()
 
 const dialog = ref(false)
 const selectedItem = ref<Partial<NotificationGroup> | null>(null)
+const sortBy = ref<SortBy[]>([{key: 'name'}])
 
 const headers = ref<{
   title: string, key: keyof NotificationGroup | 'actions', info?: string | string[], align?: "start" | "end" | "center" | undefined

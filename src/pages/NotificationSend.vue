@@ -23,11 +23,11 @@
   
 
   <v-data-table
+    v-model:sort-by="sortBy"
     class="table"
     :row-props="{class: 'bg-surface-tertiary table-row'}"
     :cell-props="{class: 'table-column'}"
     :headers="headers"
-    :sort-by="[{key: 'name'}]"
     style="max-height: calc(99vh - calc(43px + 64px))"
     fixed-header
     :items="items"
@@ -47,6 +47,7 @@
 
 <script lang="ts" setup>
 import type { Store } from '@/plugins/store/types';
+import type { SortBy } from '@/plugins/store/types/alerts-types';
 import type { NotificationSend } from '@/plugins/store/types/notificationSends-types';
 import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -64,6 +65,7 @@ const { t } = useI18n()
 const store: Store = useStore()
 
 const dialog = ref(false)
+const sortBy = ref<SortBy[]>([{key: 'name', order: 'asc'}])
 
 const headers = ref<{title: string, key: keyof NotificationSend, info?: string | string[], align?: "start" | "end" | "center" | undefined}[]>([
   { title: t('Name'), key: 'name'},
