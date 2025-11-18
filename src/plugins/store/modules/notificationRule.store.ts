@@ -198,8 +198,9 @@ const actions: Actions & ActionTree<State, RootState> = {
       dispatch('getNotificationRules')
     })
   },
-  setPagination({commit}, pagination) {
+  setPagination({commit, dispatch}, pagination) {
     commit('SET_PAGINATION', pagination)
+    dispatch('getNotificationRules')
   },
   setHistoryPagination({commit}, pagination) {
     commit('SET_HISTORY_PAGINATION', pagination)

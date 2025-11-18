@@ -378,7 +378,7 @@
 
 <script lang="ts" setup>
 import moment from 'moment'
-import { computed, ref, watch, type Ref } from 'vue'
+import { computed, ref, type Ref } from 'vue'
 import { useStore } from 'vuex';
 import type { Store } from '@/plugins/store/types';
 import { useFilters } from '@/filters';
@@ -392,7 +392,6 @@ const filters = useFilters()
 const router = useRouter()
 const { t } = useI18n()
 
-const emit=defineEmits(['update'])
 
 const selectedItem: Ref<NotificationRule | null> = ref(null)
 
@@ -490,7 +489,6 @@ const selected = computed({
 })
 const selectableRows = computed(() => selected.value.length > 0)
 
-watch(pagination, ()=> emit('update'), {deep: true})
 
 function emptyArray(arr: any[]) {
   for (const _ in arr) {
@@ -542,9 +540,14 @@ function deleteItem(item: NotificationRule) {
   )
 }
 
-function setPagination(value: Pagination) {
-  store.dispatch('notificationRules/setPagination', value)
-  store.dispatch('notificationRules/getNotificationRules')
+const paginationTimeout = ref(0)
+async function setPagination(value: Pagination) {
+  if (paginationTimeout.value) clearTimeout(paginationTimeout.value)
+  if (store.state.notificationRules.isLoading) {
+    paginationTimeout.value = setTimeout(() => setPagination(value), 10)
+    return
+  }
+  await store.dispatch('notificationRules/setPagination', value)
 }
 
 </script>

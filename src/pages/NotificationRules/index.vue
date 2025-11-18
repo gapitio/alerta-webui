@@ -12,7 +12,7 @@
       @keydown.enter="(e: any) => setSearch(e.target.value)"
       @click:clear="clearSearch"
     />
-    <notification-rule-list @update="getNotificationRules" />
+    <notification-rule-list />
   </div>
 </template>
 
