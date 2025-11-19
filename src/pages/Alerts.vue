@@ -421,23 +421,26 @@ function toCsv(data: typeof alerts.value) {
     filename: `Alerts_${filter.value.environment || 'All'}`,
     quoteCharacter: '"',
     decimalSeparator: 'locale',
-    showTitle: true,
     useBom: true,
     useKeysAsHeaders: true,
   })
 
   const attrs: any = {}
-  data.forEach(d => Object.keys(d.attributes).forEach(attr => attrs[`attributes.${attr}`] = d.attributes[attr]))
-  const csvContent = data.map(
-    ({ correlate, service, tags, rawData, ...item }) => ({
-      correlate: correlate?.join(','),
-      service: typeof service == 'object' ? service?.join(',') : service,
-      tags: tags?.join(','),
-      ...attrs,
-      ...item,
-      rawData: rawData ? rawData.toString() : ''
-    })
-  )
+  data.forEach(d => Object.keys(d.attributes).forEach(attr => attrs[`attributes.${attr}`] = d.attributes[attr].replace(/^([=, +])/, '\'$1')))
+  const csvContent = data.map(({ correlate, service, tags, rawData, customTags, ...item }) => {
+      const d = {
+        correlate: correlate?.join(','),
+        service: typeof service == 'object' ? service?.join(',') : service,
+        tags: tags?.join(','),
+        customTags: customTags?.join(','),
+        ...attrs,
+        ...item,
+        rawData: rawData ? rawData.toString() : '',
+      }
+      delete d.history
+      delete d.attributes
+      return d
+  })
   download(options)(generateCsv(options)(csvContent))
 }
 
