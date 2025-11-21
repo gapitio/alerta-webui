@@ -203,6 +203,7 @@ export const en = {
   Days: 'Days',
 
   // Notifications
+  MaxLength: 'Max Length',
   ShowSent: 'Show Sent',
   ShowError: 'Show Error',
   ApiToken: 'API Token',

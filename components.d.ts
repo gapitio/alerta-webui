@@ -43,6 +43,7 @@ declare module 'vue' {
     NotificationChannelsFilter: typeof import('./src/components/dialogs/filters/NotificationChannelsFilter.vue')['default']
     NotificationGroupAdd: typeof import('./src/components/dialogs/add/NotificationGroupAdd.vue')['default']
     NotificationGroupsFilter: typeof import('./src/components/dialogs/filters/NotificationGroupsFilter.vue')['default']
+    NotificationHistoryExport: typeof import('./src/components/dialogs/NotificationHistoryExport.vue')['default']
     NotificationHistoryFilter: typeof import('./src/components/dialogs/filters/NotificationHistoryFilter.vue')['default']
     NotificationRuleAdd: typeof import('./src/components/dialogs/add/NotificationRuleAdd.vue')['default']
     NotificationRuleList: typeof import('./src/components/lists/NotificationRuleList.vue')['default']
