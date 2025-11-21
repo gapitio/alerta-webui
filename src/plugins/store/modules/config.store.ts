@@ -86,7 +86,8 @@ const state: State = {
   indicators: {queries: [], severity: []},
   ldap_email_edit: false,
   oidc_auth_url: '',
-  version: 'DEV'
+  version: 'DEV',
+  hidden_pages: []
 }
 
 export const deepCopy = function (state: any, value: any, propName?: string) {
