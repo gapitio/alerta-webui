@@ -34,7 +34,7 @@
     >
       <template v-for="item in items">
         <v-list-item
-          v-if="item.icon && item.show"
+          v-if="item.icon && item.show && show(item.path)"
           :key="item.text"
           v-has-perms="item.perms"
           :to="item.path"
@@ -59,15 +59,19 @@
               :title="item.text"
             />
           </template>
-          <v-list-item
+          <template
             v-for="i in item.items"
             :key="i.text"
-            v-has-perms="i.perms"
-            :to="i.path"
-            active-class="active-group"
-            :prepend-icon="i.icon"
-            :title="i.text"
-          />
+          >
+            <v-list-item
+              v-if="show(i.path)"
+              v-has-perms="i.perms"
+              :to="i.path"
+              active-class="active-group"
+              :prepend-icon="i.icon"
+              :title="i.text"
+            />
+          </template>
         </v-list-group>
         <v-list-item
           v-else-if="item.divider"
@@ -124,6 +128,8 @@ const store: Store = useStore<State>()
 const {t} = useI18n()
 const $config = config.$get()
 
+const hiddenPages = computed(() => store.getters.getConfig('hidden_pages'))
+const show = (path: string) => {console.log(path, hiddenPages.value);return !hiddenPages.value.includes(path.replace('/', ''))}
 const items = computed(
   () => [
     {

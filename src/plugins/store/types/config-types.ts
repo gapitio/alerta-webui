@@ -101,6 +101,7 @@ export interface State {
   tracking_id: null | string
   version: string
   pingfederate_url: string | null
+  hidden_pages: string[]
 }
 
 export type ExternalConfig = {sort_by: (SortBy | string)[]} & Omit<State, 'sort_by'>
