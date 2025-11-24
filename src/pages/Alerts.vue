@@ -321,7 +321,9 @@ function toCsv(data: typeof alerts.value) {
   const attrs: any = {}
   data.forEach(d =>
     Object.keys(d.attributes).forEach(
-      attr => (attrs[`attributes.${attr}`] = d.attributes[attr].replace(/^([=, +])/, "'$1"))
+      attr =>
+        (attrs[`attributes.${attr}`] =
+          typeof d.attributes[attr] == 'string' ? d.attributes[attr].replace(/^([=, +])/, "'$1") : d.attributes[attr])
     )
   )
   const csvContent = data.map(({correlate, service, tags, rawData, customTags, ...item}) => {
