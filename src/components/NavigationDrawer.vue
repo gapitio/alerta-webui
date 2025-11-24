@@ -129,7 +129,7 @@ const {t} = useI18n()
 const $config = config.$get()
 
 const hiddenPages = computed(() => store.getters.getConfig('hidden_pages'))
-const show = (path: string) => {console.log(path, hiddenPages.value);return !hiddenPages.value.includes(path.replace('/', ''))}
+const show = (path: string) => !hiddenPages.value.includes(path.replace('/', ''))
 const items = computed(
   () => [
     {
