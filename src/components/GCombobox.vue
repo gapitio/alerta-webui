@@ -1,9 +1,6 @@
 <template>
   <div>
-    <span
-      v-if="showHeader" 
-      class="text-secondary"
-    >{{ label }}</span>
+    <span v-if="showHeader" class="text-secondary">{{ label }}</span>
     <v-combobox
       v-model="model"
       :placeholder="placeholder ?? label"
@@ -19,7 +16,7 @@
       :items="items"
       :item-value="itemValue"
       :item-title="itemTitle"
-      :return-object="itemValue===undefined"
+      :return-object="itemValue === undefined"
       :multiple="multiple"
       :required="required"
       :rules="compProps.rules"
@@ -28,28 +25,16 @@
       :prepend-icon="prependIcon"
       :prepend-inner-icon="prependInnerIcon"
       class="g-input"
-      @click:prepend="(e) => emit('click:prepend', e)"
-      @click:prepend-inner="(e) => emit('click:prepend-inner', e)"
-      @click:append="(e) => emit('click:append', e)"
-      @click:append-inner="(e) => emit('click:append-inner', e)"
-      @click:clear="(e) => emit('click:clear', e)"
-    > 
-      <template 
-        v-if="deleteItems"
-        #item="{ item, props }"
-      >
-        <v-list-item
-          v-bind="props"
-          @click.stop="emit('selectItem', item)"
-        >
+      @click:prepend="e => emit('click:prepend', e)"
+      @click:prepend-inner="e => emit('click:prepend-inner', e)"
+      @click:append="e => emit('click:append', e)"
+      @click:append-inner="e => emit('click:append-inner', e)"
+      @click:clear="e => emit('click:clear', e)"
+    >
+      <template v-if="deleteItems" #item="{item, props}">
+        <v-list-item v-bind="props" @click.stop="emit('selectItem', item)">
           <template #append>
-            <v-icon
-              small
-              class="ml-2"
-              @click.stop="emit('deleteItem', item)"
-            >
-              delete
-            </v-icon>
+            <v-icon small class="ml-2" @click.stop="emit('deleteItem', item)"> delete </v-icon>
           </template>
         </v-list-item>
       </template>
@@ -61,22 +46,29 @@
 </template>
 
 <script lang="ts" setup>
-
 const model = defineModel<string | string[]>()
-const emit = defineEmits(['click:clear', 'click:prepend', 'click:prepend-inner', 'click:append', 'click:append-inner', 'selectItem', 'deleteItem'])
+const emit = defineEmits([
+  'click:clear',
+  'click:prepend',
+  'click:prepend-inner',
+  'click:append',
+  'click:append-inner',
+  'selectItem',
+  'deleteItem'
+])
 const compProps = defineProps<{
-  items?: any[];
-  itemValue?: string;
-  itemTitle?: string;
-  multiple?: boolean;
-  rules?: ((val: string)=> boolean)[];
-  required?: boolean;
-  label: string;
-  placeholder?: string;
-  chips?: boolean;
-  smallChips?: boolean;
-  persistentHint?: boolean;
-  hint?: string;
+  items?: any[]
+  itemValue?: string
+  itemTitle?: string
+  multiple?: boolean
+  rules?: ((val: string) => boolean)[]
+  required?: boolean
+  label: string
+  placeholder?: string
+  chips?: boolean
+  smallChips?: boolean
+  persistentHint?: boolean
+  hint?: string
   showHeader?: boolean
   showDetails?: boolean
   clearable?: boolean
@@ -88,6 +80,4 @@ const compProps = defineProps<{
   disabled?: boolean
   readonly?: boolean
 }>()
-
 </script>
-

@@ -32,48 +32,51 @@
 </template>
 
 <script lang="ts" setup>
-import type { Store } from '@/plugins/store/types';
-import type { NotificationDelay } from '@/plugins/store/types/notificationDelay-types';
-import type { Pagination } from '@/plugins/store/types/alerts-types';
-import { computed, onUnmounted, ref, watch } from 'vue';
-import { useI18n } from 'vue-i18n';
-import { useStore } from 'vuex';
+import type {Store} from '@/plugins/store/types'
+import type {NotificationDelay} from '@/plugins/store/types/notificationDelay-types'
+import type {Pagination} from '@/plugins/store/types/alerts-types'
+import {computed, onUnmounted, ref, watch} from 'vue'
+import {useI18n} from 'vue-i18n'
+import {useStore} from 'vuex'
 
 definePage({
   meta: {
-    title: "Notification Delays",
+    title: 'Notification Delays',
     requiresAuth: true
   }
-});
+})
 
-const { t } = useI18n()
+const {t} = useI18n()
 const store: Store = useStore()
 
-const headers = ref<{
-  title: string,
-  sortable: false,
-  key: keyof NotificationDelay | 'actions',
-  info?: string | string[],
-  align?: "start" | "end" | "center"
-  }[]>
-([
-  { title: t('Alert'), key: 'alert_id', sortable: false},
-  { title: t('NotificationRule'), key: 'notification_rule_id', sortable: false},
-  { title: t('Time'), key: 'delay_time', sortable: false},
-  { title: t('Actions'), key: 'actions', align:'end', sortable: false }
+const headers = ref<
+  {
+    title: string
+    sortable: false
+    key: keyof NotificationDelay | 'actions'
+    info?: string | string[]
+    align?: 'start' | 'end' | 'center'
+  }[]
+>([
+  {title: t('Alert'), key: 'alert_id', sortable: false},
+  {title: t('NotificationRule'), key: 'notification_rule_id', sortable: false},
+  {title: t('Time'), key: 'delay_time', sortable: false},
+  {title: t('Actions'), key: 'actions', align: 'end', sortable: false}
 ])
 const items = computed(() => store.state.notificationDelays.items)
 const timeout = ref<number | undefined>(undefined)
-const interval = computed(() => store.getters.getPreference('refreshInterval') ?? store.getters.getConfig('refresh_interval'))
+const interval = computed(
+  () => store.getters.getPreference('refreshInterval') ?? store.getters.getConfig('refresh_interval')
+)
 
 const pagination = computed({
-  get:() => store.getters['notificationDelays/pagination'],
+  get: () => store.getters['notificationDelays/pagination'],
   set: setPagination
 })
 
 const refresh = computed(() => store.state.refresh)
 
-watch(refresh, (val) => {
+watch(refresh, val => {
   if (!val) return
   getItems()
 })
@@ -87,8 +90,7 @@ function getItems() {
 onUnmounted(() => clearTimeout(timeout.value))
 
 function deleteItem(item: NotificationDelay) {
-  confirm(t('ConfirmDelete')) &&
-  store.dispatch('notificationDelays/deleteNotificationDelay', item.id)
+  confirm(t('ConfirmDelete')) && store.dispatch('notificationDelays/deleteNotificationDelay', item.id)
   getItems()
 }
 

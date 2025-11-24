@@ -1,45 +1,24 @@
 <template>
-  <v-dialog
-    v-model="dialog"
-    scrollable
-    max-width="540px"
-  >
+  <v-dialog v-model="dialog" scrollable max-width="540px">
     <v-form ref="form">
       <v-card class="dialog-card">
         <v-card-title>
-          <v-col
-            cols="12"
-          >
+          <v-col cols="12">
             <span class="header">
               {{ formTitle }}
             </span>
           </v-col>
         </v-card-title>
 
-        <v-card-text style="overflow-x: hidden;">
+        <v-card-text style="overflow-x: hidden">
           <v-row>
             <v-col cols="9">
-              <g-text-field
-                v-model.trim="editedItem.name"
-                show-header
-                required
-                :label="t('Name')"
-              />
+              <g-text-field v-model.trim="editedItem.name" show-header required :label="t('Name')" />
             </v-col>
-            <v-col
-              cols="3"
-              align-self="center"
-              class="pt-8"
-            >
-              <g-switch
-                v-model="editedItem.active"
-                :label="t('Active')"
-              />
+            <v-col cols="3" align-self="center" class="pt-8">
+              <g-switch v-model="editedItem.active" :label="t('Active')" />
             </v-col>
-            <v-col
-              v-if="store.getters.getConfig('customer_views')"
-              cols="12"
-            >
+            <v-col v-if="store.getters.getConfig('customer_views')" cols="12">
               <g-select
                 v-model="editedItem.customer"
                 show-header
@@ -49,14 +28,9 @@
                 clearable
               />
             </v-col>
-            <v-col
-              cols="6"
-            >
-              <v-menu
-                v-model="menu"
-                :close-on-content-click="false"
-              >
-                <template #activator="{ props }">
+            <v-col cols="6">
+              <v-menu v-model="menu" :close-on-content-click="false">
+                <template #activator="{props}">
                   <g-text-field
                     v-model="editedDate"
                     v-bind="props"
@@ -66,11 +40,7 @@
                   />
                 </template>
 
-                <v-date-picker
-                  v-model="editedItem.reactivateDate"
-                  hide-header
-                  @update:model-value="menu = false"
-                />
+                <v-date-picker v-model="editedItem.reactivateDate" hide-header @update:model-value="menu = false" />
               </v-menu>
             </v-col>
             <v-col cols="6">
@@ -92,81 +62,37 @@
               />
             </v-col>
             <v-col cols="6">
-              <g-text-field
-                v-model.trim="editedItem.timeObj.time"
-                show-header
-                :label="t('DelayTime')"
-              />
+              <g-text-field v-model.trim="editedItem.timeObj.time" show-header :label="t('DelayTime')" />
             </v-col>
             <v-col cols="6">
-              <g-select
-                v-model="editedItem.timeObj.interval"
-                show-header
-                :items="intervals"
-                :label="t('Interval')"
-              />
+              <g-select v-model="editedItem.timeObj.interval" show-header :items="intervals" :label="t('Interval')" />
             </v-col>
             <v-col cols="12">
-              <g-select
-                v-model="editedItem.days"
-                show-header
-                :items="days"
-                :label="t('Days')"
-                chips
-                multiple
-              />
+              <g-select v-model="editedItem.days" show-header :items="days" :label="t('Days')" chips multiple />
             </v-col>
             <v-col cols="6">
-              <g-combobox
-                v-model="editedItem.period.startTime"
-                show-header
-                :items="times"
-                :label="t('StartTime')"
-              />
+              <g-combobox v-model="editedItem.period.startTime" show-header :items="times" :label="t('StartTime')" />
             </v-col>
             <v-col cols="6">
-              <g-combobox
-                v-model="editedItem.period.endTime"
-                show-header
-                :items="times"
-                :label="t('EndTime')"
-              />
+              <g-combobox v-model="editedItem.period.endTime" show-header :items="times" :label="t('EndTime')" />
             </v-col>
             <v-col cols="12">
-              <g-textarea
-                v-model.trim="editedItem.text"
-                show-header
-                :label="t('Text')"
-              >
+              <g-textarea v-model.trim="editedItem.text" show-header :label="t('Text')">
                 <template #infoDialog>
                   <text-information-dialog />
                 </template>
               </g-textarea>
             </v-col>
 
-            <v-col
-              cols="8"
-              class="header"
-            >
+            <v-col cols="8" class="header">
               {{ t('Receivers') }}
             </v-col>
 
-            <v-col
-              cols="3"
-            >
-              <g-switch
-                v-model="editedItem.useOnCall"
-                :label="t('UseOncall')"
-              />
+            <v-col cols="3">
+              <g-switch v-model="editedItem.useOnCall" :label="t('UseOncall')" />
             </v-col>
             <v-col cols="12">
-              <g-combobox
-                v-model="editedItem.receivers"
-                show-header
-                :label="t('Receivers')"
-                multiple
-                chips
-              />
+              <g-combobox v-model="editedItem.receivers" show-header :label="t('Receivers')" multiple chips />
             </v-col>
             <v-col cols="12">
               <g-select
@@ -195,19 +121,12 @@
                 multiple
               />
             </v-col>
-            
+
             <v-col cols="12">
-              <group-edit
-                v-model="editedItem.triggers"
-                :items="triggerItems"
-                :header="t('Triggers')"
-              />
+              <group-edit v-model="editedItem.triggers" :items="triggerItems" :header="t('Triggers')" />
             </v-col>
 
-            <v-col
-              cols="12"
-              class="header"
-            >
+            <v-col cols="12" class="header">
               {{ t('AlertFields') }}
             </v-col>
             <v-col cols="12">
@@ -220,18 +139,10 @@
               />
             </v-col>
             <v-col cols="12">
-              <g-text-field
-                v-model.trim="editedItem.resource"
-                show-header
-                :label="t('Resource')"
-              />
+              <g-text-field v-model.trim="editedItem.resource" show-header :label="t('Resource')" />
             </v-col>
             <v-col cols="12">
-              <g-text-field
-                v-model.trim="editedItem.event"
-                show-header
-                :label="t('Event')"
-              />
+              <g-text-field v-model.trim="editedItem.event" show-header :label="t('Event')" />
             </v-col>
             <v-col cols="12">
               <g-combobox
@@ -254,19 +165,11 @@
             </v-col>
 
             <v-col cols="12">
-              <group-edit
-                v-model="editedItem.tags"
-                :items="tagItems"
-                :header="t('AlertTags')"
-              />
+              <group-edit v-model="editedItem.tags" :items="tagItems" :header="t('AlertTags')" />
             </v-col>
-            
+
             <v-col cols="12">
-              <group-edit
-                v-model="editedItem.excludedTags"
-                :items="tagItems"
-                :header="t('AlertExcludedTags')"
-              />
+              <group-edit v-model="editedItem.excludedTags" :items="tagItems" :header="t('AlertExcludedTags')" />
             </v-col>
           </v-row>
         </v-card-text>
@@ -276,24 +179,13 @@
             <notification-alert-list :rule="editedItem" />
           </v-col>
           <v-col cols="4">
-            <v-btn
-              variant="outlined"
-              width="247"
-              class="no-cap-btn btn"
-              @click="close(false)"
-            >
+            <v-btn variant="outlined" width="247" class="no-cap-btn btn" @click="close(false)">
               {{ t('Cancel') }}
             </v-btn>
           </v-col>
 
           <v-col cols="4">
-            <v-btn
-              color="primary-600"
-              variant="flat"
-              class="no-cap-btn"
-              width="247"
-              @click="validate"
-            >
+            <v-btn color="primary-600" variant="flat" class="no-cap-btn" width="247" @click="validate">
               {{ t('Save') }}
             </v-btn>
           </v-col>
@@ -304,19 +196,19 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, watch, type Ref } from 'vue'
-import { useStore } from 'vuex'
-import { useI18n } from 'vue-i18n'
-import type { Store } from '@/plugins/store/types'
-import type { NotificationRule } from '@/plugins/store/types/notificationRule-types'
-import type { VForm } from 'vuetify/components'
-import { useFilters } from '@/filters'
+import {computed, ref, watch, type Ref} from 'vue'
+import {useStore} from 'vuex'
+import {useI18n} from 'vue-i18n'
+import type {Store} from '@/plugins/store/types'
+import type {NotificationRule} from '@/plugins/store/types/notificationRule-types'
+import type {VForm} from 'vuetify/components'
+import {useFilters} from '@/filters'
 
 const store: Store = useStore()
-const { t } = useI18n()
+const {t} = useI18n()
 const filters = useFilters()
 const rules = {
-  required: (v: string) => !!v || t('TextIsRequired'),
+  required: (v: string) => !!v || t('TextIsRequired')
 }
 
 const compProps = defineProps<{
@@ -348,50 +240,53 @@ const defaultItem: NotificationRule = {
   triggers: [{from_severity: [], to_severity: [], status: []}],
   channelId: '',
   tags: [{all: [], any: []}],
-  excludedTags: [{all: [], any: []}],
+  excludedTags: [{all: [], any: []}]
 }
-
 
 const form = ref<VForm | null>(null)
 const days = ref(['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'])
-const intervals = ref(['second','minute', 'hour', 'days'])
+const intervals = ref(['second', 'minute', 'hour', 'days'])
 const menu = ref(false)
-const editedItem: Ref<NotificationRule & {
-  reactivateDate: string | null,
-  reactivateTime: string | null,
-  timeObj: {
-    time: number | null,
-    interval: string | null
-  },
-  period: {
-    startTime: string,
-    endTime: string
+const editedItem: Ref<
+  NotificationRule & {
+    reactivateDate: string | null
+    reactivateTime: string | null
+    timeObj: {
+      time: number | null
+      interval: string | null
+    }
+    period: {
+      startTime: string
+      endTime: string
+    }
   }
-}> = ref({
+> = ref({
   ...defaultItem,
   reactivateDate: null,
   reactivateTime: null,
   timeObj: {time: null, interval: null},
-  period: {startTime:'', endTime:''}
+  period: {startTime: '', endTime: ''}
 })
 
-const valueStart: Ref<NotificationRule & {
-  reactivateDate: string | null,
-  reactivateTime: string | null,
-  timeObj: {
-    time: number | null,
-    interval: string | null
-  },
-  period: {
-    startTime: string,
-    endTime: string
+const valueStart: Ref<
+  NotificationRule & {
+    reactivateDate: string | null
+    reactivateTime: string | null
+    timeObj: {
+      time: number | null
+      interval: string | null
+    }
+    period: {
+      startTime: string
+      endTime: string
+    }
   }
-}> = ref({
+> = ref({
   ...defaultItem,
   reactivateDate: null,
   reactivateTime: null,
   timeObj: {time: null, interval: null},
-  period: {startTime:'', endTime:''}
+  period: {startTime: '', endTime: ''}
 })
 
 const editedDate = computed(() => {
@@ -410,15 +305,18 @@ const timeFromIsoString = (time: string | null) => {
   return `${hour < 10 ? 0 : ''}${hour}:${minute < 10 ? 0 : ''}${minute}`
 }
 
-const formTitle = computed(() => compProps.item?.id !== undefined ? t('EditNotificationRule') : t('NewNotificationRule'))
+const formTitle = computed(() =>
+  compProps.item?.id !== undefined ? t('EditNotificationRule') : t('NewNotificationRule')
+)
 
 const dialog = computed({
   get: () => compProps.dialog,
-  set: (val) => {if(!val) close(false)}
+  set: val => {
+    if (!val) close(false)
+  }
 })
 
-
-watch(dialog, (val) => {
+watch(dialog, val => {
   if (val) {
     if (compProps.item) {
       const obj = {
@@ -427,25 +325,19 @@ watch(dialog, (val) => {
         reactivateTime: timeFromIsoString(compProps.item.reactivate),
         timeObj: {time: null, interval: null},
         period: {
-          startTime: compProps.item.startTime
-            ? filters.hhmmUtcToLocal(compProps.item.startTime)
-            : '',
-          endTime: compProps.item.endTime
-            ? filters.hhmmUtcToLocal(compProps.item.endTime)
-            : ''
+          startTime: compProps.item.startTime ? filters.hhmmUtcToLocal(compProps.item.startTime) : '',
+          endTime: compProps.item.endTime ? filters.hhmmUtcToLocal(compProps.item.endTime) : ''
         }
       }
       editedItem.value = obj
       valueStart.value = JSON.parse(JSON.stringify(obj))
-      
-    }
-    else {
+    } else {
       const obj = {
-        ...JSON.parse(JSON.stringify(defaultItem)) as NotificationRule,
+        ...(JSON.parse(JSON.stringify(defaultItem)) as NotificationRule),
         reactivateDate: null,
         reactivateTime: null,
         timeObj: {time: null, interval: null},
-        period: {startTime:'', endTime:''}
+        period: {startTime: '', endTime: ''}
       }
       editedItem.value = obj
       valueStart.value = JSON.parse(JSON.stringify(obj))
@@ -453,21 +345,22 @@ watch(dialog, (val) => {
   }
 })
 
-const times = computed(() => Array.from(
-  {
-    length: (24 * 60) / 15 + 1
-  },
-  (v, i) => {
-    if (i == 0) {
-      return null
-    } else {
-      const h = Math.floor(((i - 1) * 15) / 60)
-      const m = (i - 1) * 15 - h * 60
-      return ('0' + h).slice(-2) + ':' + ('0' + m).slice(-2)
+const times = computed(() =>
+  Array.from(
+    {
+      length: (24 * 60) / 15 + 1
+    },
+    (v, i) => {
+      if (i == 0) {
+        return null
+      } else {
+        const h = Math.floor(((i - 1) * 15) / 60)
+        const m = (i - 1) * 15 - h * 60
+        return ('0' + h).slice(-2) + ':' + ('0' + m).slice(-2)
+      }
     }
-  }
-))
-
+  )
+)
 
 const allowedCustomers = computed(() => store.getters['customers/customers'])
 const allowedEnvironments = computed(() => store.getters['alerts/environments']())
@@ -493,22 +386,21 @@ const triggerItems = computed(() => ({
 async function save() {
   let sTimeStr = null
   let eTimeStr = null
-  if (
-    editedItem.value.period.startTime !== '' &&
-    editedItem.value.period.endTime !== ''
-  ) {
+  if (editedItem.value.period.startTime !== '' && editedItem.value.period.endTime !== '') {
     sTimeStr = filters.hhmmLocalToUtc(editedItem.value.period.startTime)
     eTimeStr = filters.hhmmLocalToUtc(editedItem.value.period.endTime)
   }
   if (editedItem.value.id) {
-      await store.dispatch('notificationRules/updateNotificationRule', [
+    await store.dispatch('notificationRules/updateNotificationRule', [
       editedItem.value.id,
       {
         active: editedItem.value.active,
         customer: editedItem.value.customer,
         name: editedItem.value.name,
         environment: editedItem.value.environment,
-        delayTime: editedItem.value.timeObj.time ? `${editedItem.value.timeObj.time} ${editedItem.value.timeObj.interval}` : null,
+        delayTime: editedItem.value.timeObj.time
+          ? `${editedItem.value.timeObj.time} ${editedItem.value.timeObj.interval}`
+          : null,
         receivers: editedItem.value.receivers,
         usersEmails: editedItem.value.usersEmails,
         groupIds: editedItem.value.groupIds,
@@ -524,11 +416,13 @@ async function save() {
         text: editedItem.value.text.replace(/\{([\w\[\]\. ]*)\}/g, '%($1)s'),
         days: editedItem.value.days,
         channelId: editedItem.value.channelId,
-        triggers: editedItem.value.triggers.map(b => {return {...b, text: b.text !== undefined ? b.text?.replace(/\{([\w\[\]\. ]*)\}/g, '%($1)s') : b.text}}),
-        reactivate: editedItem.value.reactivateDate && editedItem.value.reactivateTime ? toISODate(
-          editedDate.value,
-          editedItem.value.reactivateTime
-        ) : null
+        triggers: editedItem.value.triggers.map(b => {
+          return {...b, text: b.text !== undefined ? b.text?.replace(/\{([\w\[\]\. ]*)\}/g, '%($1)s') : b.text}
+        }),
+        reactivate:
+          editedItem.value.reactivateDate && editedItem.value.reactivateTime
+            ? toISODate(editedDate.value, editedItem.value.reactivateTime)
+            : null
       }
     ])
   } else {
@@ -538,19 +432,22 @@ async function save() {
         id: null,
         startTime: sTimeStr,
         endTime: eTimeStr,
-        delayTime: editedItem.value.timeObj.time ? `${editedItem.value.timeObj.time} ${editedItem.value.timeObj.interval}` : null,
+        delayTime: editedItem.value.timeObj.time
+          ? `${editedItem.value.timeObj.time} ${editedItem.value.timeObj.interval}`
+          : null,
         text: editedItem.value.text.replace(/\{([\w\[\]\. ]*)\}/g, '%($1)s'),
-        triggers: editedItem.value.triggers.map(b => {return {...b, text: b.text !== undefined ? b.text.replace(/\{([\w\[\]\. ]*)\}/g, '%($1)s') : b.text}}),
-        reactivate: editedItem.value.reactivateDate && editedItem.value.reactivateTime ? toISODate(
-          editedDate.value,
-          editedItem.value.reactivateTime
-        ) : null
+        triggers: editedItem.value.triggers.map(b => {
+          return {...b, text: b.text !== undefined ? b.text.replace(/\{([\w\[\]\. ]*)\}/g, '%($1)s') : b.text}
+        }),
+        reactivate:
+          editedItem.value.reactivateDate && editedItem.value.reactivateTime
+            ? toISODate(editedDate.value, editedItem.value.reactivateTime)
+            : null
       })
     )
   }
   close(true)
 }
-
 
 function toISODate(date: string, time: string) {
   return new Date(date + ' ' + time).toISOString()
@@ -560,10 +457,9 @@ function compareDict(a: any, b: any) {
   if (a === null) return true
   for (const key in a) {
     if (b[key] === undefined) return false
-    if (a[key] !== null && typeof a[key] === typeof({})) {
+    if (a[key] !== null && typeof a[key] === typeof {}) {
       if (b[key] === null || a[key].length !== b[key].length || !compareDict(a[key], b[key])) return false
-    }
-    else if (a[key] !== b[key]) return false
+    } else if (a[key] !== b[key]) return false
   }
   return true
 }

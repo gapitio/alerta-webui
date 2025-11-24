@@ -1,9 +1,5 @@
 <template>
-  <v-dialog
-    v-model="dialog"
-    scrollable
-    max-width="540px"
-  >
+  <v-dialog v-model="dialog" scrollable max-width="540px">
     <v-form ref="form">
       <v-card class="dialog-card">
         <v-card-title>
@@ -14,12 +10,9 @@
           </v-col>
         </v-card-title>
 
-        <v-card-text style="overflow-x: hidden;">
+        <v-card-text style="overflow-x: hidden">
           <v-row>
-            <v-col 
-              cols="12"
-              class="pb-0"
-            >
+            <v-col cols="12" class="pb-0">
               <g-text-field
                 v-model="editedItem.name"
                 show-details
@@ -29,10 +22,7 @@
                 :label="t('Name')"
               />
             </v-col>
-            <v-col 
-              cols="12"
-              class="pb-0"
-            >
+            <v-col cols="12" class="pb-0">
               <g-select
                 v-model="editedItem.usersEmails"
                 show-header
@@ -43,53 +33,24 @@
                 :label="t('Users')"
               />
             </v-col>
-            <v-col 
-              cols="12"
-              class="pb-0"
-            >
-              <g-combobox
-                v-model="editedItem.phoneNumbers"
-                show-header
-                chips
-                multiple
-                :label="t('PhoneNumbers')"
-              />
+            <v-col cols="12" class="pb-0">
+              <g-combobox v-model="editedItem.phoneNumbers" show-header chips multiple :label="t('PhoneNumbers')" />
             </v-col>
-            <v-col 
-              cols="12"
-              class="pb-0"
-            >
-              <g-combobox
-                v-model="editedItem.mails"
-                show-header
-                multiple
-                chips
-                :label="t('Emails')"
-              />
+            <v-col cols="12" class="pb-0">
+              <g-combobox v-model="editedItem.mails" show-header multiple chips :label="t('Emails')" />
             </v-col>
           </v-row>
         </v-card-text>
 
         <v-card-actions class="dialog-card-actions">
           <v-col cols="6">
-            <v-btn
-              variant="outlined"
-              width="247"
-              class="no-cap-btn btn"
-              @click="close(false)"
-            >
+            <v-btn variant="outlined" width="247" class="no-cap-btn btn" @click="close(false)">
               {{ t('Cancel') }}
             </v-btn>
           </v-col>
 
           <v-col cols="6">
-            <v-btn
-              color="primary-600"
-              variant="flat"
-              class="no-cap-btn"
-              width="247"
-              @click="validate"
-            >
+            <v-btn color="primary-600" variant="flat" class="no-cap-btn" width="247" @click="validate">
               {{ t('Save') }}
             </v-btn>
           </v-col>
@@ -100,17 +61,17 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, watch } from 'vue'
-import { useStore } from 'vuex'
-import { useI18n } from 'vue-i18n'
-import type { Store } from '@/plugins/store/types'
-import type { VForm } from 'vuetify/components'
-import type { NotificationGroup, NotificationGroupAdd } from '@/plugins/store/types/notificationGroup-types'
+import {computed, ref, watch} from 'vue'
+import {useStore} from 'vuex'
+import {useI18n} from 'vue-i18n'
+import type {Store} from '@/plugins/store/types'
+import type {VForm} from 'vuetify/components'
+import type {NotificationGroup, NotificationGroupAdd} from '@/plugins/store/types/notificationGroup-types'
 
 const store: Store = useStore()
-const { t } = useI18n()
+const {t} = useI18n()
 const rules = {
-  required: (v: string) => !!v || t('Required'),
+  required: (v: string) => !!v || t('Required')
 }
 
 const props = defineProps<{
@@ -127,38 +88,38 @@ const defaultItem: NotificationGroupAdd = {
   mails: []
 }
 
-
 const form = ref<VForm | null>(null)
 const editedItem = ref<NotificationGroupAdd>({
-  ...defaultItem,
+  ...defaultItem
 })
 
 const valueStart = ref<NotificationGroupAdd>({
   ...defaultItem
 })
 
-const formTitle = computed(() => props.item?.id !== undefined ? t('EditNotificationGroup') : t('NewNotificationGroup'))
+const formTitle = computed(() =>
+  props.item?.id !== undefined ? t('EditNotificationGroup') : t('NewNotificationGroup')
+)
 const emails = computed(() => store.state.users.emails)
 const dialog = computed({
   get: () => props.dialog,
-  set: (val) => {if(!val) close(false)}
+  set: val => {
+    if (!val) close(false)
+  }
 })
 
-
-watch(dialog, (val) => {
+watch(dialog, val => {
   if (val) {
     getEmails()
     if (props.item) {
       const obj = {
-        ...props.item!,
+        ...props.item!
       }
       editedItem.value = obj
       valueStart.value = JSON.parse(JSON.stringify(obj))
-      
-    }
-    else {
+    } else {
       const obj = {
-        ...JSON.parse(JSON.stringify(defaultItem)) as NotificationGroup,
+        ...(JSON.parse(JSON.stringify(defaultItem)) as NotificationGroup)
       }
       editedItem.value = obj
       valueStart.value = JSON.parse(JSON.stringify(obj))
@@ -166,10 +127,9 @@ watch(dialog, (val) => {
   }
 })
 
-
 async function save() {
   if (editedItem.value.id) {
-      await store.dispatch('notificationGroups/updateNotificationGroup', [
+    await store.dispatch('notificationGroups/updateNotificationGroup', [
       editedItem.value.id,
       {
         ...editedItem.value,
@@ -177,10 +137,7 @@ async function save() {
       }
     ])
   } else {
-    await store.dispatch(
-      'notificationGroups/createNotificationGroup',
-      Object.assign(editedItem.value)
-    )
+    await store.dispatch('notificationGroups/createNotificationGroup', Object.assign(editedItem.value))
   }
   close(true)
 }
@@ -189,10 +146,9 @@ function compareDict(a: any, b: any) {
   if (a === null) return true
   for (const key in a) {
     if (b[key] === undefined) return false
-    if (a[key] !== null && typeof a[key] === typeof({})) {
+    if (a[key] !== null && typeof a[key] === typeof {}) {
       if (b[key] === null || a[key].length !== b[key].length || !compareDict(a[key], b[key])) return false
-    }
-    else if (a[key] !== b[key]) return false
+    } else if (a[key] !== b[key]) return false
   }
   return true
 }

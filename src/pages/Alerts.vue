@@ -1,8 +1,5 @@
 <template>
-  <audio 
-    ref="audio"
-    :src="audioUrl"
-  />
+  <audio ref="audio" :src="audioUrl" />
   <g-combobox
     v-model="query"
     prepend-inner-icon="search"
@@ -13,7 +10,7 @@
     hide-details
     :items="userQueries"
     validate-on="submit"
-    style="position: absolute; top: 2.5px;right: calc(25vw); width: 40vw; background: white;"
+    style="position: absolute; top: 2.5px; right: calc(25vw); width: 40vw; background: white"
     delete-items
     @keydown.enter="(e: any) => setSearch(e.target.value)"
     @click:prepend-inner="setSearch(query ?? '')"
@@ -26,183 +23,81 @@
   <v-card variant="flat">
     <v-row>
       <v-col cols="auto">
-        <h1> {{ t('Alerts') }} </h1>
+        <h1>{{ t('Alerts') }}</h1>
       </v-col>
-      <v-col 
-        cols="auto"
-        align-self="center"
-      >
+      <v-col cols="auto" align-self="center">
         <alerts-filter />
       </v-col>
-      <v-col 
-        v-if="selected.length > 0"
-        align-self="center"
-      >
-        <v-btn 
-          icon="visibility"
-          variant="text"
-          @click.stop="watchAlerts"
-        />
-        <v-btn 
-          icon="visibility_off"
-          variant="text"
-          @click.stop="unwatchAlerts"
-        />
-        <v-btn 
-          icon="check"
-          variant="text"
-          @click.stop="takeAction('ack', ackTimeout)"
-        />
-        <v-btn 
-          icon="undo"
-          variant="text"
-          @click.stop="takeAction('unack')"
-        />
-        <v-btn 
-          icon="schedule"
-          variant="text"
-          @click.stop="takeAction('shelve', shelveTimeout)"
-        />
-        <v-btn 
-          icon="restore"
-          variant="text"
-          @click.stop="takeAction('unshelve')"
-        />
-        <v-btn
-          v-if="isAlertAlarmModel"
-          icon="highlight_off"
-          variant="text"
-          @click.stop="takeAction('close')"
-        />
-        <v-btn
-          v-if="haveDeleteScope()"
-          icon="delete"
-          variant="text"
-          @click.stop="deleteAlerts"
-        />
+      <v-col v-if="selected.length > 0" align-self="center">
+        <v-btn icon="visibility" variant="text" @click.stop="watchAlerts" />
+        <v-btn icon="visibility_off" variant="text" @click.stop="unwatchAlerts" />
+        <v-btn icon="check" variant="text" @click.stop="takeAction('ack', ackTimeout)" />
+        <v-btn icon="undo" variant="text" @click.stop="takeAction('unack')" />
+        <v-btn icon="schedule" variant="text" @click.stop="takeAction('shelve', shelveTimeout)" />
+        <v-btn icon="restore" variant="text" @click.stop="takeAction('unshelve')" />
+        <v-btn v-if="isAlertAlarmModel" icon="highlight_off" variant="text" @click.stop="takeAction('close')" />
+        <v-btn v-if="haveDeleteScope()" icon="delete" variant="text" @click.stop="deleteAlerts" />
         <notes-add />
-        <v-btn
-          v-if="haveDeleteScope()"
-          icon="scan_delete"
-          variant="text"
-          @click.stop="removeLasNotes"
-        />
+        <v-btn v-if="haveDeleteScope()" icon="scan_delete" variant="text" @click.stop="removeLasNotes" />
       </v-col>
     </v-row>
 
-    <v-tabs
-      v-model="currentTab"
-      slider-color="link-active"
-    >
-      <v-tab
-        v-for="env in environments"
-        :key="env"
-        :value="env"
-        class="big-font bold no-cap-btn"
-        @click="setEnv(env)"
-      >
+    <v-tabs v-model="currentTab" slider-color="link-active">
+      <v-tab v-for="env in environments" :key="env" :value="env" class="big-font bold no-cap-btn" @click="setEnv(env)">
         {{ env }}&nbsp;({{ environmentCounts[env] || 0 }})
       </v-tab>
-      <div style="position: absolute; right: 0px;">
+      <div style="position: absolute; right: 0px">
         <v-tooltip :text="t('DownloadAsCsv')">
           <template #activator="{props}">
-            <v-btn 
-              v-bind="props" 
-              icon="download"
-              variant="text"
-              @click="toCsv(alerts)"
-            />
+            <v-btn v-bind="props" icon="download" variant="text" @click="toCsv(alerts)" />
           </template>
         </v-tooltip>
       </div>
     </v-tabs>
     <v-row class="mt-0">
-      <template
-        v-for="(f, d) in filter"
-        :key="d"
-      >
-        <v-col
-          v-if="d == 'dateRange' && f && isDateRange(f)"
-          cols="auto"
-        >
-          <v-chip
-            v-if="(f.from ?? 0) < 0"
-            variant="flat"
-            class="chip"
-            size="small"
-          >
+      <template v-for="(f, d) in filter" :key="d">
+        <v-col v-if="d == 'dateRange' && f && isDateRange(f)" cols="auto">
+          <v-chip v-if="(f.from ?? 0) < 0" variant="flat" class="chip" size="small">
             {{ d }}: {{ f.from! / -3600 }} hours
           </v-chip>
           <template v-else-if="f.select">
-            <v-chip
-              v-for="desc in ['from', 'to']"
-              :key="desc"
-              variant="flat"
-              class="chip"
-              size="small"
-            >
-              {{ d }}.{{ desc }}:
-              &nbsp;
-              <date-time 
-                :value="moment.unix(f[desc as 'from' | 'to']!).utc()"
-                no-break
-              />
+            <v-chip v-for="desc in ['from', 'to']" :key="desc" variant="flat" class="chip" size="small">
+              {{ d }}.{{ desc }}: &nbsp;
+              <date-time :value="moment.unix(f[desc as 'from' | 'to']!).utc()" no-break />
             </v-chip>
           </template>
         </v-col>
-        <v-col
-          v-else-if="typeof(f) == 'object' && ((f as string[])?.length ?? 0) > 0"
-          cols="auto"
-        >
-          <v-chip
-            v-for="a in f"
-            :key="a"
-            variant="flat"
-            class="chip"
-            size="small"
-          >
-            {{ d }}: {{ a }}
-          </v-chip>
+        <v-col v-else-if="typeof f == 'object' && ((f as string[])?.length ?? 0) > 0" cols="auto">
+          <v-chip v-for="a in f" :key="a" variant="flat" class="chip" size="small"> {{ d }}: {{ a }} </v-chip>
         </v-col>
-        <v-col 
-          v-else-if="typeof(f) == 'string'"
-          cols="auto"
-        >
-          <v-chip
-            variant="flat"
-            class="chip"
-            size="small"
-          >
-            {{ d }}: {{ f }}
-          </v-chip>
+        <v-col v-else-if="typeof f == 'string'" cols="auto">
+          <v-chip variant="flat" class="chip" size="small"> {{ d }}: {{ f }} </v-chip>
         </v-col>
       </template>
     </v-row>
 
-    <alert-list
-      :filter="filter"
-    />
+    <alert-list :filter="filter" />
   </v-card>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onUnmounted } from 'vue'
-import { useStore } from 'vuex'
-import { useRoute, useRouter } from 'vue-router'
-import { generateCsv, download, mkConfig } from 'export-to-csv'
-import { useI18n } from 'vue-i18n'
+import {ref, computed, watch, onUnmounted} from 'vue'
+import {useStore} from 'vuex'
+import {useRoute, useRouter} from 'vue-router'
+import {generateCsv, download, mkConfig} from 'export-to-csv'
+import {useI18n} from 'vue-i18n'
 // import utils from '@/common/utils'
-import type { Query } from '@/plugins/store/types/alerts-types'
-import type { State, Store } from '@/plugins/store/types'
+import type {Query} from '@/plugins/store/types/alerts-types'
+import type {State, Store} from '@/plugins/store/types'
 import moment from 'moment'
-import type { DateRange } from '@/plugins/store/types/notificationHistory-types'
+import type {DateRange} from '@/plugins/store/types/notificationHistory-types'
 
 definePage({
   meta: {
-    title: "Alerts",
+    title: 'Alerts',
     requiresAuth: true
   }
-});
+})
 const store: Store = useStore<State>()
 const route = useRoute()
 const router = useRouter()
@@ -219,18 +114,17 @@ const query = ref<string | null>(null)
 const routeQuery = computed(() => route.query)
 const audioUrl = computed(() => store.getters.getConfig('audio').new ?? store.getters.getPreference('audioURL'))
 
-watch(storeQuery, (val) => query.value = val)
+watch(storeQuery, val => (query.value = val))
 
 const isDateRange = (date: DateRange | string[]): date is DateRange => !(date instanceof Array)
 
-watch(routeQuery, (val) => setQuery(val as Query))
+watch(routeQuery, val => setQuery(val as Query))
 
 setQuery(route.query as Query)
 
-const userQueries = computed(() => store.getters.getUserQueries.map(
-  (q) => ({title: q.q, value: q.q, props: {appendIcon: 'delete'}})
-))
-
+const userQueries = computed(() =>
+  store.getters.getUserQueries.map(q => ({title: q.q, value: q.q, props: {appendIcon: 'delete'}}))
+)
 
 const defaultTab = computed(() => filter.value.environment || 'All')
 
@@ -246,14 +140,14 @@ function haveDeleteScope() {
   if (config.delete_alert_scope_enforced) {
     return scopes.includes('admin') || scopes.includes('admin:alerts') || scopes.includes('delete:alerts')
   } else {
-    return scopes.some(s =>
-      ['admin', 'admin:alerts', 'write', 'write:alerts', 'delete:alerts'].includes(s)
-    )
+    return scopes.some(s => ['admin', 'admin:alerts', 'write', 'write:alerts', 'delete:alerts'].includes(s))
   }
 }
 
 async function takeAction(action: string, timeout?: number | null) {
-  await Promise.all(selected.value.map(id => store.dispatch('alerts/takeAction', [id, action, '', timeout ?? undefined])))
+  await Promise.all(
+    selected.value.map(id => store.dispatch('alerts/takeAction', [id, action, '', timeout ?? undefined]))
+  )
   getAlerts()
 }
 
@@ -275,12 +169,14 @@ async function deleteAlerts() {
 }
 
 async function removeLasNotes() {
-  await Promise.all(selected.value.map((id) => {
-    const alert = alerts.value.filter(alert => alert.id == id).pop()
-    const note = alert?.history.filter(h => h.type == 'note').pop()
-    if(!alert || !note) return
-    return store.dispatch('alerts/deleteNote', [alert.id, note.id])
-  }))
+  await Promise.all(
+    selected.value.map(id => {
+      const alert = alerts.value.filter(alert => alert.id == id).pop()
+      const note = alert?.history.filter(h => h.type == 'note').pop()
+      if (!alert || !note) return
+      return store.dispatch('alerts/deleteNote', [alert.id, note.id])
+    })
+  )
   getAlerts()
 }
 
@@ -309,9 +205,8 @@ const environments = computed(() => ['All', ...store.getters['alerts/environment
 
 const environmentCounts = computed(() => store.getters['alerts/counts'])
 
-const refreshInterval = computed(() =>
-  store.getters.getPreference('refreshInterval') ||
-  store.getters.getConfig('refresh_interval')
+const refreshInterval = computed(
+  () => store.getters.getPreference('refreshInterval') || store.getters.getConfig('refresh_interval')
 )
 
 const isMute = computed(() => store.getters.getPreference('isMute'))
@@ -329,22 +224,22 @@ function setQuery(q: Query) {
 }
 
 function setSearch(q: string) {
-  store.dispatch('alerts/updateQuery', { q })
-  router.push({ query: { ...route.query, q } })
+  store.dispatch('alerts/updateQuery', {q})
+  router.push({query: {...route.query, q}})
   getAlerts()
 }
 
 function saveSearch(q: string) {
-  store.dispatch('addUserQuery', { q })
+  store.dispatch('addUserQuery', {q})
 }
 
 function deleteSearch(q: string) {
-  store.dispatch('removeUserQuery', { q })
+  store.dispatch('removeUserQuery', {q})
 }
 
 function clearSearch() {
-  store.dispatch('alerts/updateQuery', { q: '' })
-  router.push({ query: { ...route.query, q: undefined } })
+  store.dispatch('alerts/updateQuery', {q: ''})
+  router.push({query: {...route.query, q: undefined}})
   getAlerts()
 }
 
@@ -361,7 +256,7 @@ function clearSearch() {
 // }
 
 function setPage(page: number) {
-  store.dispatch('alerts/setPagination', { page })
+  store.dispatch('alerts/setPagination', {page})
 }
 
 function setKiosk(isKiosk: boolean) {
@@ -397,14 +292,13 @@ function setEnv(env: string) {
 
 const refresh = computed(() => store.state.refresh)
 
-watch(refresh, (val) => {
+watch(refresh, val => {
   if (!val) return
   refreshAlerts(audio.value)
 })
 
-
 async function refreshAlerts(audioRef: HTMLAudioElement | null) {
-  if(timeout.value) clearTimeout(timeout.value)
+  if (timeout.value) clearTimeout(timeout.value)
   getEnvironments()
   if (isLoggedIn.value) {
     getQueries()
@@ -415,31 +309,34 @@ async function refreshAlerts(audioRef: HTMLAudioElement | null) {
   timeout.value = setTimeout(() => refreshAlerts(audio.value), refreshInterval.value)
 }
 
-
 function toCsv(data: typeof alerts.value) {
   const options = mkConfig({
     filename: `Alerts_${filter.value.environment || 'All'}`,
     quoteCharacter: '"',
     decimalSeparator: 'locale',
     useBom: true,
-    useKeysAsHeaders: true,
+    useKeysAsHeaders: true
   })
 
   const attrs: any = {}
-  data.forEach(d => Object.keys(d.attributes).forEach(attr => attrs[`attributes.${attr}`] = d.attributes[attr].replace(/^([=, +])/, '\'$1')))
-  const csvContent = data.map(({ correlate, service, tags, rawData, customTags, ...item }) => {
-      const d = {
-        correlate: correlate?.join(','),
-        service: typeof service == 'object' ? service?.join(',') : service,
-        tags: tags?.join(','),
-        customTags: customTags?.join(','),
-        ...attrs,
-        ...item,
-        rawData: rawData ? rawData.toString() : '',
-      }
-      delete d.history
-      delete d.attributes
-      return d
+  data.forEach(d =>
+    Object.keys(d.attributes).forEach(
+      attr => (attrs[`attributes.${attr}`] = d.attributes[attr].replace(/^([=, +])/, "'$1"))
+    )
+  )
+  const csvContent = data.map(({correlate, service, tags, rawData, customTags, ...item}) => {
+    const d = {
+      correlate: correlate?.join(','),
+      service: typeof service == 'object' ? service?.join(',') : service,
+      tags: tags?.join(','),
+      customTags: customTags?.join(','),
+      ...attrs,
+      ...item,
+      rawData: rawData ? rawData.toString() : ''
+    }
+    delete d.history
+    delete d.attributes
+    return d
   })
   download(options)(generateCsv(options)(csvContent))
 }
@@ -463,18 +360,24 @@ onUnmounted(() => {
 const getPrefs = () => store.dispatch('getUserPrefs')
 getPrefs()
 
-watch(() => tab.value, () => {
-  setPage(1)
-})
+watch(
+  () => tab.value,
+  () => {
+    setPage(1)
+  }
+)
 
-watch(filter, () => {
-  history.replaceState(history.state, '', store.getters['alerts/getHash'])
-  tab.value = defaultTab.value
-  refreshAlerts(null)
-}, { deep: true })
+watch(
+  filter,
+  () => {
+    history.replaceState(history.state, '', store.getters['alerts/getHash'])
+    tab.value = defaultTab.value
+    refreshAlerts(null)
+  },
+  {deep: true}
+)
 
 watch(showPanel, () => {
   history.replaceState(history.state, '', store.getters['alerts/getHash'])
 })
 </script>
-

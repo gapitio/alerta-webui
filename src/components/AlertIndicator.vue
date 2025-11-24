@@ -1,14 +1,8 @@
-<template>  
-  <v-card
-    @click="selectAsi()"
-  >
+<template>
+  <v-card @click="selectAsi()">
     <v-container fluid>
       <v-row>
-        <v-col 
-          :style="{ 'background-color': severityColor(maxSeverity) }"
-          align="center"
-          cols="12"
-        >
+        <v-col :style="{'background-color': severityColor(maxSeverity)}" align="center" cols="12">
           {{ title }}
         </v-col>
       </v-row>
@@ -17,7 +11,7 @@
           v-for="severity in store.state.config.indicators.severity"
           :key="severity"
           align="center"
-          :style="{ 'background-color': severityColor(severity)}"
+          :style="{'background-color': severityColor(severity)}"
         >
           {{ counts[severity] || 0 }}
         </v-col>
@@ -28,16 +22,16 @@
 
 <script lang="ts" setup>
 import AlertsApi from '../services/api/alert.service'
-import { computed, ref, defineProps, watch, onBeforeUnmount, type Ref } from 'vue'
-import { useStore } from 'vuex'
-import type { Store } from '@/plugins/store/types'
-import type { Query } from '@/plugins/store/types/alerts-types'
+import {computed, ref, defineProps, watch, onBeforeUnmount, type Ref} from 'vue'
+import {useStore} from 'vuex'
+import type {Store} from '@/plugins/store/types'
+import type {Query} from '@/plugins/store/types/alerts-types'
 
 const store: Store = useStore()
 
 const props = defineProps<{
-  title: string;
-  query: Query;
+  title: string
+  query: Query
 }>()
 
 const counts: Ref<{[key: string]: number}> = ref({})
@@ -46,9 +40,13 @@ const timer: Ref<number | null> = ref(null)
 
 const refresh = computed(() => store.state.refresh)
 const timeout = ref<number | undefined>(undefined)
-const refreshInterval = computed(() => store.getters.getPreference('refreshInterval') || store.getters.getConfig('refresh_interval'))
+const refreshInterval = computed(
+  () => store.getters.getPreference('refreshInterval') || store.getters.getConfig('refresh_interval')
+)
 
-watch(refresh, () => { refreshList()})
+watch(refresh, () => {
+  refreshList()
+})
 onBeforeUnmount(() => cancelTimer())
 cancelTimer()
 refreshCounts()
@@ -76,12 +74,15 @@ function setFilter(filter: URLSearchParams) {
 }
 
 function severityColor(severity: string) {
-  return counts.value && counts.value[severity] > 0 ? store.getters.getConfig('alarm_model').colors.severity[severity] : 'transparent'
+  return counts.value && counts.value[severity] > 0
+    ? store.getters.getConfig('alarm_model').colors.severity[severity]
+    : 'transparent'
 }
 
 function getCounts() {
-  return AlertsApi.getCounts(new URLSearchParams(props.query))
-    .then(response => (counts.value = response.severityCounts))
+  return AlertsApi.getCounts(new URLSearchParams(props.query)).then(
+    response => (counts.value = response.severityCounts)
+  )
 }
 
 function getMostSevere() {
@@ -101,15 +102,14 @@ function getMostSevere() {
 
 function refreshCounts() {
   getMostSevere()
-  getCounts()
-    .then(() => timer.value = setTimeout(() => refreshCounts(), refreshInterval.value))
+  getCounts().then(() => (timer.value = setTimeout(() => refreshCounts(), refreshInterval.value)))
 }
 
 function refreshList() {
-  if(timeout.value) clearTimeout(timeout.value)
+  if (timeout.value) clearTimeout(timeout.value)
   getMostSevere()
   getCounts()
-  timeout.value = setTimeout(refreshList, )
+  timeout.value = setTimeout(refreshList)
 }
 
 function cancelTimer() {

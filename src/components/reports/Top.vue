@@ -2,9 +2,8 @@
   <v-card>
     <v-card-title primary-title>
       <div>
-        <div class="headline">
-          {{ t('Top') }} {{ pagination.itemsPerPage }} {{ title }}
-        </div><br>
+        <div class="headline">{{ t('Top') }} {{ pagination.itemsPerPage }} {{ title }}</div>
+        <br />
         <span class="grey--text">{{ info }}</span>
       </div>
       <v-spacer />
@@ -23,25 +22,16 @@
       @update:options="updateRowsPerPage"
     >
       <template #[`item.event`]="{item}">
-        <span style="white-space: nowrap;">{{ item.event }}</span>
+        <span style="white-space: nowrap">{{ item.event }}</span>
       </template>
-      <template
-        v-for="desc in ['environments', 'services']"
-        :key="desc"
-        #[`item.${desc}`]="{item}"
-      >
+      <template v-for="desc in ['environments', 'services']" :key="desc" #[`item.${desc}`]="{item}">
         {{ item[desc as 'environments'].join(', ') }}
       </template>
       <template #[`item.resources`]="{item}">
         <v-row class="mt-1 mb-1">
-          <v-col 
-            v-for="a in item.resources"
-            :key="a.id"
-            cols="auto"
-            class="pb-0 pt-0"
-          >
+          <v-col v-for="a in item.resources" :key="a.id" cols="auto" class="pb-0 pt-0">
             <router-link :to="`/alert/${a.id}`">
-              {{ a.resource }}  
+              {{ a.resource }}
             </router-link>
           </v-col>
         </v-row>
@@ -51,16 +41,16 @@
 </template>
 
 <script setup lang="ts">
-import type { Store } from '@/plugins/store/types';
-import type { Report } from '@/plugins/store/types/reports-types';
-import { computed, ref } from 'vue';
-import { useI18n } from 'vue-i18n';
-import { useStore } from 'vuex';
+import type {Store} from '@/plugins/store/types'
+import type {Report} from '@/plugins/store/types/reports-types'
+import {computed, ref} from 'vue'
+import {useI18n} from 'vue-i18n'
+import {useStore} from 'vuex'
 
-const { t } = useI18n()
+const {t} = useI18n()
 const store: Store = useStore()
 
-defineProps<{items: Report[], title: string, info: string}>()
+defineProps<{items: Report[]; title: string; info: string}>()
 
 const updateRowsPerPage = (val: any) => store.dispatch('reports/setPageSize', val.itemsPerPage)
 
@@ -70,9 +60,8 @@ const headers = ref([
   {title: t('DuplCount'), value: 'duplicateCount', sortable: false},
   {title: t('Environments'), value: 'environments', sortable: false},
   {title: t('Services'), value: 'services', sortable: false},
-  {title: t('Resources'), value: 'resources', sortable: false},
+  {title: t('Resources'), value: 'resources', sortable: false}
 ])
 
 const pagination = computed(() => store.state.reports.pagination)
 </script>
-

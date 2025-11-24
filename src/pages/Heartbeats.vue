@@ -6,7 +6,7 @@
     variant="outlined"
     clearable
     hide-details
-    style="position: absolute; top: 2.5px;right: calc(25vw); width: 40vw; background: white;"
+    style="position: absolute; top: 2.5px; right: calc(25vw); width: 40vw; background: white"
   />
   <h1>{{ t('Heartbeats') }}</h1>
   <v-data-table
@@ -19,54 +19,40 @@
     :search="search"
     sort-desc-icon="arrow_drop_down"
     sort-asc-icon="arrow_drop_up"
-    style="max-height: calc(100vh - calc(64px + 74px));"
+    style="max-height: calc(100vh - calc(64px + 74px))"
     :items="items"
   >
-    <template 
-      v-for="desc in ['receiveTime', 'createTime']"
-      :key="desc"
-      #[`item.${desc}`]="{ item }"
-    >
+    <template v-for="desc in ['receiveTime', 'createTime']" :key="desc" #[`item.${desc}`]="{item}">
       <date-time :value="item[desc as 'receiveTime' | 'createTime']" />
     </template>
-    <template #[`item.latency`]="{ item }">
-      {{ item.latency }} ms
-    </template>
-    <template #[`item.tags`]="{ item }">
+    <template #[`item.latency`]="{item}"> {{ item.latency }} ms </template>
+    <template #[`item.tags`]="{item}">
       {{ item.tags.join(', ') }}
     </template>
-    <template #[`item.status`]="{ item }">
-      <v-chip
-        label
-        class="chip"
-        :class="item.status"
-      >
+    <template #[`item.status`]="{item}">
+      <v-chip label class="chip" :class="item.status">
         {{ item.status }}
       </v-chip>
     </template>
     <template #[`item.actions`]="{item}">
-      <v-btn 
-        icon="delete" 
-        variant="text"
-        @click="deleteItem(item.id)"
-      />
+      <v-btn icon="delete" variant="text" @click="deleteItem(item.id)" />
     </template>
   </v-data-table>
 </template>
 
 <script lang="ts" setup>
-import type { Store } from '@/plugins/store/types';
-import type { SortBy } from '@/plugins/store/types/alerts-types';
-import { computed, onUnmounted, ref, watch } from 'vue';
-import { useI18n } from 'vue-i18n';
-import { useStore } from 'vuex';
+import type {Store} from '@/plugins/store/types'
+import type {SortBy} from '@/plugins/store/types/alerts-types'
+import {computed, onUnmounted, ref, watch} from 'vue'
+import {useI18n} from 'vue-i18n'
+import {useStore} from 'vuex'
 
-const { t } = useI18n()
+const {t} = useI18n()
 const store: Store = useStore()
 
 const search = ref('')
 
-const headers = computed(() => ([
+const headers = computed(() => [
   {title: t('Origin'), key: 'origin'},
   {title: t('Tags'), key: 'tags'},
   {title: t('Attributes'), key: 'attributes'},
@@ -75,8 +61,8 @@ const headers = computed(() => ([
   {title: t('Latency'), key: 'latency'},
   {title: t('Timeout'), key: 'timeout'},
   {title: t('Status'), key: 'status'},
-  {title: t('Actions'), key: 'actions', sortable: false},
-]))
+  {title: t('Actions'), key: 'actions', sortable: false}
+])
 
 const items = computed(() => store.state.heartbeats.items)
 definePage({
@@ -89,18 +75,16 @@ definePage({
 const refresh = computed(() => store.state.refresh)
 const sortBy = ref<SortBy[]>([{key: 'origin', order: 'asc'}])
 
-watch(refresh, (val) => {
+watch(refresh, val => {
   if (!val) return
   getItems()
 })
-
-
 
 const timeout = ref<number | undefined>(undefined)
 const interval = computed(() => store.getters.getPreference('refreshInterval'))
 
 function getItems() {
-  if(timeout.value) clearTimeout(timeout.value)
+  if (timeout.value) clearTimeout(timeout.value)
   store.dispatch('heartbeats/getHeartbeats')
   timeout.value = setTimeout(getItems, interval.value)
 }
@@ -112,5 +96,4 @@ function deleteItem(id: string) {
 onUnmounted(() => clearTimeout(timeout.value))
 
 getItems()
-
 </script>

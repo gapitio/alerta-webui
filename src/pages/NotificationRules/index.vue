@@ -8,7 +8,7 @@
       clearable
       hide-details
       validate-on="submit"
-      style="position: absolute; top: 2.5px;right: calc(25vw); width: 40vw; background: white;"
+      style="position: absolute; top: 2.5px; right: calc(25vw); width: 40vw; background: white"
       @keydown.enter="(e: any) => setSearch(e.target.value)"
       @click:clear="clearSearch"
     />
@@ -17,14 +17,14 @@
 </template>
 
 <script lang="ts" setup>
-import { useStore } from 'vuex';
-import type { Store } from '../../plugins/store/types'
-import { useI18n } from 'vue-i18n';
-import { computed, onUnmounted, ref, watch } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import type { Query } from '@/plugins/store/types/alerts-types';
+import {useStore} from 'vuex'
+import type {Store} from '../../plugins/store/types'
+import {useI18n} from 'vue-i18n'
+import {computed, onUnmounted, ref, watch} from 'vue'
+import {useRoute, useRouter} from 'vue-router'
+import type {Query} from '@/plugins/store/types/alerts-types'
 
-const { t } = useI18n()
+const {t} = useI18n()
 const store: Store = useStore()
 const route = useRoute()
 const router = useRouter()
@@ -32,7 +32,7 @@ const router = useRouter()
 definePage({
   meta: {
     title: 'Notification Rules',
-    requiresAuth: true,
+    requiresAuth: true
   }
 })
 
@@ -41,13 +41,13 @@ const tempQuery = ref('')
 
 const query = computed({
   get: () => store.state.notificationRules.query.q ?? null,
-  set: (val) => tempQuery.value = val
+  set: val => (tempQuery.value = val)
 })
 
 const routeQuery = computed(() => route.query)
 const interval = computed(() => store.getters.getPreference('refreshInterval'))
 
-watch(routeQuery, (val) => setQuery(val as Query))
+watch(routeQuery, val => setQuery(val as Query))
 function setQuery(q: Query) {
   store.dispatch('notificationRules/updateQuery', q)
   refreshAll()
@@ -68,7 +68,7 @@ function clearSearch() {
 }
 const refresh = computed(() => store.state.refresh)
 
-watch(refresh, (val) => {
+watch(refresh, val => {
   if (!val) return
   refreshAll()
 })
@@ -114,5 +114,4 @@ function getTags() {
 }
 
 refreshAll()
-
 </script>
