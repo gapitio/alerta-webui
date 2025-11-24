@@ -7,7 +7,11 @@
 // https://vuetifyjs.com/features/sass-variables/`
 @use 'vuetify/settings' with (
   $color-pack: false,
-  $body-font-family: (Poppins, 'Roboto', sans-serif),
+  $body-font-family: (
+    Poppins,
+    'Roboto',
+    sans-serif
+  ),
   $tab-slider-size: 4px,
   $font-size-root: 14px,
   $switch-inset-thumb-height: 16px,
@@ -15,23 +19,20 @@
   $switch-inset-track-height: 20px,
   $switch-inset-track-width: 40px,
   $table-row-height: 40px,
-  $typography: 
-  (
+  $typography: (
     'body-2': (
       'size': 13px,
       'weight': 400,
       'line-height': 1.425,
-      'letter-spacing': .0178571429em,
+      'letter-spacing': 0.0178571429em,
       'text-transform': none
     ),
     'button': (
       'size': 13px,
       'weight': 500,
       'line-height': 2.6,
-      'letter-spacing': .0892857143em,
+      'letter-spacing': 0.0892857143em,
       'text-transform': uppercase
-    ),
+    )
   )
 );
-
-

@@ -1,13 +1,9 @@
 <template>
   <v-container class="fill-height">
     <v-row justify="center">
-      <v-col
-        v-if="isBasicAuth"
-        cols="12"
-        sm="8"
-      >
+      <v-col v-if="isBasicAuth" cols="12" sm="8">
         <p class="text-center text-h5 font-weight-medium pb-4">
-          {{ t("LoginToContinue") }}
+          {{ t('LoginToContinue') }}
         </p>
         <v-form @submit.prevent="login">
           <v-row>
@@ -26,49 +22,29 @@
                 show-header
                 :label="t('Password')"
                 :append-inner-icon="showPassword ? 'visibility_off' : 'visibility'"
-                @click:append-inner="() => showPassword = !showPassword"
+                @click:append-inner="() => (showPassword = !showPassword)"
               />
             </v-col>
             <v-col cols="12">
-              <v-btn
-                block
-                color="primary"
-                type="submit"
-              >
-                {{ t("LogIn") }}
+              <v-btn block color="primary" type="submit">
+                {{ t('LogIn') }}
               </v-btn>
             </v-col>
           </v-row>
         </v-form>
         <div class="text-center">
-          <v-btn
-            v-if="signupEnabled"
-            variant="text"
-            color="primary"
-            :to="'/signup'"
-          >
-            {{ t("CreateAccount") }}
+          <v-btn v-if="signupEnabled" variant="text" color="primary" :to="'/signup'">
+            {{ t('CreateAccount') }}
           </v-btn>
-          <v-btn
-            v-if="provider === 'basic'"
-            variant="text"
-            color="primary"
-            :to="'/forgot'"
-          >
-            {{ t("ForgotPassword") }}
+          <v-btn v-if="provider === 'basic'" variant="text" color="primary" :to="'/forgot'">
+            {{ t('ForgotPassword') }}
           </v-btn>
         </div>
       </v-col>
 
-      <v-col
-        v-else-if="provider === 'saml2'"
-        cols="12"
-        sm="8"
-      >
+      <v-col v-else-if="provider === 'saml2'" cols="12" sm="8">
         <div>
-          <p class="text-center text-h5 font-weight-medium">
-            SAML2 Authentication uses pop-up windows.
-          </p>
+          <p class="text-center text-h5 font-weight-medium">SAML2 Authentication uses pop-up windows.</p>
           <p class="text-center text-body-1 font-weight-medium">
             Please allow pop-ups from <kbd>{{ host }}</kbd>
           </p>
@@ -80,25 +56,16 @@
         </div>
         <div v-if="error">
           <p class="text-center text-h5 font-weight-medium">
-            {{ t("UnspecifiedProblem") }}
-            <a
-              href="#"
-              @click.prevent="authenticateUsingSAML"
-            >
-              {{ t("TryAgain") }}
+            {{ t('UnspecifiedProblem') }}
+            <a href="#" @click.prevent="authenticateUsingSAML">
+              {{ t('TryAgain') }}
             </a>
           </p>
-          <p class="text-center text-body-1 font-weight-medium">
-            {{ t("Error") }}: {{ error }}
-          </p>
+          <p class="text-center text-body-1 font-weight-medium">{{ t('Error') }}: {{ error }}</p>
         </div>
       </v-col>
 
-      <v-col
-        v-else
-        cols="12"
-        sm="8"
-      >
+      <v-col v-else cols="12" sm="8">
         <div v-if="message && !error">
           <p class="text-center text-h5 font-weight-medium">
             {{ message }}
@@ -106,46 +73,38 @@
         </div>
         <div v-if="error">
           <p class="text-center text-h5 font-weight-medium">
-            {{ t("UnspecifiedProblem") }}
-            <a
-              href="#"
-              @click.prevent="authenticate"
-            >
-              {{ t("TryAgain") }}
+            {{ t('UnspecifiedProblem') }}
+            <a href="#" @click.prevent="authenticate">
+              {{ t('TryAgain') }}
             </a>
           </p>
-          <p class="text-center text-body-1 font-weight-medium">
-            {{ t("Error") }}: {{ error }}
-          </p>
+          <p class="text-center text-body-1 font-weight-medium">{{ t('Error') }}: {{ error }}</p>
         </div>
       </v-col>
-      <v-col 
-        cols="12"
-        sm="8"
-      />
+      <v-col cols="12" sm="8" />
     </v-row>
   </v-container>
 </template>
 
 <script setup lang="ts">
-import type { Store } from '@/plugins/store/types';
-import { AxiosError } from 'axios';
-import { computed, ref } from 'vue';
-import { useI18n } from 'vue-i18n';
-import { useRoute, useRouter } from 'vue-router';
-import { useTheme } from 'vuetify';
-import { useStore } from 'vuex';
+import type {Store} from '@/plugins/store/types'
+import {AxiosError} from 'axios'
+import {computed, ref} from 'vue'
+import {useI18n} from 'vue-i18n'
+import {useRoute, useRouter} from 'vue-router'
+import {useTheme} from 'vuetify'
+import {useStore} from 'vuex'
 
 definePage({
   meta: {
-    title: "Login"
+    title: 'Login'
   }
-});
+})
 
 const store: Store = useStore()
 const router = useRouter()
 const route = useRoute()
-const { t } = useI18n()
+const {t} = useI18n()
 const theme = useTheme()
 
 const host = ref(window.location.origin)
@@ -176,23 +135,22 @@ async function login() {
   await store.dispatch('getUserPrefs')
   theme.global.name.value = isDark.value ? 'gapitDark' : 'gapitLight'
   const redirect = !(route.query.redirect instanceof Array) ? route.query.redirect?.toString() : null
-  router.push({ path: redirect || '/' })
+  router.push({path: redirect || '/'})
 }
 
-async function authenticate(){
+async function authenticate() {
   if (authProvider.value) {
     message.value = `Authenticating with ${authProvider.value} ...`
     try {
       await store.dispatch('auth/authenticate', provider.value)
       theme.global.name.value = isDark.value ? 'gapitDark' : 'gapitLight'
       const redirect = !(route.query.redirect instanceof Array) ? route.query.redirect?.toString() : null
-      router.push({ path: redirect || '/' })
+      router.push({path: redirect || '/'})
     } catch (e) {
       if (e instanceof AxiosError) error.value = (e.response?.data as {message: string}).message
       else throw e
     }
-  }
-  else {
+  } else {
     message.value = t('AuthNotPossible')
     error.value = `Unknown authentication provider (${provider.value})`
   }
@@ -206,12 +164,11 @@ function authenticateUsingSAML() {
         try {
           await store.dispatch('auth/setToken', event.data)
           const redirect = !(route.query.redirect instanceof Array) ? route.query.redirect?.toString() : null
-          router.push({ path: redirect || '/' })
+          router.push({path: redirect || '/'})
         } catch (e) {
           if (e instanceof AxiosError) error.value = (e.response?.data as {message: string}).message
           else throw e
         }
-          
       } else {
         message.value = t('AuthNotPossible')
         error.value = event.data.message ? event.data.message : JSON.stringify(event)

@@ -3,16 +3,14 @@
 </template>
 
 <script setup lang="ts">
-import { useRoute } from 'vue-router';
+import {useRoute} from 'vue-router'
 
 definePage({
   meta: {
-    title: "Alert",
+    title: 'Alert',
     requiresAuth: true
   }
-});
-
+})
 
 const route = useRoute('users-id')
 </script>
-

@@ -1,50 +1,26 @@
 <template>
   <v-container fluid>
-    <v-row 
-      align="start"
-    >
+    <v-row align="start">
       <v-col cols="auto">
-        <v-btn 
-          v-show="!isWatched"
-          prepend-icon="visibility"
-          variant="outlined"
-          @click="watchAlert"
-        >
+        <v-btn v-show="!isWatched" prepend-icon="visibility" variant="outlined" @click="watchAlert">
           {{ t('Watch') }}
         </v-btn>
-        <v-btn 
-          v-show="isWatched"
-          variant="outlined"
-          prepend-icon="visibility_off"
-          @click="unwatchAlert"
-        >
+        <v-btn v-show="isWatched" variant="outlined" prepend-icon="visibility_off" @click="unwatchAlert">
           {{ t('Unwatch') }}
         </v-btn>
       </v-col>
       <v-col cols="auto">
-        <v-btn 
-          prepend-icon="note_add"
-          variant="outlined"
-          @click="editNote = true"
-        >
+        <v-btn prepend-icon="note_add" variant="outlined" @click="editNote = true">
           {{ t('AddNote') }}
         </v-btn>
       </v-col>
       <v-col cols="auto">
-        <v-btn 
-          prepend-icon="delete"
-          variant="outlined"
-          @click="deleteAlert"
-        >
+        <v-btn prepend-icon="delete" variant="outlined" @click="deleteAlert">
           {{ t('Delete') }}
         </v-btn>
       </v-col>
     </v-row>
-    <v-dialog 
-      v-model="editNote"
-      scrollable
-      max-width="540px"
-    >
+    <v-dialog v-model="editNote" scrollable max-width="540px">
       <v-form ref="form">
         <v-card class="dialog-card">
           <v-card-title>
@@ -54,10 +30,10 @@
               </span>
             </v-col>
           </v-card-title>
-          <v-card-text style="overflow-x: hidden;">
+          <v-card-text style="overflow-x: hidden">
             <v-row>
               <v-col cols="12">
-                <g-text-field 
+                <g-text-field
                   v-model.trim="text"
                   show-header
                   :maxlength="maxNoteLength"
@@ -85,24 +61,13 @@
           </v-card-text>
           <v-card-actions class="dialog-card-actions">
             <v-col cols="6">
-              <v-btn
-                variant="outlined"
-                width="247"
-                class="no-cap-btn btn"
-                @click="close"
-              >
+              <v-btn variant="outlined" width="247" class="no-cap-btn btn" @click="close">
                 {{ t('Cancel') }}
               </v-btn>
             </v-col>
 
             <v-col cols="6">
-              <v-btn
-                color="primary-600"
-                variant="flat"
-                class="no-cap-btn"
-                width="247"
-                @click="validate"
-              >
+              <v-btn color="primary-600" variant="flat" class="no-cap-btn" width="247" @click="validate">
                 {{ t('Save') }}
               </v-btn>
             </v-col>
@@ -114,18 +79,17 @@
 </template>
 
 <script lang="ts">
-type s = 'take-action' | 'ack-alert' | 'shelve-alert' |'add-note'
-
+type s = 'take-action' | 'ack-alert' | 'shelve-alert' | 'add-note'
 </script>
 
 <script lang="ts" setup>
-import type { Store } from '@/plugins/store/types';
-import { computed, ref, watch } from 'vue'
-import { useI18n } from 'vue-i18n'
-import type { VForm } from 'vuetify/components';
-import { useStore } from 'vuex';
+import type {Store} from '@/plugins/store/types'
+import {computed, ref, watch} from 'vue'
+import {useI18n} from 'vue-i18n'
+import type {VForm} from 'vuetify/components'
+import {useStore} from 'vuex'
 
-const { t } = useI18n()
+const {t} = useI18n()
 const store: Store = useStore()
 
 const props = defineProps({
@@ -143,10 +107,10 @@ const props = defineProps({
   }
 })
 type Action = {
-  title: string,
+  title: string
   value: 'open' | 'close' | 'unack' | 'ack' | 'shelve' | 'unshelve' | 'note'
-  action: s,
-  show?: ()=>boolean
+  action: s
+  show?: () => boolean
 }
 
 const isAcked = computed(() => ['ack', 'ACKED'].includes(props.status))
@@ -155,30 +119,41 @@ const isClosed = computed(() => props.status == 'closed')
 const isAlertAlarmModel = computed(() => !store.getters.getConfig('alarm_model').name.includes('ISA'))
 
 const actions: Action[] = [
-  { title: t('Open'), value:'open', action: 'take-action', show: () => isClosed.value },
-  { title: t('Close'), value:'close', action: 'take-action', show: () => !isClosed.value && isAlertAlarmModel.value },
-  { title: t('Unack'), value:'unack', action: 'take-action', show: () => isAcked.value },
-  { title: t('Ack'), value:'ack', action:'ack-alert', show: () => !isClosed.value && !isAcked.value && !isShelved.value },
-  { title: t('Shelve'), value:'shelve', action:'shelve-alert', show: () => !isShelved.value },
-  { title: t('Unshelve'), value:'unshelve', action:'take-action', show: () => isShelved.value },
-  { title: t('AddNote'), value:'note', action:'add-note' },
+  {title: t('Open'), value: 'open', action: 'take-action', show: () => isClosed.value},
+  {title: t('Close'), value: 'close', action: 'take-action', show: () => !isClosed.value && isAlertAlarmModel.value},
+  {title: t('Unack'), value: 'unack', action: 'take-action', show: () => isAcked.value},
+  {
+    title: t('Ack'),
+    value: 'ack',
+    action: 'ack-alert',
+    show: () => !isClosed.value && !isAcked.value && !isShelved.value
+  },
+  {title: t('Shelve'), value: 'shelve', action: 'shelve-alert', show: () => !isShelved.value},
+  {title: t('Unshelve'), value: 'unshelve', action: 'take-action', show: () => isShelved.value},
+  {title: t('AddNote'), value: 'note', action: 'add-note'}
 ]
 
-const filteredActions = computed(() => actions.filter(a => a.show === undefined ? true : a.show()))
-const emits = defineEmits(['take-action', 'ack-alert', 'shelve-alert', 'add-note', 'watch-alert', 'unwatch-alert', 'delete-alert'])
-const type = ref<Action>({ title: t('AddNote'), value:'note', action: 'add-note' })
-
-
+const filteredActions = computed(() => actions.filter(a => (a.show === undefined ? true : a.show())))
+const emits = defineEmits([
+  'take-action',
+  'ack-alert',
+  'shelve-alert',
+  'add-note',
+  'watch-alert',
+  'unwatch-alert',
+  'delete-alert'
+])
+const type = ref<Action>({title: t('AddNote'), value: 'note', action: 'add-note'})
 
 const editNote = ref(false)
 const text = ref('')
 const form = ref<VForm | null>(null)
 const maxNoteLength = 200
-const textRules = [
-  (v: string) => !!v || t('TextIsRequired')
-]
+const textRules = [(v: string) => !!v || t('TextIsRequired')]
 
-watch(editNote, (val) => {if(val) type.value = { title: t('AddNote'), value:'note', action: 'add-note' }})
+watch(editNote, val => {
+  if (val) type.value = {title: t('AddNote'), value: 'note', action: 'add-note'}
+})
 
 async function validate() {
   const validation = await form.value?.validate()

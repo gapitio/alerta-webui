@@ -1,31 +1,31 @@
-$primary-600: #1570EF;
+$primary-600: #1570ef;
 
-$surface-primary: #1D232A;
+$surface-primary: #1d232a;
 $surface-secondary-alt: #161719;
 $surface-tertiary: $surface-secondary-alt;
 $border-primary: #344054;
 $border-secondary: $border-primary;
-$link-active: #53B1FD;
-$text-primary: #F2F4F7;
+$link-active: #53b1fd;
+$text-primary: #f2f4f7;
 $text-disabled: #667085;
-$text-secondary: #D0D5DD;
+$text-secondary: #d0d5dd;
 
-$critical-color: #A33129;
-$critical-chip-color: #F04438;
-$critical-600: #D92D20;
-$major-color: #914C30;
-$major-chip-color: #FB6514;
-$normal-color: #193B2D;
-$ack-color: #193B2D;
-$normal-chip-color: #12B76A;
+$critical-color: #a33129;
+$critical-chip-color: #f04438;
+$critical-600: #d92d20;
+$major-color: #914c30;
+$major-chip-color: #fb6514;
+$normal-color: #193b2d;
+$ack-color: #193b2d;
+$normal-chip-color: #12b76a;
 $informational-color: #374967;
-$informational-chip-color: #2E90FA;
+$informational-chip-color: #2e90fa;
 $minor-color: #736426;
-$minor-chip-color: #FFD320;
+$minor-chip-color: #ffd320;
 $warning-color: $minor-color;
 $warning-chip-color: $minor-chip-color;
-$minor-500: #FFD320;
-$severity-color: #1D2939;
+$minor-500: #ffd320;
+$severity-color: #1d2939;
 
 .v-theme--gapitDark .sidebar {
   border-color: $border-primary;
@@ -38,12 +38,12 @@ $severity-color: #1D2939;
 
 .v-theme--gapitDark .bg-success {
   background-color: $normal-color !important;
-} 
+}
 
 .v-theme--gapitDark .bg-error {
   background-color: $critical-color !important;
   color: $text-primary !important;
-} 
+}
 
 .v-theme--gapitDark div {
   scrollbar-color: $border-secondary $surface-primary;
@@ -72,7 +72,7 @@ $severity-color: #1D2939;
 
 .v-theme--gapitDark .btn {
   background-color: $surface-primary;
-  border-color: $border-secondary
+  border-color: $border-secondary;
 }
 
 .v-theme--gapitDark .alert {
@@ -80,12 +80,12 @@ $severity-color: #1D2939;
   text-align: left;
 }
 
-.v-theme--gapitDark .alert .v-icon{
+.v-theme--gapitDark .alert .v-icon {
   color: $critical-600;
 }
 
 .v-theme--gapitDark {
-  color: $text-primary
+  color: $text-primary;
 }
 
 .v-theme--gapitDark .bg-primary-600 {
@@ -120,7 +120,7 @@ $severity-color: #1D2939;
 
 .v-theme--gapitDark .switch-light {
   background-color: $surface-primary;
-  border-color: $border-secondary
+  border-color: $border-secondary;
 }
 
 // .v-theme--gapitDark .v-switch__track {
@@ -203,11 +203,11 @@ $severity-color: #1D2939;
   background-color: $normal-chip-color;
 }
 
-.v-theme--gapitDark .chip.slow{
+.v-theme--gapitDark .chip.slow {
   background-color: $minor-500;
   color: #000000 !important;
 }
-.v-theme--gapitDark .chip.expired{
+.v-theme--gapitDark .chip.expired {
   background-color: $critical-chip-color;
 }
 

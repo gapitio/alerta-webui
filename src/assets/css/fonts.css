@@ -1,12 +1,12 @@
 @font-face {
-  font-family: "Material Icons";
+  font-family: 'Material Icons';
   font-style: normal;
   font-weight: 400;
   font-display: block;
-  src: url("../fonts/MaterialIcons/MaterialSymbolsOutlined-VariableFont_FILL,GRAD,opsz,wght.ttf");
+  src: url('../fonts/MaterialIcons/MaterialSymbolsOutlined-VariableFont_FILL,GRAD,opsz,wght.ttf');
 }
 .material-icons {
-  font-family: "Material Icons";
+  font-family: 'Material Icons';
   font-weight: normal;
   font-style: normal;
   font-size: 24px;
@@ -17,6 +17,6 @@
   white-space: nowrap;
   word-wrap: normal;
   direction: ltr;
-  -webkit-font-feature-settings: "liga";
+  -webkit-font-feature-settings: 'liga';
   -webkit-font-smoothing: antialiased;
 }

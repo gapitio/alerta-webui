@@ -1,15 +1,10 @@
 <template>
   <div>
-    <span
-      v-if="showHeader" 
-      class="text-secondary"
-    >{{ label }}
+    <span v-if="showHeader" class="text-secondary"
+      >{{ label }}
       <slot name="infoDialog" />
     </span>
-    <span
-      v-if="required"
-      :class="getColorClass()"
-    >*</span>
+    <span v-if="required" :class="getColorClass()">*</span>
     <v-textarea
       ref="field"
       v-model="model"
@@ -39,8 +34,8 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
-import type { VTextField } from 'vuetify/components';
+import {ref} from 'vue'
+import type {VTextField} from 'vuetify/components'
 
 defineSlots()
 
@@ -48,28 +43,28 @@ const emits = defineEmits(['click:appendInner', 'click:clear'])
 
 const model = defineModel<string>()
 const field = ref<null | VTextField>(null)
-const getColorClass = () => {return field.value?.isValid ? 'text-secondary' : 'critical-text'}
+const getColorClass = () => {
+  return field.value?.isValid ? 'text-secondary' : 'critical-text'
+}
 const props = defineProps<{
-  itemValue?: string;
-  multiple?: boolean;
-  rules?: ((val: string)=> boolean)[];
-  required?: boolean;
-  label: string;
-  placeholder?: string;
-  prependInnerIcon?: string;
-  appendInnerIcon?: string;
-  chips?: boolean;
-  smallChips?: boolean;
-  persistentHint?: boolean;
-  hint?: string;
-  showHeader?: boolean;
-  showDetails?: boolean | 'auto';
-  clearable?: boolean;
-  type?: string;
-  disabled?: boolean;
-  rows?: number;
-  readonly?: boolean;
+  itemValue?: string
+  multiple?: boolean
+  rules?: ((val: string) => boolean)[]
+  required?: boolean
+  label: string
+  placeholder?: string
+  prependInnerIcon?: string
+  appendInnerIcon?: string
+  chips?: boolean
+  smallChips?: boolean
+  persistentHint?: boolean
+  hint?: string
+  showHeader?: boolean
+  showDetails?: boolean | 'auto'
+  clearable?: boolean
+  type?: string
+  disabled?: boolean
+  rows?: number
+  readonly?: boolean
 }>()
-
 </script>
-

@@ -1,10 +1,6 @@
 <template>
   <v-row no-gutters>
-    <v-col
-      v-if="label !== ''"
-      cols="auto"
-      class="label pr-2"
-    >
+    <v-col v-if="label !== ''" cols="auto" class="label pr-2">
       {{ label }}
     </v-col>
     <v-col>
@@ -27,11 +23,10 @@
 const model = defineModel<boolean | string>()
 
 defineProps<{
-  label?: string,
-  class?: string,
-  trueValue?: any,
-  falseValue?: any,
+  label?: string
+  class?: string
+  trueValue?: any
+  falseValue?: any
   disabled?: boolean
 }>()
-
 </script>

@@ -1,9 +1,6 @@
 <template>
   <div>
-    <span
-      v-if="showHeader" 
-      class="text-secondary"
-    >{{ label }}</span>
+    <span v-if="showHeader" class="text-secondary">{{ label }}</span>
     <v-select
       v-model="model"
       :placeholder="label"
@@ -27,14 +24,13 @@
 </template>
 
 <script lang="ts" setup>
-
 const model = defineModel<string | number | object>()
 
 const props = defineProps({
   items: {
     type: Array,
     required: true
-  },  
+  },
   itemValue: {
     type: String,
     default: undefined
@@ -45,27 +41,27 @@ const props = defineProps({
   },
   multiple: {
     type: Boolean,
-    default: false,
+    default: false
   },
   rules: {
-    type: Array<(val: string)=>boolean>,
+    type: Array<(val: string) => boolean>,
     default: () => []
-  }, 
+  },
   required: {
     type: Boolean,
-    default: false,
+    default: false
   },
   label: {
     type: String,
-    required: true,
+    required: true
   },
   placeholder: {
     type: String,
-    default: undefined,
+    default: undefined
   },
   chips: {
     type: Boolean,
-    default: false,
+    default: false
   },
   closableChips: {
     type: Boolean,
@@ -73,11 +69,11 @@ const props = defineProps({
   },
   smallChips: {
     type: Boolean,
-    default: false,
+    default: false
   },
   persistentHint: {
     type: Boolean,
-    default: false,
+    default: false
   },
   hint: {
     type: String,
@@ -89,17 +85,15 @@ const props = defineProps({
   },
   showDetails: {
     type: Boolean,
-    default: false,
+    default: false
   },
   clearable: {
     type: Boolean,
-    default: false,
+    default: false
   },
   returnObject: {
     type: Boolean,
-    default: false,
-  },
+    default: false
+  }
 })
-
 </script>
-

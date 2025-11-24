@@ -1,19 +1,7 @@
 <template>
-  <v-container
-    grid-list-sm
-    fill-height
-  >
-    <v-layout
-      align-center
-      row
-      wrap
-    >
-      <v-flex
-        xs12
-        sm8
-        offset-xs0
-        offset-sm2
-      >
+  <v-container grid-list-sm fill-height>
+    <v-layout align-center row wrap>
+      <v-flex xs12 sm8 offset-xs0 offset-sm2>
         <p class="text-xs-center headline font-weight-medium">
           <span>{{ t('ChooseNewPassword') }}</span>
         </p>
@@ -34,11 +22,7 @@
             :append-icon="showPassword ? 'visibility_off' : 'visibility'"
             @click:append="showPassword = !showPassword"
           />
-          <v-btn
-            block
-            color="primary"
-            type="submit"
-          >
+          <v-btn block color="primary" type="submit">
             {{ t('ResetPassword') }}
           </v-btn>
         </v-form>
@@ -46,48 +30,38 @@
           <span class="body-2">
             {{ t('AlreadyHaveAccount') }}
           </span>
-          <v-btn
-            flat
-            color="primary"
-            to="/login"
-          >
+          <v-btn flat color="primary" to="/login">
             {{ t('SignIn') }}
           </v-btn>
         </div>
       </v-flex>
-      <v-flex
-        xs12
-        sm8
-        offset-xs0
-        offset-sm2
-      />
+      <v-flex xs12 sm8 offset-xs0 offset-sm2 />
     </v-layout>
   </v-container>
 </template>
 
 <script lang="ts" setup>
-import type { Store } from '@/plugins/store/types';
-import { ref } from 'vue';
-import { useI18n } from 'vue-i18n';
-import { useRoute } from 'vue-router';
-import { useStore } from 'vuex';
+import type {Store} from '@/plugins/store/types'
+import {ref} from 'vue'
+import {useI18n} from 'vue-i18n'
+import {useRoute} from 'vue-router'
+import {useStore} from 'vuex'
 
 definePage({
   meta: {
-    title: "Login"
+    title: 'Login'
   }
-});
+})
 
 const store: Store = useStore()
 const route = useRoute()
-const { t } = useI18n()
+const {t} = useI18n()
 
 const password = ref<string | null>(null)
 const confirmPassword = ref<string | null>(null)
 const showPassword = ref(false)
 
 function reset() {
-  if (password.value) store.dispatch('auth/reset', [route.params.token as string, password.value] )
+  if (password.value) store.dispatch('auth/reset', [route.params.token as string, password.value])
 }
-
 </script>

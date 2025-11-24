@@ -1,5 +1,6 @@
+<template>redirect</template>
 <script setup lang="ts">
-  definePage({
-    redirect: '/alerts'    
-  });
+definePage({
+  redirect: '/alerts'
+})
 </script>

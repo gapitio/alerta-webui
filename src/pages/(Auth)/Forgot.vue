@@ -1,18 +1,13 @@
 <template>
   <v-container class="fill-height">
     <v-row justify="center">
-      <v-col
-        cols="12"
-        sm="8"
-      >
+      <v-col cols="12" sm="8">
         <p class="text-center text-h5 font-weight-medium pb-4">
-          {{ t("ResetLink") }}
+          {{ t('ResetLink') }}
         </p>
         <v-form @submit.prevent="forgot()">
           <v-row>
-            <v-col
-              cols="12"
-            >
+            <v-col cols="12">
               <g-text-field
                 v-model.trim="email"
                 show-header
@@ -22,13 +17,7 @@
               />
             </v-col>
             <v-col cols="12">
-              <v-btn
-                :loading="isSending"
-                :disabled="isSending"
-                block
-                color="primary"
-                type="submit"
-              >
+              <v-btn :loading="isSending" :disabled="isSending" block color="primary" type="submit">
                 {{ t('Send') }}
               </v-btn>
             </v-col>
@@ -39,40 +28,31 @@
             <span class="body-2">
               {{ t('AlreadyHaveAccount') }}
             </span>
-            <v-btn
-              flat
-              color="primary"
-              to="/login"
-            >
+            <v-btn flat color="primary" to="/login">
               {{ t('SignIn') }}
             </v-btn>
           </div>
         </v-col>
       </v-col>
-     
-      <v-col
-        cols="12"
-        sm8
-        offset-xs0
-        offset-sm2
-      />
+
+      <v-col cols="12" sm8 offset-xs0 offset-sm2 />
     </v-row>
   </v-container>
 </template>
 
 <script lang="ts" setup>
-import type { Store } from '@/plugins/store/types'
-import { computed, ref } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { useStore } from 'vuex'
+import type {Store} from '@/plugins/store/types'
+import {computed, ref} from 'vue'
+import {useI18n} from 'vue-i18n'
+import {useStore} from 'vuex'
 
 definePage({
   meta: {
-    title: "Forgot"
+    title: 'Forgot'
   }
-});
+})
 
-const { t } = useI18n()
+const {t} = useI18n()
 const store: Store = useStore()
 
 const email = ref<string | null>(null)
@@ -88,4 +68,3 @@ async function forgot() {
   }
 }
 </script>
-

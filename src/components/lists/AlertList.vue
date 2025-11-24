@@ -26,11 +26,7 @@
     >
       <date-time :value="item[timeObj as 'lastReceiveTime']" />
     </template>
-    <template
-      v-for="desc in ['service', 'tags']"
-      :key="desc"
-      #[`item.${desc}`]="{item}"
-    >
+    <template v-for="desc in ['service', 'tags']" :key="desc" #[`item.${desc}`]="{item}">
       {{ item[desc as 'service'].join(', ') }}
     </template>
     <template #[`item.note`]="{item}">
@@ -43,30 +39,17 @@
       {{ filters.hhmmss(timeoutLeft(item)) }}
     </template>
     <template #[`item.severity`]="{item}">
-      <v-chip
-        :class="[item.severity]"
-        class="chip"
-        label
-        variant="flat"
-        size="small"
-      >
+      <v-chip :class="[item.severity]" class="chip" label variant="flat" size="small">
         {{ item.severity }}
       </v-chip>
     </template>
     <template #[`item.status`]="{item}">
-      <v-chip 
-        class="chip"
-        label
-        variant="flat"
-        size="small"
-      >
+      <v-chip class="chip" label variant="flat" size="small">
         {{ item.status }}
       </v-chip>
     </template>
     <template #[`item.actions`]="{item}">
-      <div
-        class="action-buttons"
-      >
+      <div class="action-buttons">
         <v-btn
           v-if="isAcked(item.status) || isClosed(item.status)"
           density="compact"
@@ -131,58 +114,57 @@
           @click.stop="deleteAlert(item.id)"
         />
       </div>
-    </template>            
+    </template>
   </v-data-table-server>
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue'
-import { useStore } from 'vuex'
-import { useRoute, useRouter } from 'vue-router'
+import {computed} from 'vue'
+import {useStore} from 'vuex'
+import {useRoute, useRouter} from 'vue-router'
 import debounce from 'lodash/debounce'
 import moment from 'moment'
-import { useI18n } from 'vue-i18n'
-import type { Store } from '@/plugins/store/types'
-import { useFilters } from '@/filters'
-import type { Alert, Pagination } from '@/plugins/store/types/alerts-types'
-
+import {useI18n} from 'vue-i18n'
+import type {Store} from '@/plugins/store/types'
+import {useFilters} from '@/filters'
+import type {Alert, Pagination} from '@/plugins/store/types/alerts-types'
 
 const store: Store = useStore()
 const filters = useFilters()
 const route = useRoute()
 const router = useRouter()
-const { t } = useI18n()
+const {t} = useI18n()
 
 const headersMap = computed(() => ({
-  id: { title: t('AlertId'), key: 'id' },
-  resource: { title: t('Resource'), key: 'resource' },
-  event: { title: t('Event'), key: 'event' },
-  environment: { title: t('Environment'), key: 'environment' },
-  severity: { title: t('Severity'), key: 'severity' },
-  correlate: { title: t('Correlate'), key: 'correlate' },
-  status: { title: t('Status'), key: 'status' },
-  service: { title: t('Service'), key: 'service' },
-  group: { title: t('Group'), key: 'group' },
-  value: { title: t('Value'), value: 'value' },
-  tags: { title: t('Tags'), key: 'tags' },
-  attributes: { title: t('Attribute'), key: 'attributes' },
-  origin: { title: t('Origin'), key: 'origin' },
-  type: { title: t('Type'), key: 'type' },
-  createTime: { title: t('CreateTime'), key: 'createTime' },
-  timeout: { title: t('Timeout'), key: 'timeout' },
-  timeoutLeft: { title: t('TimeoutLeft'), key: 'timeoutLeft' },
-  customer: { title: t('Customer'), key: 'customer' },
-  duplicateCount: { title: t('Dupl'), key: 'duplicateCount' },
-  repeat: { title: t('Repeat'), key: 'repeat' },
-  previousSeverity: { title: t('PrevSeverity'), key: 'previousSeverity' },
-  trendIndication: { title: t('TrendIndication'), key: 'trendIndication' },
-  receiveTime: { title: t('ReceiveTime'), key: 'receiveTime' },
-  duration: { title: t('Duration'), key: 'duration' },
-  lastReceiveId: { title: t('LastReceiveId'), key: 'lastReceiveId', headerProps: { class: 'text-no-wrap' } },
-  lastReceiveTime: { title: t('LastReceiveTime'), key: 'lastReceiveTime', headerProps: { class: 'text-no-wrap' } },
-  text: { title: t('Description'), key: 'text' },
-  note: { title: t('LastNote'), key: 'note', sortable: false },
-  actions: { title: t('Actions'), key: 'actions', sortable: false, align: 'end'},
+  id: {title: t('AlertId'), key: 'id'},
+  resource: {title: t('Resource'), key: 'resource'},
+  event: {title: t('Event'), key: 'event'},
+  environment: {title: t('Environment'), key: 'environment'},
+  severity: {title: t('Severity'), key: 'severity'},
+  correlate: {title: t('Correlate'), key: 'correlate'},
+  status: {title: t('Status'), key: 'status'},
+  service: {title: t('Service'), key: 'service'},
+  group: {title: t('Group'), key: 'group'},
+  value: {title: t('Value'), value: 'value'},
+  tags: {title: t('Tags'), key: 'tags'},
+  attributes: {title: t('Attribute'), key: 'attributes'},
+  origin: {title: t('Origin'), key: 'origin'},
+  type: {title: t('Type'), key: 'type'},
+  createTime: {title: t('CreateTime'), key: 'createTime'},
+  timeout: {title: t('Timeout'), key: 'timeout'},
+  timeoutLeft: {title: t('TimeoutLeft'), key: 'timeoutLeft'},
+  customer: {title: t('Customer'), key: 'customer'},
+  duplicateCount: {title: t('Dupl'), key: 'duplicateCount'},
+  repeat: {title: t('Repeat'), key: 'repeat'},
+  previousSeverity: {title: t('PrevSeverity'), key: 'previousSeverity'},
+  trendIndication: {title: t('TrendIndication'), key: 'trendIndication'},
+  receiveTime: {title: t('ReceiveTime'), key: 'receiveTime'},
+  duration: {title: t('Duration'), key: 'duration'},
+  lastReceiveId: {title: t('LastReceiveId'), key: 'lastReceiveId', headerProps: {class: 'text-no-wrap'}},
+  lastReceiveTime: {title: t('LastReceiveTime'), key: 'lastReceiveTime', headerProps: {class: 'text-no-wrap'}},
+  text: {title: t('Description'), key: 'text'},
+  note: {title: t('LastNote'), key: 'note', sortable: false},
+  actions: {title: t('Actions'), key: 'actions', sortable: false, align: 'end'}
 }))
 
 const alerts = computed(() => {
@@ -193,14 +175,14 @@ const alerts = computed(() => {
   //     Object.keys(alert).some((k) => alert[k]?.toString().toLowerCase().includes(text))
   //   )
   // } else {
-    return alertList
+  return alertList
   // }
 })
 
 const isSearching = computed(() => (store.state.alerts.isSearching ? 'primary' : false))
 const pagination = computed({
-  get: () => (store.state.alerts.pagination),
-  set: (value) => store.dispatch('alerts/setPagination', value)
+  get: () => store.state.alerts.pagination,
+  set: value => store.dispatch('alerts/setPagination', value)
 })
 
 const lastNote = (item: Alert) => {
@@ -210,14 +192,18 @@ const lastNote = (item: Alert) => {
 
 const customHeaders = computed(() => {
   const configHeaders = store.state.config.columns.map(
-    (c) => headersMap.value[c as keyof typeof headersMap.value] ?? { title: c.charAt(0).toUpperCase() + c.slice(1), value: 'attributes.' + c }
+    c =>
+      headersMap.value[c as keyof typeof headersMap.value] ?? {
+        title: c.charAt(0).toUpperCase() + c.slice(1),
+        value: 'attributes.' + c
+      }
   )
   return [...configHeaders, headersMap.value.actions]
 })
 
 const selected = computed({
   get: () => store.state.alerts.selected,
-  set: (value) => store.dispatch('alerts/updateSelected', value),
+  set: value => store.dispatch('alerts/updateSelected', value)
 })
 
 const ackTimeout = computed(() => store.getters.getPreference('ackTimeout'))
@@ -237,22 +223,22 @@ function timeoutLeft(item: any) {
   return expireTime.isAfter() ? expireTime.diff(moment(), 'seconds') : moment.duration()
 }
 
-function rowProps({ item }: { item: any }) {
+function rowProps({item}: {item: any}) {
   return {
     class: `${item.status == 'open' ? item.severity : item.status == 'ack' ? 'ack' : ''} severity hover-lighten text-no-wrap table-row`,
-    onClick: () => selectItem(item),
+    onClick: () => selectItem(item)
   }
 }
 
 function columnsProps() {
   return {
-    class: `table-column`,
+    class: `table-column`
   }
 }
 
 function selectItem(item: any) {
   if (!selected.value.length) {
-    router.push({ path: `/alert/${item.id}`, query: { redirect: route.fullPath } })
+    router.push({path: `/alert/${item.id}`, query: {redirect: route.fullPath}})
   }
 }
 
@@ -282,9 +268,7 @@ function haveDeleteScope() {
   if (config.delete_alert_scope_enforced) {
     return scopes.includes('admin') || scopes.includes('admin:alerts') || scopes.includes('delete:alerts')
   } else {
-    return scopes.some(s =>
-      ['admin', 'admin:alerts', 'write', 'write:alerts', 'delete:alerts'].includes(s)
-    )
+    return scopes.some(s => ['admin', 'admin:alerts', 'write', 'write:alerts', 'delete:alerts'].includes(s))
   }
 }
 
@@ -293,36 +277,57 @@ function isAlertAlarmModel() {
 }
 
 // Debounced methods
-const takeAction = debounce((id: string, action: string) => {
-  store.dispatch('alerts/takeAction', [id, action, ''])
-    .then(() => store.dispatch('alerts/getAlerts'))
-}, 200, { leading: true, trailing: false })
+const takeAction = debounce(
+  (id: string, action: string) => {
+    store.dispatch('alerts/takeAction', [id, action, '']).then(() => store.dispatch('alerts/getAlerts'))
+  },
+  200,
+  {leading: true, trailing: false}
+)
 
-const ackAlert = debounce((id: string) => {
-  store.dispatch('alerts/takeAction', [id, 'ack', '', ackTimeout.value!])
-    .then(() => store.dispatch('alerts/getAlerts'))
-}, 200, { leading: true, trailing: false })
-
-const shelveAlert = debounce((id: string) => {
-  store.dispatch('alerts/takeAction', [id, 'shelve', '', shelveTimeout.value!])
-    .then(() => store.dispatch('alerts/getAlerts'))
-}, 200, { leading: true, trailing: false })
-
-const watchAlert = debounce((id: string) => {
-  store.dispatch('alerts/watchAlert', id)
-    .then(() => store.dispatch('alerts/getAlerts'))
-}, 200, { leading: true, trailing: false })
-
-const unwatchAlert = debounce((id: string) => {
-  store.dispatch('alerts/unwatchAlert', id)
-    .then(() => store.dispatch('alerts/getAlerts'))
-}, 200, { leading: true, trailing: false })
-
-const deleteAlert = debounce((id: string) => {
-  if (confirm(t('ConfirmDelete'))) {
-    store.dispatch('alerts/deleteAlert', id)
+const ackAlert = debounce(
+  (id: string) => {
+    store
+      .dispatch('alerts/takeAction', [id, 'ack', '', ackTimeout.value!])
       .then(() => store.dispatch('alerts/getAlerts'))
-  }
-}, 200, { leading: true, trailing: false })
+  },
+  200,
+  {leading: true, trailing: false}
+)
 
+const shelveAlert = debounce(
+  (id: string) => {
+    store
+      .dispatch('alerts/takeAction', [id, 'shelve', '', shelveTimeout.value!])
+      .then(() => store.dispatch('alerts/getAlerts'))
+  },
+  200,
+  {leading: true, trailing: false}
+)
+
+const watchAlert = debounce(
+  (id: string) => {
+    store.dispatch('alerts/watchAlert', id).then(() => store.dispatch('alerts/getAlerts'))
+  },
+  200,
+  {leading: true, trailing: false}
+)
+
+const unwatchAlert = debounce(
+  (id: string) => {
+    store.dispatch('alerts/unwatchAlert', id).then(() => store.dispatch('alerts/getAlerts'))
+  },
+  200,
+  {leading: true, trailing: false}
+)
+
+const deleteAlert = debounce(
+  (id: string) => {
+    if (confirm(t('ConfirmDelete'))) {
+      store.dispatch('alerts/deleteAlert', id).then(() => store.dispatch('alerts/getAlerts'))
+    }
+  },
+  200,
+  {leading: true, trailing: false}
+)
 </script>

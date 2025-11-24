@@ -1,29 +1,18 @@
 <template>
-  <v-dialog
-    v-model="dialog"
-    scrollable
-    max-width="540px"
-  >
+  <v-dialog v-model="dialog" scrollable max-width="540px">
     <v-form ref="form">
       <v-card class="dialog-card">
         <v-card-title>
-          <v-col
-            cols="12"
-            sm6
-            md9
-          >
+          <v-col cols="12" sm6 md9>
             <span class="header">
               {{ formTitle }}
             </span>
           </v-col>
         </v-card-title>
 
-        <v-card-text style="overflow-x: hidden;">
+        <v-card-text style="overflow-x: hidden">
           <v-row>
-            <v-col
-              v-if="store.getters.getConfig('customer_views')"
-              cols="12"
-            >
+            <v-col v-if="store.getters.getConfig('customer_views')" cols="12">
               <g-select
                 v-model="editedItem.customer"
                 show-header
@@ -33,50 +22,24 @@
                 clearable
               />
             </v-col>
-            
+
             <v-col cols="6">
-              <date-edit
-                v-model="editedStartDate"
-                new-date
-                :label="t('StartDate')"
-                show-header
-              />
+              <date-edit v-model="editedStartDate" new-date :label="t('StartDate')" show-header />
             </v-col>
             <v-col cols="6">
-              <g-combobox
-                v-model="editedItem.period.startTime"
-                show-header
-                :items="times"
-                :label="t('StartTime')"
-              />
+              <g-combobox v-model="editedItem.period.startTime" show-header :items="times" :label="t('StartTime')" />
             </v-col>
             <v-col cols="6">
-              <date-edit
-                v-model="editedEndDate"
-                :label="t('EndDate')"
-                show-header
-              />
+              <date-edit v-model="editedEndDate" :label="t('EndDate')" show-header />
             </v-col>
             <v-col cols="6">
-              <g-combobox
-                v-model="editedItem.period.endTime"
-                show-header
-                :items="times"
-                :label="t('EndTime')"
-              />
+              <g-combobox v-model="editedItem.period.endTime" show-header :items="times" :label="t('EndTime')" />
             </v-col>
             <v-col cols="12">
-              <g-text-field
-                v-model.trim="editedItem.text"
-                show-header
-                :label="t('Description')"
-              />
+              <g-text-field v-model.trim="editedItem.text" show-header :label="t('Description')" />
             </v-col>
 
-            <v-col
-              cols="12"
-              class="header"
-            >
+            <v-col cols="12" class="header">
               {{ t('AlertFields') }}
             </v-col>
             <v-col cols="12">
@@ -89,25 +52,13 @@
               />
             </v-col>
             <v-col cols="12">
-              <g-text-field
-                v-model.trim="editedItem.resource"
-                show-header
-                :label="t('Resource')"
-              />
+              <g-text-field v-model.trim="editedItem.resource" show-header :label="t('Resource')" />
             </v-col>
             <v-col cols="12">
-              <g-text-field
-                v-model.trim="editedItem.event"
-                show-header
-                :label="t('Event')"
-              />
+              <g-text-field v-model.trim="editedItem.event" show-header :label="t('Event')" />
             </v-col>
             <v-col cols="12">
-              <g-text-field
-                v-model.trim="editedItem.origin"
-                show-header
-                :label="t('Origin')"
-              />
+              <g-text-field v-model.trim="editedItem.origin" show-header :label="t('Origin')" />
             </v-col>
             <v-col cols="12">
               <g-combobox
@@ -130,37 +81,20 @@
             </v-col>
 
             <v-col cols="12">
-              <g-select
-                v-model="editedItem.tags"
-                :items="currentTags"
-                multiple
-                show-header
-                :label="t('Tags')"
-              />
+              <g-select v-model="editedItem.tags" :items="currentTags" multiple show-header :label="t('Tags')" />
             </v-col>
           </v-row>
         </v-card-text>
 
         <v-card-actions class="dialog-card-actions">
           <v-col cols="6">
-            <v-btn
-              variant="outlined"
-              width="247"
-              class="no-cap-btn btn"
-              @click="close(false)"
-            >
+            <v-btn variant="outlined" width="247" class="no-cap-btn btn" @click="close(false)">
               {{ t('Cancel') }}
             </v-btn>
           </v-col>
 
           <v-col cols="6">
-            <v-btn
-              color="primary-600"
-              variant="flat"
-              class="no-cap-btn"
-              width="247"
-              @click="validate"
-            >
+            <v-btn color="primary-600" variant="flat" class="no-cap-btn" width="247" @click="validate">
               {{ t('Save') }}
             </v-btn>
           </v-col>
@@ -171,17 +105,17 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, watch, type Ref } from 'vue'
-import { useStore } from 'vuex'
-import { useI18n } from 'vue-i18n'
-import type { Store } from '@/plugins/store/types'
-import type { VForm } from 'vuetify/components'
-import type { Blackout } from '@/plugins/store/types/blackout-types'
+import {computed, ref, watch, type Ref} from 'vue'
+import {useStore} from 'vuex'
+import {useI18n} from 'vue-i18n'
+import type {Store} from '@/plugins/store/types'
+import type {VForm} from 'vuetify/components'
+import type {Blackout} from '@/plugins/store/types/blackout-types'
 
 const store: Store = useStore()
-const { t } = useI18n()
+const {t} = useI18n()
 const rules = {
-  required: (v: string) => !!v || t('TextIsRequired'),
+  required: (v: string) => !!v || t('TextIsRequired')
 }
 
 const props = defineProps<{
@@ -202,40 +136,43 @@ const defaultItem: Blackout = {
   endTime: '',
   text: '',
   origin: null,
-  tags: [],
+  tags: []
 }
 
-
 const form = ref<VForm | null>(null)
-const editedItem: Ref<Blackout & {
-  period: {
-    startTime: string,
-    endTime: string
+const editedItem: Ref<
+  Blackout & {
+    period: {
+      startTime: string
+      endTime: string
+    }
   }
-}> = ref({
+> = ref({
   ...defaultItem,
   reactivateDate: null,
   reactivateTime: null,
-  period: {startTime:'12:00', endTime:'12:00'}
+  period: {startTime: '12:00', endTime: '12:00'}
 })
 
-const valueStart: Ref<Blackout & {
-  reactivateDate: string | null,
-  reactivateTime: string | null,
-  period: {
-    startTime: string,
-    endTime: string
+const valueStart: Ref<
+  Blackout & {
+    reactivateDate: string | null
+    reactivateTime: string | null
+    period: {
+      startTime: string
+      endTime: string
+    }
   }
-}> = ref({
+> = ref({
   ...defaultItem,
   reactivateDate: null,
   reactivateTime: null,
-  period: {startTime:'12:00', endTime:'12:00'}
+  period: {startTime: '12:00', endTime: '12:00'}
 })
 
 const editedStartDate = computed({
   get: () => (editedItem.value.startTime == '' ? new Date() : new Date(editedItem.value.startTime)).toISOString(),
-  set: (val) => editedItem.value.startTime = new Date(val + ' 12:00').toISOString()
+  set: val => (editedItem.value.startTime = new Date(val + ' 12:00').toISOString())
 })
 
 const editedEndDate = computed({
@@ -243,13 +180,12 @@ const editedEndDate = computed({
     let date = new Date()
     if (editedItem.value.endTime == '') {
       date.setDate(date.getDate() + 2)
-    }
-    else {
+    } else {
       date = new Date(editedItem.value.endTime)
     }
     return date.toISOString()
   },
-  set: (val) => editedItem.value.endTime = new Date(val).toISOString()
+  set: val => (editedItem.value.endTime = new Date(val).toISOString())
 })
 
 const timeFromIsoString = (time: string) => {
@@ -259,15 +195,16 @@ const timeFromIsoString = (time: string) => {
   return `${hour < 10 ? 0 : ''}${hour}:${minute < 10 ? 0 : ''}${minute}`
 }
 
-const formTitle = computed(() => props.item?.id !== undefined ? t('EditNotificationRule') : t('NewNotificationRule'))
+const formTitle = computed(() => (props.item?.id !== undefined ? t('EditNotificationRule') : t('NewNotificationRule')))
 
 const dialog = computed({
   get: () => props.dialog,
-  set: (val) => {if(!val) close(false)}
+  set: val => {
+    if (!val) close(false)
+  }
 })
 
-
-watch(dialog, (val) => {
+watch(dialog, val => {
   if (val) {
     if (props.item) {
       const obj = {
@@ -279,14 +216,12 @@ watch(dialog, (val) => {
       }
       editedItem.value = obj
       valueStart.value = JSON.parse(JSON.stringify(obj))
-      
-    }
-    else {
+    } else {
       const obj = {
-        ...JSON.parse(JSON.stringify(defaultItem)) as Blackout,
+        ...(JSON.parse(JSON.stringify(defaultItem)) as Blackout),
         period: {
-          startTime:timeFromIsoString(editedStartDate.value),
-          endTime:timeFromIsoString(editedEndDate.value)
+          startTime: timeFromIsoString(editedStartDate.value),
+          endTime: timeFromIsoString(editedEndDate.value)
         }
       }
       editedItem.value = obj
@@ -295,21 +230,22 @@ watch(dialog, (val) => {
   }
 })
 
-const times = computed(() => Array.from(
-  {
-    length: (24 * 60) / 15 + 1
-  },
-  (v, i) => {
-    if (i == 0) {
-      return null
-    } else {
-      const h = Math.floor(((i - 1) * 15) / 60)
-      const m = (i - 1) * 15 - h * 60
-      return ('0' + h).slice(-2) + ':' + ('0' + m).slice(-2)
+const times = computed(() =>
+  Array.from(
+    {
+      length: (24 * 60) / 15 + 1
+    },
+    (v, i) => {
+      if (i == 0) {
+        return null
+      } else {
+        const h = Math.floor(((i - 1) * 15) / 60)
+        const m = (i - 1) * 15 - h * 60
+        return ('0' + h).slice(-2) + ':' + ('0' + m).slice(-2)
+      }
     }
-  }
-))
-
+  )
+)
 
 const allowedCustomers = computed(() => store.getters['customers/customers'])
 const allowedEnvironments = computed(() => store.getters['alerts/environments']())
@@ -327,7 +263,7 @@ getData()
 
 async function save() {
   if (editedItem.value.id) {
-      await store.dispatch('blackouts/updateBlackout', [
+    await store.dispatch('blackouts/updateBlackout', [
       editedItem.value.id,
       {
         customer: editedItem.value.customer,
@@ -340,7 +276,7 @@ async function save() {
         origin: editedItem.value.origin,
         startTime: toISODate(editedStartDate.value, editedItem.value.period.startTime),
         endTime: toISODate(editedEndDate.value, editedItem.value.period.endTime),
-        text: editedItem.value.text.replace(/\{([\w\[\]\. ]*)\}/g, '%($1)s'),
+        text: editedItem.value.text.replace(/\{([\w\[\]\. ]*)\}/g, '%($1)s')
       }
     ])
   } else {
@@ -350,7 +286,7 @@ async function save() {
         id: null,
         startTime: toISODate(editedStartDate.value, editedItem.value.period.startTime),
         endTime: toISODate(editedEndDate.value, editedItem.value.period.endTime),
-        text: editedItem.value.text.replace(/\{([\w\[\]\. ]*)\}/g, '%($1)s'),
+        text: editedItem.value.text.replace(/\{([\w\[\]\. ]*)\}/g, '%($1)s')
       })
     )
   }
@@ -369,10 +305,9 @@ function compareDict(a: any, b: any) {
   if (a === null) return true
   for (const key in a) {
     if (b[key] === undefined) return false
-    if (a[key] !== null && typeof a[key] === typeof({})) {
+    if (a[key] !== null && typeof a[key] === typeof {}) {
       if (b[key] === null || a[key].length !== b[key].length || !compareDict(a[key], b[key])) return false
-    }
-    else if (a[key] !== b[key]) return false
+    } else if (a[key] !== b[key]) return false
   }
   return true
 }

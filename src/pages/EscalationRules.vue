@@ -9,7 +9,7 @@
       clearable
       hide-details
       validate-on="submit"
-      style="position: absolute; top: 2.5px;right: calc(25vw); width: 40vw; background: white;"
+      style="position: absolute; top: 2.5px; right: calc(25vw); width: 40vw; background: white"
       @keydown.enter="(e: any) => setSearch(e.target.value)"
       @click:clear="clearSearch"
     />
@@ -18,14 +18,14 @@
 </template>
 
 <script lang="ts" setup>
-import { useStore } from 'vuex';
-import { useI18n } from 'vue-i18n';
-import { computed, onUnmounted, ref, watch } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import type { Store } from '@/plugins/store/types';
-import type { Query } from '@/plugins/store/types/alerts-types';
+import {useStore} from 'vuex'
+import {useI18n} from 'vue-i18n'
+import {computed, onUnmounted, ref, watch} from 'vue'
+import {useRoute, useRouter} from 'vue-router'
+import type {Store} from '@/plugins/store/types'
+import type {Query} from '@/plugins/store/types/alerts-types'
 
-const { t } = useI18n()
+const {t} = useI18n()
 const store: Store = useStore()
 const route = useRoute()
 const router = useRouter()
@@ -33,34 +33,31 @@ const router = useRouter()
 definePage({
   meta: {
     title: 'Escalation Rules',
-    requiresAuth: true,
+    requiresAuth: true
   }
 })
 
 const tempQuery = ref('')
 const query = computed({
   get: () => store.state.escalationRules.query.q ?? null,
-  set: (val) => tempQuery.value = val
+  set: val => (tempQuery.value = val)
 })
-
 
 const refresh = computed(() => store.state.refresh)
 
-watch(refresh, (val) => {
+watch(refresh, val => {
   if (!val) return
   refreshAll()
 })
 
 const routeQuery = computed(() => route.query)
 
-watch(routeQuery, (val) => setQuery(val as Query))
+watch(routeQuery, val => setQuery(val as Query))
 
 function setQuery(q: Query) {
   store.dispatch('escalationRules/updateQuery', q)
   refreshAll()
 }
-
-
 
 function setSearch(query: string) {
   store.dispatch('escalationRules/updateQuery', {q: query})
@@ -108,5 +105,4 @@ function getTags() {
 
 setQuery(route.query as Query)
 refreshAll()
-
 </script>
