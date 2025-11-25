@@ -40,7 +40,7 @@ defineSlots()
 
 const emits = defineEmits(['click:appendInner', 'click:clear'])
 
-const model = defineModel<string>()
+const model = defineModel<string | number>()
 const field = ref<null | VTextField>(null)
 const getColorClass = () => {
   return field.value?.isValid ? 'text-secondary' : 'critical-text'

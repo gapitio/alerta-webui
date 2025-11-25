@@ -10,6 +10,7 @@ declare module 'vue' {
     AlertDetail: typeof import('./src/components/AlertDetail/index.vue')['default']
     AlertIndicator: typeof import('./src/components/AlertIndicator.vue')['default']
     AlertList: typeof import('./src/components/lists/AlertList.vue')['default']
+    AlertsExport: typeof import('./src/components/dialogs/AlertsExport.vue')['default']
     AlertsFilter: typeof import('./src/components/dialogs/filters/AlertsFilter.vue')['default']
     AlertsHistoryFilter: typeof import('./src/components/dialogs/filters/AlertsHistoryFilter.vue')['default']
     AlertSummary: typeof import('./src/components/Settings/AlertSummary.vue')['default']
