@@ -208,7 +208,7 @@ const actions: Actions & ActionTree<State, RootState> = {
     }
   },
 
-  getAlertHistory({commit, state}) {
+  async getAlertHistory({commit, state}) {
     const params = new URLSearchParams(state.query)
 
     const specialKeys = ['environment', 'environments', 'dateRange', 'search']
@@ -237,7 +237,9 @@ const actions: Actions & ActionTree<State, RootState> = {
     params.append('page', state.historyPagination.page.toString())
     params.append('page-size', state.historyPagination.itemsPerPage.toString())
 
-    return AlertsApi.getAlertHistory(params).then(({history, total}) => commit('SET_HISTORY', [history, total]))
+    const {history, total} = await AlertsApi.getAlertHistory(params)
+    commit('SET_HISTORY', [history, total])
+    return history
   },
   getAlertHistoryCount({commit}) {
     return AlertsApi.getAlertHistoryCount().then(({environments, total}) =>

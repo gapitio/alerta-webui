@@ -94,8 +94,14 @@ interface Note {
 export interface History {
   id: string
   href: string
+  environment: string
+  attributes: Attributes
+  resource: string
   event: string
+  origin: string
+  customer: string
   severity: string
+  group: string
   status: string
   value: string
   text: string
@@ -213,7 +219,7 @@ type AugmentedActionContext = ActionContext<Mutations, Actions, State>
 
 export type Actions<S = State> = {
   getAlerts({rootGetters, commit, state, getters}: AugmentedActionContext): Promise<Alert[]>
-  getAlertHistory({commit, state}: AugmentedActionContext): void
+  getAlertHistory({commit, state}: AugmentedActionContext): Promise<History[]>
   getAlertHistoryCount({commit}: AugmentedActionContext): void
   setHistoryFilter({commit}: AugmentedActionContext, filter: Partial<Filter>): void
   updateQuery({commit}: AugmentedActionContext, query: Query): void

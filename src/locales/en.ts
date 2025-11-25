@@ -26,6 +26,12 @@ export const en = {
   Settings: 'Settings',
   Help: 'Help',
   About: 'About',
+  Export: 'Export',
+  ExportOptions: 'Export Options',
+  Headers: 'Headers',
+  Filename: 'Filename',
+  SelectAllHeaders: 'Select All Headers',
+  SelectCustomHeaders: 'Select Table Headers',
 
   // more
   ChooseDisplayDensity: 'Choose a display density',

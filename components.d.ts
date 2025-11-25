@@ -12,6 +12,7 @@ declare module 'vue' {
     AlertList: typeof import('./src/components/lists/AlertList.vue')['default']
     AlertsExport: typeof import('./src/components/dialogs/AlertsExport.vue')['default']
     AlertsFilter: typeof import('./src/components/dialogs/filters/AlertsFilter.vue')['default']
+    AlertsHistoryExport: typeof import('./src/components/dialogs/AlertsHistoryExport.vue')['default']
     AlertsHistoryFilter: typeof import('./src/components/dialogs/filters/AlertsHistoryFilter.vue')['default']
     AlertSummary: typeof import('./src/components/Settings/AlertSummary.vue')['default']
     BlackoutAdd: typeof import('./src/components/dialogs/add/BlackoutAdd.vue')['default']

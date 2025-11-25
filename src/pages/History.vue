@@ -27,6 +27,9 @@
     <v-col cols="auto" align-self="center">
       <alerts-history-filter />
     </v-col>
+    <v-col cols="auto" align-self="center">
+      <alerts-history-export />
+    </v-col>
   </v-row>
   <v-tabs v-model="currentTab" slider-color="link-active">
     <v-tab v-for="env in environments" :key="env" :value="env" class="big-font bold no-cap-btn" @click="setEnv(env)">
