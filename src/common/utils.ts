@@ -21,12 +21,22 @@ export default {
   },
   toHash(obj: object): string {
     return Object.entries(obj)
-      .filter(x => !!x[1])
-      .reduce((a: string[], [k, v]) => a.concat(`${k}:${v}`), [])
+      .filter(x => {
+        return !!x[1] && !(Object.prototype.toString.call(x[1]) === '[object Array]' && x[1].length < 1)
+      })
+      .reduce(
+        (a: string[], [k, v]) =>
+          a.concat(
+            Object.prototype.toString.call(v) == '[object Object]'
+              ? Object.keys(v).map(a => (v[a] != undefined ? `${k}.${a}:${v[a]}` : ''))
+              : `${k}:${v}`
+          ),
+        []
+      )
       .join(';')
   },
-  fromHash(hash: string): object {
-    const h = decodeURI(hash).substring(1)
+  fromHash(hash: string): {[key: string]: any} {
+    const h = decodeURI(hash)
     return h
       ? h
           .split(';')

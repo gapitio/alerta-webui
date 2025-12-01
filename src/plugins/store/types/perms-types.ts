@@ -41,4 +41,5 @@ export type Actions = {
 
 export type Getters = {
   roles(state: State): string[]
+  getHash(state: State): string
 }

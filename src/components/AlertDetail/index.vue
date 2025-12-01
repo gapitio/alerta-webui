@@ -2,7 +2,7 @@
   <v-card flat>
     <v-card tile flat>
       <h1>{{ t('Alert') }}</h1>
-      <v-btn variant="text" icon="arrow_back" @click="router.push((route.query.redirect as string) || '/alerts')" />
+      <v-btn variant="text" icon="arrow_back" @click="router.push(redirect)" />
 
       <v-btn
         :disabled="!isAcked(item?.status!) && !isClosed(item?.status!)"
@@ -165,6 +165,19 @@ const shelveTimeout = computed(() => store.getters.getPreference('shelveTimeout'
 const username = computed(() => store.getters['auth/getUsername'])
 const timeout = ref<number | undefined>(undefined)
 const interval = computed(() => store.getters.getPreference('refreshInterval'))
+const redirect = computed(() => {
+  if (typeof route.query.redirect == 'string') {
+    const haveQuery = route.query.redirect.includes('?')
+    const [path, a] = route.query.redirect.split(haveQuery ? '?' : '#')
+    const [query, hash] = haveQuery ? a.split('#') : [, a]
+    return {
+      path,
+      query: Object.fromEntries(query?.split('&').map(q => q.split('=')) ?? []),
+      hash: hash ? `#${hash}` : undefined
+    }
+  }
+  return {path: '/alerts'}
+})
 
 const refresh = () => {
   if (timeout.value) clearTimeout(timeout.value)

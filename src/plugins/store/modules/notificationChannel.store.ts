@@ -2,6 +2,7 @@ import NotificationChannelApi from '@/services/api/notificationChannel.service'
 import type {State, Getters, Actions, Mutations, Filter} from '../types/notificationChannel-types'
 import type {ActionTree} from 'vuex'
 import type {State as RootState} from '../types'
+import utils from '@/common/utils'
 
 const namespaced = true
 
@@ -113,6 +114,10 @@ const getters: Getters = {
     return state.items.map(channel => {
       return channel.id
     })
+  },
+  getHash: state => {
+    const filterHash = utils.toHash(state.filter)
+    return `#${filterHash};`
   }
 }
 

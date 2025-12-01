@@ -2,6 +2,7 @@ import PermsApi from '@/services/api/perms.service'
 import type {State, Getters, Actions, Mutations} from '../types/perms-types'
 import type {ActionTree} from 'vuex'
 import type {State as RootState} from '../types'
+import utils from '@/common/utils'
 
 const namespaced = true
 
@@ -74,6 +75,10 @@ const actions: Actions & ActionTree<State, RootState> = {
 const getters: Getters = {
   roles: state => {
     return state.items.map(p => p.match)
+  },
+  getHash: state => {
+    const filterHash = utils.toHash(state.filter)
+    return `#${filterHash};`
   }
 }
 

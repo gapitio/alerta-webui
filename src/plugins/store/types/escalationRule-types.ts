@@ -77,10 +77,11 @@ export type Actions = {
   createEscalationRule({dispatch}: AugmentedActionContext, escalation_rule: EscalationRule): void
   updateSelected({commit}: AugmentedActionContext, selected: string[]): void
   updateEscalationRule({dispatch}: AugmentedActionContext, [escalationRuleId, update]: [string, EscalationRule]): void
-  setPagination({commit}: AugmentedActionContext, pagination: Pagination): void
+  setPagination({commit}: AugmentedActionContext, pagination: Partial<Pagination>): void
   deleteEscalationRule({dispatch}: AugmentedActionContext, escalationRuleId: string): void
 }
 
 export type Getters = {
   pagination(state: State): Pagination
+  getHash(state: State): string
 }

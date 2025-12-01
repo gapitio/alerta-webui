@@ -22,7 +22,8 @@ import type {Store} from '../../plugins/store/types'
 import {useI18n} from 'vue-i18n'
 import {computed, onUnmounted, ref, watch} from 'vue'
 import {useRoute, useRouter} from 'vue-router'
-import type {Query} from '@/plugins/store/types/alerts-types'
+import type {Query, SortBy} from '@/plugins/store/types/alerts-types'
+import utils from '@/common/utils'
 
 const {t} = useI18n()
 const store: Store = useStore()
@@ -112,6 +113,63 @@ function getServices() {
 function getTags() {
   store.dispatch('alerts/getTags')
 }
+
+const routeHash = computed(() => route.hash)
+
+function setFilter(f: any) {
+  const val: {[key: string]: any} = {}
+  Object.keys(f)
+    .filter(key => key && !['sb', 'asi', 'sd'].includes(key))
+    .forEach(a => {
+      if (a.includes('dateRange')) {
+        const [key, child] = a.split('.')
+        if (!val.hasOwnProperty(key)) val[key] = {}
+        val[key][child] = f[a]
+      } else {
+        val[a] = f[a].split(',')
+      }
+    })
+  const filter = {
+    name: val.name,
+    environment: val.environment,
+    channel: val.channel,
+    service: val.service,
+    resource: val.resource,
+    event: val.event,
+    group: val.group,
+    text: val.text
+  }
+  store.dispatch('notificationRules/setFilter', filter)
+}
+
+function setSort({sb, sd}: {sb: string; sd: string; [key: string]: string}) {
+  const orders = sd.split(',')
+  const sortBy: SortBy[] = sb.split(',').map((val, ind) => ({key: val, order: orders[ind] == '1' ? 'desc' : 'asc'}))
+  store.dispatch('notificationRules/setPagination', {sortBy})
+}
+
+function setHash(val: string) {
+  const hash = val.replace(/^#/, '')
+
+  if (hash) {
+    const hashMap = utils.fromHash(hash)
+    setFilter(hashMap)
+    if (typeof hashMap.sd === 'string' && typeof hashMap.sb === 'string') {
+      const typedHashMap = {sd: hashMap.sd, sb: hashMap.sb}
+      setSort({sd: typedHashMap.sd ?? '', sb: typedHashMap.sb})
+    }
+  }
+}
+
+setHash(routeHash.value)
+
+const pagination = computed(() => store.state.notificationRules.pagination)
+watch(pagination, () => router.replace({hash: store.getters['notificationRules/getHash'], query: routeQuery.value}))
+watch(routeHash, () => setHash(routeHash.value))
+const filter = computed(() => store.state.notificationRules.filter)
+watch(filter, () => {
+  router.replace({hash: store.getters['notificationRules/getHash'], query: routeQuery.value})
+})
 
 refreshAll()
 </script>

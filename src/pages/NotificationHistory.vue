@@ -98,6 +98,7 @@
 </template>
 
 <script lang="ts" setup>
+import utils from '@/common/utils'
 import type {Store} from '@/plugins/store/types'
 import type {Pagination, Query} from '@/plugins/store/types/alerts-types'
 import type {DateRange, NotificationHistory} from '@/plugins/store/types/notificationHistory-types'
@@ -157,8 +158,13 @@ const query = computed({
   set: val => (tempQuery.value = val)
 })
 const routeQuery = computed(() => route.query)
+const routeHash = computed(() => route.hash)
 
 watch(routeQuery, val => val as Query)
+watch(routeHash, val => setHash(val))
+watch(filter, () => {
+  router.replace({query: routeQuery.value, hash: store.getters['notificationHistory/getHash']})
+})
 
 function setQuery(q: Query) {
   store.dispatch('notificationHistory/updateQuery', q)
@@ -200,6 +206,43 @@ const fetchRule = async (id: string) => {
   const r = await store.dispatch('notificationRules/getNotificationRule', id)
   rules.value.push({id: id, name: r.name ?? id})
 }
+
+function setFilter(f: any) {
+  const val: {[key: string]: any} = {}
+  Object.keys(f)
+    .filter(key => key && !['sb', 'asi', 'sd'].includes(key))
+    .forEach(a => {
+      if (a.includes('dateRange')) {
+        const [key, child] = a.split('.')
+        if (!val.hasOwnProperty(key)) val[key] = {}
+        val[key][child] = f[a]
+      } else {
+        val[a] = f[a].split(',')
+      }
+    })
+  const filter = {
+    dateRange: Object.prototype.toString.call(val.dateRange) === '[object Object]' ? val.dateRange : {},
+    message: val.message,
+    receiver: val.receiver,
+    channel: val.channel,
+    rule: val.rule,
+    alert: val.alert,
+    error: val.error
+  }
+  store.dispatch('notificationHistory/setFilter', filter)
+}
+
+function setHash(val: string) {
+  const hash = val.replace(/^#/, '')
+
+  if (hash) {
+    const hashMap = utils.fromHash(hash)
+    setFilter(hashMap)
+  }
+}
+
+setHash(routeHash.value)
+router.replace({query: route.query, hash: store.getters['alerts/getHistoryHash']})
 
 function setSearch(query: string) {
   store.dispatch('notificationHistory/updateQuery', {q: query})

@@ -3,6 +3,7 @@ import type {State, Getters, Mutations, Actions, Filter} from '../types/notifica
 import type {ActionTree} from 'vuex'
 import type {State as RootState} from '../types'
 import moment from 'moment'
+import utils from '@/common/utils'
 
 const namespaced = true
 
@@ -140,6 +141,10 @@ const getters: Getters = {
   },
   sent: state => {
     return state.sent
+  },
+  getHash: state => {
+    const filterHash = utils.toHash(state.filter)
+    return `#${filterHash}`
   }
 }
 

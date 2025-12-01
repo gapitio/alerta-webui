@@ -76,4 +76,5 @@ export type Actions = {
 export type Getters = {
   pagination(state: State): Pagination
   sent(state: State): boolean[]
+  getHash(state: State): string
 }

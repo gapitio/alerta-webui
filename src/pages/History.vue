@@ -1,6 +1,6 @@
 <template>
   <g-combobox
-    v-model="storeQuery"
+    v-model="query"
     prepend-inner-icon="search"
     append-inner-icon="push_pin"
     :label="t('Search')"
@@ -103,9 +103,10 @@
 </template>
 
 <script lang="ts" setup>
+import utils from '@/common/utils'
 import {useFilters} from '@/filters'
 import type {Store} from '@/plugins/store/types'
-import type {History, Pagination} from '@/plugins/store/types/alerts-types'
+import type {History, Pagination, Query} from '@/plugins/store/types/alerts-types'
 import type {DateRange} from '@/plugins/store/types/notificationHistory-types'
 import moment from 'moment'
 import {computed, onUnmounted, ref, watch} from 'vue'
@@ -136,15 +137,12 @@ const history = computed(() => store.state.alerts.history)
 const environmentCounts = computed(() => store.getters['alerts/historyCounts'])
 const showAllowedEnvs = computed(() => store.getters.getPreference('showAllowedEnvs'))
 const environments = computed(() => ['All', ...store.getters['alerts/environments'](showAllowedEnvs.value)])
-const storeQuery = computed({
-  get: () => store.state.alerts.query.q,
-  set: (q: string) => {
-    query.value = q
-  }
-})
+const storeQuery = computed(() => store.state.alerts.query.q)
 const interval = computed(() => store.getters.getPreference('refreshInterval'))
+const routeHash = computed(() => route.hash)
+const routeQuery = computed(() => route.query)
 
-const query = ref(storeQuery.value)
+const query = ref('')
 const timeout = ref<number | undefined>(undefined)
 const userQueries = computed(() =>
   store.getters.getUserQueries.map(q => ({title: q.q, value: q.q, props: {appendIcon: 'delete'}}))
@@ -172,6 +170,34 @@ function setPagination(value: Pagination) {
   store.dispatch('alerts/setHistoryPagination', value)
   refreshAll()
 }
+
+function setFilter(f: any) {
+  const val: {[key: string]: any} = {}
+  Object.keys(f)
+    .filter(key => key && !['sb', 'asi', 'sd'].includes(key))
+    .forEach(a => {
+      if (a.includes('dateRange')) {
+        const [key, child] = a.split('.')
+        if (!val.hasOwnProperty(key)) val[key] = {}
+        val[key][child] = f[a]
+      } else {
+        val[a] = f[a].split(',')
+      }
+    })
+  store.dispatch('alerts/setHistoryFilter', val)
+}
+
+function setHash(val: string) {
+  const hash = val.replace(/^#/, '')
+
+  if (hash) {
+    const hashMap = utils.fromHash(hash)
+    setFilter(hashMap)
+  }
+}
+
+setHash(routeHash.value)
+router.replace({query: route.query, hash: store.getters['alerts/getHistoryHash']})
 
 function rowProps({item}: {item: any}) {
   return {
@@ -201,10 +227,20 @@ watch(refresh, val => {
   if (!val) return
   refreshAll()
 })
+watch(routeHash, val => setHash(val))
+watch(filter, () => router.replace({query: routeQuery.value, hash: store.getters['alerts/getHistoryHash']}))
+watch(storeQuery, val => (query.value = val))
+watch(routeQuery, val => setQuery(val as Query))
+
+function setQuery(q: Query) {
+  store.dispatch('alerts/updateQuery', q)
+  query.value = q.q
+  refreshAll()
+}
 
 function setSearch(q: string) {
   store.dispatch('alerts/updateQuery', {q})
-  router.push({query: {...route.query, q}})
+  router.push({query: {...route.query, q}, hash: routeHash.value})
   refreshAll()
 }
 
@@ -249,5 +285,6 @@ function getQueries() {
   store.dispatch('getUserQueries')
 }
 
+setQuery(routeQuery.value as Query)
 refreshAll()
 </script>

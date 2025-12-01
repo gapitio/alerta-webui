@@ -50,4 +50,5 @@ export type Actions = {
 
 export type Getters = {
   pagination(state: State): Pagination
+  getHash(state: State): string
 }

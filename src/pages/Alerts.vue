@@ -86,8 +86,8 @@ import {useStore} from 'vuex'
 import {useRoute, useRouter} from 'vue-router'
 import {generateCsv, download, mkConfig} from 'export-to-csv'
 import {useI18n} from 'vue-i18n'
-// import utils from '@/common/utils'
-import type {Query} from '@/plugins/store/types/alerts-types'
+import utils from '@/common/utils'
+import type {Query, SortBy} from '@/plugins/store/types/alerts-types'
 import type {State, Store} from '@/plugins/store/types'
 import moment from 'moment'
 import type {DateRange} from '@/plugins/store/types/notificationHistory-types'
@@ -111,10 +111,12 @@ const currentTab = computed(() => store.state.alerts.filter.environment ?? 'All'
 const filter = computed(() => store.state.alerts.filter)
 const storeQuery = computed(() => store.state.alerts.query.q)
 const query = ref<string | null>(null)
+const routeHash = computed(() => route.hash)
 const routeQuery = computed(() => route.query)
 const audioUrl = computed(() => store.getters.getConfig('audio').new ?? store.getters.getPreference('audioURL'))
 
 watch(storeQuery, val => (query.value = val))
+watch(routeHash, val => setHash(val))
 
 const isDateRange = (date: DateRange | string[]): date is DateRange => !(date instanceof Array)
 
@@ -212,11 +214,6 @@ const refreshInterval = computed(
 const isMute = computed(() => store.getters.getPreference('isMute'))
 const isLoggedIn = computed(() => store.getters['auth/isLoggedIn'])
 
-const showPanel = computed({
-  get: () => store.state.alerts.showPanel,
-  set: (val: boolean) => store.dispatch('alerts/toggle', ['showPanel', val])
-})
-
 function setQuery(q: Query) {
   store.dispatch('alerts/updateQuery', q)
   query.value = q.q
@@ -225,7 +222,7 @@ function setQuery(q: Query) {
 
 function setSearch(q: string) {
   store.dispatch('alerts/updateQuery', {q})
-  router.push({query: {...route.query, q}})
+  router.push({query: {...route.query, q}, hash: store.getters['alerts/getHash']})
   getAlerts()
 }
 
@@ -243,17 +240,27 @@ function clearSearch() {
   getAlerts()
 }
 
-// function setFilter(f: any) {
-//   store.dispatch('alerts/setFilter', {
-//     environment: f.environment,
-//     text: f.text,
-//     status: f.status ? f.status.split(',') : null,
-//     customer: f.customer ? f.customer.split(',') : null,
-//     service: f.service ? f.service.split(',') : null,
-//     group: f.group ? f.group.split(',') : null,
-//     dateRange: f.dateRange ? f.dateRange.split(',').map(n => (n ? parseInt(n) : null)) : [null, null]
-//   })
-// }
+function setFilter(f: any) {
+  const val: {[key: string]: any} = {}
+  Object.keys(f)
+    .filter(key => key && !['sb', 'asi', 'sd'].includes(key))
+    .forEach(a => {
+      if (a.includes('dateRange')) {
+        const [key, child] = a.split('.')
+        if (!val.hasOwnProperty(key)) val[key] = {}
+        val[key][child] = f[a]
+      } else {
+        val[a] = f[a].split(',')
+      }
+    })
+  store.dispatch('alerts/setFilter', val)
+}
+
+function setSort({sb, sd}: {sb: string; sd: string; [key: string]: string}) {
+  const orders = sd.split(',')
+  const sortBy: SortBy[] = sb.split(',').map((val, ind) => ({key: val, order: orders[ind] == '1' ? 'desc' : 'asc'}))
+  store.dispatch('alerts/setPagination', {sortBy})
+}
 
 function setPage(page: number) {
   store.dispatch('alerts/setPagination', {page})
@@ -342,16 +349,23 @@ function toCsv(data: typeof alerts.value) {
   })
   download(options)(generateCsv(options)(csvContent))
 }
+function setHash(val: string) {
+  const hash = val.replace(/^#/, '')
 
+  if (hash) {
+    const hashMap: {sd?: string; sb?: string; [key: string]: any} = utils.fromHash(hash)
+    setFilter(hashMap)
+    if (typeof hashMap.sd === 'string' && typeof hashMap.sb === 'string') {
+      const typedHashMap = {sd: hashMap.sd, sb: hashMap.sb}
+      setSort({sd: typedHashMap.sd ?? '', sb: typedHashMap.sb})
+    }
+  }
+}
+
+setHash(routeHash.value)
 // Lifecycle hooks
 setQuery(route.query as Query)
-// const hash = route.hash?.replace(/^#/, '')
-// if (hash) {
-//   const hashMap = utils.fromHash(hash)
-//   setFilter(hashMap)
-//   setSort(hashMap)
-//   setPanel(hashMap.asi === '1')
-// }
+
 setKiosk(route.query.isKiosk === 'true')
 refreshAlerts(audio.value)
 
@@ -372,14 +386,13 @@ watch(
 watch(
   filter,
   () => {
-    history.replaceState(history.state, '', store.getters['alerts/getHash'])
+    router.replace({hash: store.getters['alerts/getHash'], query: routeQuery.value})
     tab.value = defaultTab.value
     refreshAlerts(null)
   },
   {deep: true}
 )
 
-watch(showPanel, () => {
-  history.replaceState(history.state, '', store.getters['alerts/getHash'])
-})
+const pagination = computed(() => store.state.alerts.pagination)
+watch(pagination, () => router.replace({hash: store.getters['alerts/getHash'], query: routeQuery.value}))
 </script>

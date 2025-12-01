@@ -79,11 +79,13 @@
 </template>
 
 <script lang="ts" setup>
+import utils from '@/common/utils'
 import type {Store} from '@/plugins/store/types'
 import type {SortBy} from '@/plugins/store/types/alerts-types'
 import type {Permission} from '@/plugins/store/types/perms-types'
 import {computed, ref, watch} from 'vue'
 import {useI18n} from 'vue-i18n'
+import {useRoute, useRouter} from 'vue-router'
 import {useStore} from 'vuex'
 
 definePage({
@@ -95,6 +97,8 @@ definePage({
 
 const {t} = useI18n()
 const store: Store = useStore()
+const route = useRoute()
+const router = useRouter()
 
 const sortBy = ref<SortBy[]>([{key: 'role', order: 'asc'}])
 const dialog = ref(false)
@@ -144,6 +148,43 @@ function close() {
   dialog.value = false
   selectedItem.value = null
 }
+const filter = computed(() => store.state.perms.filter)
+const routeHash = computed(() => route.hash)
+watch(routeHash, val => setHash(val))
+watch(filter, () => router.replace({hash: store.getters['perms/getHash']}))
+
+function setFilter(f: any) {
+  const val: {[key: string]: any} = {}
+  Object.keys(f)
+    .filter(key => key && !['sb', 'asi', 'sd'].includes(key))
+    .forEach(a => {
+      if (a.includes('dateRange')) {
+        const [key, child] = a.split('.')
+        if (!val.hasOwnProperty(key)) val[key] = {}
+        val[key][child] = f[a]
+      } else {
+        val[a] = f[a].split(',')
+      }
+    })
+  const filter = {
+    scope: val.scope,
+    match: val.match
+  }
+  store.dispatch('perms/setFilter', filter)
+  getItems()
+}
+
+function setHash(val: string) {
+  const hash = val.replace(/^#/, '')
+
+  if (hash) {
+    const hashMap = utils.fromHash(hash)
+    setFilter(hashMap)
+  }
+}
+
+setHash(routeHash.value)
+router.replace({hash: store.getters['users/getHash']})
 
 getItems()
 getScopes()

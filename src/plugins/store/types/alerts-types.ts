@@ -204,8 +204,8 @@ export type Mutations<S = State> = {
   SET_SETTING<T extends keyof S>(state: S, {s, v}: {s: T; v: S[T]}): void
   SET_FILTER(state: S, filter: Partial<Filter>): void
   SET_HISTORY_FILTER(state: S, filter: Partial<Filter>): void
-  SET_PAGINATION(state: S, pagination: {[key in keyof Pagination]?: Pagination[key]}): void
-  SET_HISTORY_PAGINATION(state: S, pagination: Pagination): void
+  SET_PAGINATION(state: S, pagination: Partial<Pagination>): void
+  SET_HISTORY_PAGINATION(state: S, pagination: Partial<Pagination>): void
   SET_PANEL(state: S, panel: boolean): void
 }
 
@@ -242,7 +242,7 @@ export type Actions<S = State> = {
   setFilter({commit}: AugmentedActionContext, filter: Partial<Filter>): void
   resetFilter({commit, rootState}: AugmentedActionContext): void
   setPagination({commit}: AugmentedActionContext, pagination: Partial<Pagination>): void
-  setHistoryPagination({commit}: AugmentedActionContext, pagination: Pagination): void
+  setHistoryPagination({commit}: AugmentedActionContext, pagination: Partial<Pagination>): void
   setPanel({commit}: AugmentedActionContext, panel: boolean): void
 }
 
@@ -256,4 +256,5 @@ export type Getters = {
   groups(state: State): string[]
   tags(state: State): string[]
   getHash(state: State): string
+  getHistoryHash(state: State): string
 }
