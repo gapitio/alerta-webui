@@ -214,11 +214,6 @@ const refreshInterval = computed(
 const isMute = computed(() => store.getters.getPreference('isMute'))
 const isLoggedIn = computed(() => store.getters['auth/isLoggedIn'])
 
-const showPanel = computed({
-  get: () => store.state.alerts.showPanel,
-  set: (val: boolean) => store.dispatch('alerts/toggle', ['showPanel', val])
-})
-
 function setQuery(q: Query) {
   store.dispatch('alerts/updateQuery', q)
   query.value = q.q
