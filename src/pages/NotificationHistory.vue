@@ -45,14 +45,22 @@
   </v-row>
   <v-row class="pt-0 mt-0" ref="filterHeader">
     <template v-for="(f, d) in filter" :key="d">
-      <v-col v-if="d == 'dateRange' && f && isDateRange(f)">
+      <v-col v-if="d == 'dateRange' && f && isDateRange(f) && (f.from || f.to)">
         <v-chip v-if="(f.from ?? 0) < 0" variant="flat" class="chip" size="small">
           {{ d }}: {{ f.from! / -3600 }} hours
         </v-chip>
         <template v-else-if="f.select">
           <v-chip v-for="desc in ['from', 'to']" :key="desc" variant="flat" class="chip" size="small">
             {{ d }}.{{ desc }}: &nbsp;
-            <date-time :value="moment.unix(f[desc as 'from' | 'to']!).utc()" no-break />
+            <date-time
+              :value="
+                moment
+                  .unix(f[desc as 'from' | 'to']!)
+                  .utc()
+                  .toISOString()
+              "
+              no-break
+            />
           </v-chip>
         </template>
       </v-col>
