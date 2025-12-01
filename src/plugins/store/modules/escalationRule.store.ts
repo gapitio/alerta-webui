@@ -2,6 +2,7 @@ import EscalationRuleApi from '@/services/api/escalationRule.service'
 import type {State, Mutations, Actions, Getters, Filter} from '../types/escalationRule-types'
 import type {ActionTree} from 'vuex'
 import type {State as RootState} from '../types'
+import utils from '@/common/utils'
 
 const namespaced = true
 
@@ -143,6 +144,13 @@ const actions: Actions & ActionTree<State, RootState> = {
 const getters: Getters = {
   pagination: state => {
     return state.pagination
+  },
+  getHash: state => {
+    const filterHash = utils.toHash(state.filter)
+    const sortBy = state.pagination.sortBy ? state.pagination.sortBy : []
+    const descending = sortBy.length > 0 ? sortBy.map(o => (o.order === 'desc' ? 1 : 0)) : [0, 1]
+    const paginationHash = sortBy.length > 0 ? `sb:${sortBy.map(({key}) => key).join(',')};sd:${descending}` : ''
+    return `#${filterHash};${paginationHash};`
   }
 }
 

@@ -412,7 +412,8 @@ const getters: Getters = {
     const paginationHash = `sb:${sortBy.map(({key}) => key).join(',')};sd:${descending}`
     const asiHash = `asi:${state.showPanel ? 1 : 0}`
     return `#${filterHash};${paginationHash};${asiHash}`
-  }
+  },
+  getHistoryHash: state => `#${utils.toHash(state.historyFilter)}`
 }
 
 export default {

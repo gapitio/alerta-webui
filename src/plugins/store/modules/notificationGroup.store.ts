@@ -2,6 +2,7 @@ import NotificationGroupApi from '@/services/api/notificationGroup.service'
 import type {State, Getters, Actions, Mutations, Filter} from '../types/notificationGroup-types'
 import type {ActionTree} from 'vuex'
 import type {State as RootState} from '../types'
+import utils from '@/common/utils'
 
 const namespaced = true
 
@@ -100,6 +101,10 @@ const actions: Actions & ActionTree<State, RootState> = {
 const getters: Getters = {
   pagination: state => {
     return state.pagination
+  },
+  getHash: state => {
+    const filterHash = utils.toHash(state.filter)
+    return `#${filterHash};`
   }
 }
 

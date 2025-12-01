@@ -43,3 +43,7 @@ export type Actions = {
   updateKey({dispatch}: AugmentedActionContext, [key, update]: [string, Key]): void
   deleteKey({dispatch}: AugmentedActionContext, key: string): void
 }
+
+export type Getters = {
+  getHash(state: State): string
+}

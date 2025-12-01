@@ -9,7 +9,7 @@ import type {
 } from './escalationRule-types'
 import type {State as GroupState, Actions as GroupActions} from './groups-types'
 import type {State as HeartbeatState, Actions as HeartbeatActions} from './heartbeats-types'
-import type {State as KeyState, Actions as KeyActions} from './keys-types'
+import type {State as KeyState, Getters as KeyGetters, Actions as KeyActions} from './keys-types'
 import type {State as ManagementState, Actions as ManagementActions} from './management-types'
 import type {
   State as NotificationChannelState,
@@ -154,6 +154,10 @@ type PermsModule = {
   [K in keyof PermsGetters as `perms/${K}`]: ReturnType<PermsGetters[K]>
 }
 
+type KeyModule = {
+  [K in keyof KeyGetters as `keys/${K}`]: ReturnType<KeyGetters[K]>
+}
+
 type UsersModule = {
   [K in keyof UsersGetters as `users/${K}`]: ReturnType<UsersGetters[K]>
 }
@@ -181,7 +185,8 @@ export type Getters = AlertModule &
   OnCallModule &
   PermsModule &
   PreferencesModule &
-  UsersModule
+  UsersModule &
+  KeyModule
 
 export type AlertDispatch = {
   [K in keyof AlertsActions as `alerts/${K}`]: AlertsActions[K]

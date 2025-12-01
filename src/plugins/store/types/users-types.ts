@@ -110,4 +110,5 @@ export type Actions = {
 
 export type Getters = {
   countryCodes(state: State): string[]
+  getHash(state: State): string
 }

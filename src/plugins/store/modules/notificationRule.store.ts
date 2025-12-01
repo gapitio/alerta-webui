@@ -2,6 +2,7 @@ import NotificationRuleApi from '@/services/api/notificationRule.service'
 import type {State, Getters, Actions, Mutations, Filter} from '../types/notificationRule-types'
 import type {ActionTree} from 'vuex'
 import type {State as RootState} from '../types'
+import utils from '@/common/utils'
 
 const namespaced = true
 
@@ -222,6 +223,13 @@ const getters: Getters = {
   },
   historyPagination: state => {
     return state.historyPagination
+  },
+  getHash: state => {
+    const filterHash = utils.toHash(state.filter)
+    const sortBy = state.pagination.sortBy ? state.pagination.sortBy : []
+    const descending = sortBy.length > 0 ? sortBy.map(o => (o.order === 'desc' ? 1 : 0)) : [0, 1]
+    const paginationHash = sortBy.length > 0 ? `sb:${sortBy.map(({key}) => key).join(',')};sd:${descending}` : ''
+    return `#${filterHash};${paginationHash};`
   }
 }
 

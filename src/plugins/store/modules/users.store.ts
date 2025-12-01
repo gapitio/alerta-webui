@@ -4,6 +4,7 @@ import codes from 'country-calling-code'
 import type {State, Mutations, Actions, Getters, Filter} from '../types/users-types'
 import type {ActionTree} from 'vuex'
 import type {State as RootState} from '../types'
+import utils from '@/common/utils'
 
 const namespaced = true
 
@@ -131,6 +132,10 @@ const actions: Actions & ActionTree<State, RootState> = {
 const getters: Getters = {
   countryCodes: state => {
     return state.countryCodes
+  },
+  getHash: state => {
+    const filterHash = utils.toHash(state.filter)
+    return `#${filterHash};`
   }
 }
 

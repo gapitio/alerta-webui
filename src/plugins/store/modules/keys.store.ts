@@ -1,7 +1,8 @@
 import KeysApi from '@/services/api/key.service'
-import type {State, Mutations, Actions} from '../types/keys-types'
+import type {State, Mutations, Actions, Getters} from '../types/keys-types'
 import type {ActionTree} from 'vuex'
 import type {State as RootState} from '../types'
+import utils from '@/common/utils'
 
 const namespaced = true
 
@@ -61,8 +62,11 @@ const actions: Actions & ActionTree<State, RootState> = {
   }
 }
 
-const getters = {
-  //
+const getters: Getters = {
+  getHash: state => {
+    const filterHash = utils.toHash(state.filter)
+    return `#${filterHash};`
+  }
 }
 
 export default {

@@ -74,4 +74,5 @@ export type Actions = {
 export type Getters = {
   pagination(state: State): Pagination
   ids(state: State): NotificationChannel['id'][]
+  getHash(state: State): string
 }

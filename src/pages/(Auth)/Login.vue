@@ -134,8 +134,7 @@ async function login() {
   await store.dispatch('auth/login', creds)
   await store.dispatch('getUserPrefs')
   theme.global.name.value = isDark.value ? 'gapitDark' : 'gapitLight'
-  const redirect = !(route.query.redirect instanceof Array) ? route.query.redirect?.toString() : null
-  router.push({path: redirect || '/'})
+  router.push(redirect.value)
 }
 
 async function authenticate() {
@@ -144,8 +143,7 @@ async function authenticate() {
     try {
       await store.dispatch('auth/authenticate', provider.value)
       theme.global.name.value = isDark.value ? 'gapitDark' : 'gapitLight'
-      const redirect = !(route.query.redirect instanceof Array) ? route.query.redirect?.toString() : null
-      router.push({path: redirect || '/'})
+      router.push(redirect.value)
     } catch (e) {
       if (e instanceof AxiosError) error.value = (e.response?.data as {message: string}).message
       else throw e
@@ -163,8 +161,7 @@ function authenticateUsingSAML() {
       if (event.data && event.data.status && event.data.status === 'ok' && event.data.token) {
         try {
           await store.dispatch('auth/setToken', event.data)
-          const redirect = !(route.query.redirect instanceof Array) ? route.query.redirect?.toString() : null
-          router.push({path: redirect || '/'})
+          router.push(redirect.value)
         } catch (e) {
           if (e instanceof AxiosError) error.value = (e.response?.data as {message: string}).message
           else throw e
@@ -182,4 +179,17 @@ function checkLogin() {
   if (store.getters['auth/isLoggedIn']) router.push({path: '/'})
 }
 checkLogin()
+const redirect = computed(() => {
+  if (typeof route.query.redirect == 'string') {
+    const haveQuery = route.query.redirect.includes('?')
+    const [path, a] = route.query.redirect.split(haveQuery ? '?' : '#')
+    const [query, hash] = haveQuery ? a.split('#') : [, a]
+    return {
+      path,
+      query: Object.fromEntries(query?.split('&').map(q => q.split('=')) ?? []),
+      hash: hash ? `#${hash}` : undefined
+    }
+  }
+  return {path: '/'}
+})
 </script>

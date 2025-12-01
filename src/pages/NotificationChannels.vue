@@ -88,11 +88,13 @@
 </template>
 
 <script lang="ts" setup>
+import utils from '@/common/utils'
 import type {Store} from '@/plugins/store/types'
 import type {SortBy} from '@/plugins/store/types/alerts-types'
 import type {NotificationChannel} from '@/plugins/store/types/notificationChannel-types'
 import {computed, ref, watch} from 'vue'
 import {useI18n} from 'vue-i18n'
+import {useRoute, useRouter} from 'vue-router'
 import {useStore} from 'vuex'
 
 definePage({
@@ -104,6 +106,8 @@ definePage({
 
 const {t} = useI18n()
 const store: Store = useStore()
+const route = useRoute()
+const router = useRouter()
 
 const search = ref('')
 const dialog = ref(false)
@@ -176,6 +180,44 @@ function closeSend() {
   sendDialog.value = false
   selectedItem.value = null
 }
+
+const routeHash = computed(() => route.hash)
+watch(routeHash, val => setHash(val))
+watch(filter, () => router.replace({hash: store.getters['notificationChannels/getHash']}))
+
+function setFilter(f: any) {
+  const val: {[key: string]: any} = {}
+  Object.keys(f)
+    .filter(key => key && !['sb', 'asi', 'sd'].includes(key))
+    .forEach(a => {
+      if (a.includes('dateRange')) {
+        const [key, child] = a.split('.')
+        if (!val.hasOwnProperty(key)) val[key] = {}
+        val[key][child] = f[a]
+      } else {
+        val[a] = f[a].split(',')
+      }
+    })
+  const filter = {
+    name: val.name,
+    sender: val.sender,
+    type: val.type
+  }
+  store.dispatch('notificationChannels/setFilter', filter)
+  getItems()
+}
+
+function setHash(val: string) {
+  const hash = val.replace(/^#/, '')
+
+  if (hash) {
+    const hashMap = utils.fromHash(hash)
+    setFilter(hashMap)
+  }
+}
+
+setHash(routeHash.value)
+router.replace({hash: store.getters['notificationChannels/getHash']})
 
 getItems()
 </script>

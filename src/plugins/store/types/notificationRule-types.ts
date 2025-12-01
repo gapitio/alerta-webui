@@ -80,7 +80,7 @@ export type Mutations<S = State> = {
   SET_ALERTS(state: S, [total, alerts, pageSize]: [number, Alert[], number]): void
   SET_ITEM(state: S, rule: NotificationRule): void
   SET_HISTORY(state: S, [notificationHistory, total, pageSize]: [NotificationRuleHistory[], number, number]): void
-  SET_PAGINATION(state: S, pagination: Pagination): void
+  SET_PAGINATION(state: S, pagination: Partial<Pagination>): void
   SET_HISTORY_PAGINATION(state: S, pagination: Pagination): void
   SET_ALERTS_PAGINATION(state: S, pagination: Pagination): void
   SET_ACTIVE_FILTER(state: S, filter: Partial<{active: boolean; inactive: boolean}>): void
@@ -101,7 +101,7 @@ export type Actions = {
   deleteNotificationRule({dispatch}: AugmentedActionContext, id: string): void
   updateQuery({commit}: AugmentedActionContext, query: Query): void
   setFilter({commit}: AugmentedActionContext, filter: Filter): void
-  setPagination({commit}: AugmentedActionContext, pagination: Pagination): void
+  setPagination({commit}: AugmentedActionContext, pagination: Partial<Pagination>): void
   setHistoryPagination({commit}: AugmentedActionContext, pagination: Pagination): void
   setAlertsPagination({commit}: AugmentedActionContext, pagination: Pagination): void
 }
@@ -109,4 +109,5 @@ export type Actions = {
 export type Getters = {
   pagination(state: State): Pagination
   historyPagination(state: State): Pagination
+  getHash(state: State): string
 }

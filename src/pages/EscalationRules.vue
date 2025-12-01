@@ -23,7 +23,8 @@ import {useI18n} from 'vue-i18n'
 import {computed, onUnmounted, ref, watch} from 'vue'
 import {useRoute, useRouter} from 'vue-router'
 import type {Store} from '@/plugins/store/types'
-import type {Query} from '@/plugins/store/types/alerts-types'
+import type {Query, SortBy} from '@/plugins/store/types/alerts-types'
+import utils from '@/common/utils'
 
 const {t} = useI18n()
 const store: Store = useStore()
@@ -50,9 +51,64 @@ watch(refresh, val => {
   refreshAll()
 })
 
+const routeHash = computed(() => route.hash)
+
+function setFilter(f: any) {
+  const val: {[key: string]: any} = {}
+  Object.keys(f)
+    .filter(key => key && !['sb', 'asi', 'sd'].includes(key))
+    .forEach(a => {
+      if (a.includes('dateRange')) {
+        const [key, child] = a.split('.')
+        if (!val.hasOwnProperty(key)) val[key] = {}
+        val[key][child] = f[a]
+      } else {
+        val[a] = f[a].split(',')
+      }
+    })
+  const filter = {
+    environment: val.environment,
+    service: val.service,
+    resource: val.resource,
+    event: val.event,
+    group: val.group,
+    user: val.user,
+    tags: val.tags
+  }
+  store.dispatch('escalationRules/setFilter', filter)
+}
+
+function setSort({sb, sd}: {sb: string; sd: string; [key: string]: string}) {
+  const orders = sd.split(',')
+  const sortBy: SortBy[] = sb.split(',').map((val, ind) => ({key: val, order: orders[ind] == '1' ? 'desc' : 'asc'}))
+  store.dispatch('escalationRules/setPagination', {sortBy})
+}
+
+function setHash(val: string) {
+  const hash = val.replace(/^#/, '')
+
+  if (hash) {
+    const hashMap: {sd?: string; sb?: string; [key: string]: string | undefined} = utils.fromHash(hash)
+    setFilter(hashMap)
+    if (typeof hashMap.sd === 'string' && typeof hashMap.sb === 'string') {
+      const typedHashMap = {sd: hashMap.sd, sb: hashMap.sb}
+      setSort({sd: typedHashMap.sd ?? '', sb: typedHashMap.sb})
+    }
+  }
+}
+
+setHash(routeHash.value)
+
 const routeQuery = computed(() => route.query)
+const pagination = computed(() => store.state.escalationRules.pagination)
+watch(pagination, () => router.replace({hash: store.getters['escalationRules/getHash'], query: routeQuery.value}))
 
 watch(routeQuery, val => setQuery(val as Query))
+watch(routeHash, () => setHash(routeHash.value))
+const filter = computed(() => store.state.escalationRules.filter)
+watch(filter, () => {
+  router.replace({hash: store.getters['escalationRules/getHash'], query: routeQuery.value})
+})
 
 function setQuery(q: Query) {
   store.dispatch('escalationRules/updateQuery', q)
