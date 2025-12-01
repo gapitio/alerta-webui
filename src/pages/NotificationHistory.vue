@@ -43,16 +43,24 @@
       />
     </v-col>
   </v-row>
-  <v-row class="pt-0 mt-0">
+  <v-row class="pt-0 mt-0" ref="filterHeader">
     <template v-for="(f, d) in filter" :key="d">
-      <v-col v-if="d == 'dateRange' && f && isDateRange(f)">
+      <v-col v-if="d == 'dateRange' && f && isDateRange(f) && (f.from || f.to)" cols="auto">
         <v-chip v-if="(f.from ?? 0) < 0" variant="flat" class="chip" size="small">
           {{ d }}: {{ f.from! / -3600 }} hours
         </v-chip>
         <template v-else-if="f.select">
           <v-chip v-for="desc in ['from', 'to']" :key="desc" variant="flat" class="chip" size="small">
             {{ d }}.{{ desc }}: &nbsp;
-            <date-time :value="moment.unix(f[desc as 'from' | 'to']!).utc()" no-break />
+            <date-time
+              :value="
+                moment
+                  .unix(f[desc as 'from' | 'to']!)
+                  .utc()
+                  .toISOString()
+              "
+              no-break
+            />
           </v-chip>
         </template>
       </v-col>
@@ -69,7 +77,7 @@
     v-model:items-per-page="pagination.itemsPerPage"
     :headers="headers"
     fixed-header
-    style="max-height: calc(99vh - calc(64px + 64px + 74px))"
+    :style="calcHeight"
     :items="history"
     :items-length="pagination.totalItems!"
     :items-per-page-options="pagination.itemsPerPageOptions"
@@ -103,9 +111,10 @@ import type {Store} from '@/plugins/store/types'
 import type {Pagination, Query} from '@/plugins/store/types/alerts-types'
 import type {DateRange, NotificationHistory} from '@/plugins/store/types/notificationHistory-types'
 import moment from 'moment'
-import {computed, onUnmounted, ref, watch} from 'vue'
+import {computed, onUnmounted, ref, watch, type StyleValue} from 'vue'
 import {useI18n} from 'vue-i18n'
 import {useRoute, useRouter} from 'vue-router'
+import type {VDataTableServer, VRow} from 'vuetify/components'
 import {useStore} from 'vuex'
 
 definePage({
@@ -115,6 +124,7 @@ definePage({
   }
 })
 
+const filterHeader = ref<VRow | null>(null)
 const isDateRange = (date: DateRange | string[]): date is DateRange => !(date instanceof Array)
 
 const store: Store = useStore()
@@ -164,7 +174,10 @@ watch(routeQuery, val => val as Query)
 watch(routeHash, val => setHash(val))
 watch(filter, () => {
   router.replace({query: routeQuery.value, hash: store.getters['notificationHistory/getHash']})
+  if (filterHeader.value)
+    height.value = `calc(99vh - calc(64px + 64px + 74px + ${filterHeader.value.$el.offsetHeight}px)`
 })
+watch(filterHeader, val => (height.value = `calc(99vh - calc(64px + 64px + 74px + ${val!.$el.offsetHeight}px)`))
 
 function setQuery(q: Query) {
   store.dispatch('notificationHistory/updateQuery', q)
@@ -183,6 +196,12 @@ function getHistory() {
   store.dispatch('notificationHistory/getNotificationHistory')
   timeout.value = setTimeout(getHistory, interval.value)
 }
+const height = ref('calc(99vh - calc(64px + 64px + 74px)')
+const calcHeight = computed(
+  (): StyleValue => ({
+    'max-height': height.value
+  })
+)
 
 onUnmounted(() => clearTimeout(timeout.value))
 
