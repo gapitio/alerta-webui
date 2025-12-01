@@ -28,6 +28,9 @@
       <v-col cols="auto" align-self="center">
         <alerts-filter />
       </v-col>
+      <v-col cols="auto" align-self="center">
+        <alerts-export />
+      </v-col>
       <v-col v-if="selected.length > 0" align-self="center">
         <v-btn icon="visibility" variant="text" @click.stop="watchAlerts" />
         <v-btn icon="visibility_off" variant="text" @click.stop="unwatchAlerts" />
@@ -46,13 +49,6 @@
       <v-tab v-for="env in environments" :key="env" :value="env" class="big-font bold no-cap-btn" @click="setEnv(env)">
         {{ env }}&nbsp;({{ environmentCounts[env] || 0 }})
       </v-tab>
-      <div style="position: absolute; right: 0px">
-        <v-tooltip :text="t('DownloadAsCsv')">
-          <template #activator="{props}">
-            <v-btn v-bind="props" icon="download" variant="text" @click="toCsv(alerts)" />
-          </template>
-        </v-tooltip>
-      </div>
     </v-tabs>
     <v-row class="mt-0">
       <template v-for="(f, d) in filter" :key="d">
@@ -84,7 +80,6 @@
 import {ref, computed, watch, onUnmounted} from 'vue'
 import {useStore} from 'vuex'
 import {useRoute, useRouter} from 'vue-router'
-import {generateCsv, download, mkConfig} from 'export-to-csv'
 import {useI18n} from 'vue-i18n'
 import utils from '@/common/utils'
 import type {Query, SortBy} from '@/plugins/store/types/alerts-types'
@@ -316,39 +311,6 @@ async function refreshAlerts(audioRef: HTMLAudioElement | null) {
   timeout.value = setTimeout(() => refreshAlerts(audio.value), refreshInterval.value)
 }
 
-function toCsv(data: typeof alerts.value) {
-  const options = mkConfig({
-    filename: `Alerts_${filter.value.environment || 'All'}`,
-    quoteCharacter: '"',
-    decimalSeparator: 'locale',
-    useBom: true,
-    useKeysAsHeaders: true
-  })
-
-  const attrs: any = {}
-  data.forEach(d =>
-    Object.keys(d.attributes).forEach(
-      attr =>
-        (attrs[`attributes.${attr}`] =
-          typeof d.attributes[attr] == 'string' ? d.attributes[attr].replace(/^([=, +])/, "'$1") : d.attributes[attr])
-    )
-  )
-  const csvContent = data.map(({correlate, service, tags, rawData, customTags, ...item}) => {
-    const d = {
-      correlate: correlate?.join(','),
-      service: typeof service == 'object' ? service?.join(',') : service,
-      tags: tags?.join(','),
-      customTags: customTags?.join(','),
-      ...attrs,
-      ...item,
-      rawData: rawData ? rawData.toString() : ''
-    }
-    delete d.history
-    delete d.attributes
-    return d
-  })
-  download(options)(generateCsv(options)(csvContent))
-}
 function setHash(val: string) {
   const hash = val.replace(/^#/, '')
 
