@@ -88,7 +88,6 @@
       :items="escalationRules"
       :items-length="pagination.totalItems ?? 0"
       :items-per-page-options="pagination.itemsPerPageOptions"
-      :loading="isLoading"
       :row-props="{class: 'bg-surface-tertiary table-row'}"
       :cell-props="{class: 'table-column'}"
       multi-sort
@@ -282,7 +281,6 @@ const pagination = computed({
 const computedHeaders = computed(() =>
   headers.value.filter(h => (store.state.config.customer_views ? true : h.key != 'customer'))
 )
-const isLoading = computed(() => store.state.escalationRules.isLoading)
 
 const selected = computed({
   get: () => store.state.escalationRules.selected,
