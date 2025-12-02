@@ -85,8 +85,8 @@
       <v-col cols="3" class="text-grey">
         {{ key }}
       </v-col>
-      <v-col cols="9" class="clickable" @click="queryBy(`_.${key}`, value)">
-        {{ value }}
+      <v-col cols="9">
+        <span class="clickable" @click="queryBy(`_.${key}`, value)">{{ value }}</span>
       </v-col>
     </v-row>
   </v-container>
