@@ -98,7 +98,6 @@
       :items="notificationRules"
       :items-length="pagination.totalItems ?? 0"
       :items-per-page-options="pagination.itemsPerPageOptions"
-      :loading="isLoading"
       :row-props="{class: 'bg-surface-tertiary table-row'}"
       :cell-props="{class: 'table-column'}"
       multi-sort
@@ -363,7 +362,6 @@ const groups = computed(() => store.state.notificationGroups.items)
 const computedHeaders = computed(() =>
   headers.value.filter(h => (store.state.config.customer_views ? true : h.key != 'customer'))
 )
-const isLoading = computed(() => store.state.notificationRules.isLoading)
 const emails = computed(() => Object.fromEntries(store.state.users.emails.map(e => [e.email, e.name])))
 const selected = computed({
   get: () => store.state.notificationRules.selected,
