@@ -61,6 +61,17 @@
       >
         {{ item.status }}
       </v-chip>
+      <v-tooltip
+        v-if="lastNote(item)"
+        location="bottom"
+        :text="lastNote(item)"
+      >
+        <template #activator="{props}">
+          <v-icon v-bind="props">
+            sticky_note_2
+          </v-icon>
+        </template>
+      </v-tooltip>
     </template>
     <template #[`item.actions`]="{item}">
       <div
