@@ -8,6 +8,9 @@
       <g-checkbox v-model="allowedEnv" :label-right="t('ShowAllowedEnvs')" />
     </v-col>
     <v-col cols="12">
+      <g-checkbox v-model="noteIcon" :label-right="t('ShowNotesIcon')" />
+    </v-col>
+    <v-col cols="12">
       <g-select v-model="refreshInterval" show-header :items="refreshOptions" :label="t('RefreshInterval')" />
     </v-col>
   </v-row>
@@ -31,5 +34,10 @@ const allowedEnv = computed({
 const refreshInterval = computed({
   get: () => (store.getters.getPreference('refreshInterval') || store.getters.getConfig('refresh_interval')) / 1000,
   set: val => store.dispatch('setUserPrefs', {refreshInterval: val * 1000})
+})
+
+const noteIcon = computed({
+  get: () => store.getters.getPreference('showNotesIcon'),
+  set: val => store.dispatch('setUserPrefs', {showNotesIcon: val})
 })
 </script>
