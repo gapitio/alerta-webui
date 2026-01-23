@@ -282,6 +282,9 @@ const actions: Actions & ActionTree<State, RootState> = {
       timeout: timeout
     })
   },
+  takeActions(_, [alertsIds, action, text, timeout]) {
+    return AlertsApi.actionAlerts({alerts: alertsIds, action: action, text: text, timeout: timeout})
+  },
   tagAlert(_, [alertId, tags]) {
     return AlertsApi.tagAlert(alertId, tags)
   },
@@ -310,6 +313,13 @@ const actions: Actions & ActionTree<State, RootState> = {
 
   deleteAlert(_, alertId) {
     return AlertsApi.deleteAlert(alertId)
+  },
+  deleteAlerts(_, alertIds) {
+    const params = new URLSearchParams()
+    for (const id of alertIds) {
+      params.append('id', id)
+    }
+    return AlertsApi.deleteAlerts(params)
   },
 
   getEnvironments({commit, state}) {

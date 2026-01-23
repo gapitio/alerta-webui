@@ -15,6 +15,9 @@ export default {
   actionAlert(alertId: string, data: object) {
     return api.put(`/alert/${alertId}/action`, data)
   },
+  actionAlerts(data: {action: string; text?: string; timeout?: number; alerts: string[]}) {
+    return api.put(`/alerts/action`, data)
+  },
   tagAlert(alertId: string, data: object) {
     return api.put(`/alert/${alertId}/tag`, data)
   },
@@ -86,6 +89,13 @@ export default {
 
   deleteAlert(alertId: string) {
     return api.delete(`/alert/${alertId}`)
+  },
+
+  deleteAlerts(params: object) {
+    const config = {
+      params: params
+    }
+    return api.delete(`/alerts`, config)
   },
 
   getEnvironments(query: object) {

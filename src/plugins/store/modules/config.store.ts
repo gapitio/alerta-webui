@@ -87,7 +87,8 @@ const state: State = {
   ldap_email_edit: false,
   oidc_auth_url: '',
   version: 'DEV',
-  hidden_pages: []
+  hidden_pages: [],
+  bulk_size: 20
 }
 
 export const deepCopy = function (state: any, value: any, propName?: string) {

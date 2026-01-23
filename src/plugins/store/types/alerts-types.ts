@@ -232,6 +232,10 @@ export type Actions<S = State> = {
     _: AugmentedActionContext,
     [alertId, action, text, timeout]: [string, string, string, number?]
   ): Promise<any>
+  takeActions(
+    _: AugmentedActionContext,
+    [alertIds, action, text, timeout]: [string[], string, string, number?]
+  ): Promise<any>
   tagAlert(_: AugmentedActionContext, [alertId, tags]: [string, string[]]): void
   untagAlert(_: AugmentedActionContext, [alertId, tags]: [string, string[]]): void
   addNote({dispatch}: AugmentedActionContext, [alertId, text]: [string, string]): Promise<any>
@@ -239,6 +243,7 @@ export type Actions<S = State> = {
   updateNote({dispatch}: AugmentedActionContext, [alertId, noteId, note]: [string, string, Note]): void
   deleteNote({dispatch}: AugmentedActionContext, [alertId, noteId]: [string, string]): void
   deleteAlert(_: AugmentedActionContext, alertId: string): Promise<any>
+  deleteAlerts(_: AugmentedActionContext, alertIds: string[]): Promise<any>
   getEnvironments({commit, state}: AugmentedActionContext): void
   getServices({commit}: AugmentedActionContext): void
   getGroups({commit}: AugmentedActionContext): void
