@@ -1,20 +1,29 @@
 <template>
   <v-navigation-drawer
     v-if="isLoggedIn || !isAuthRequired || isAllowReadonly"
+    permanent
     disable-resize-watcher
     class="sidebar bg-primary-surface"
     width="325"
+    location="left"
+    :rail="rail"
+    @update:rail="val => (rail = val)"
   >
-    <v-row style="width: 100%; text-align: center">
-      <v-col style="margin: 30px 0px">
+    <v-row style="text-align: center">
+      <v-col style="margin: 30px 0px" v-if="!rail">
         <router-link to="/" class="toolbar-title">
           <img v-if="isDark" src="@/assets/logo-white.svg" alt="GapitLogo" width="200" />
           <img v-else src="@/assets/logo.svg" alt="GapitLogo" width="200" />
         </router-link>
       </v-col>
+      <v-col style="margin: 33px 0px" v-else>
+        <router-link to="/" class="toolbar-title">
+          <img src="@/assets/logo-small.svg" alt="GapitLogo" width="35" />
+        </router-link>
+      </v-col>
     </v-row>
 
-    <v-list density="compact" style="height: calc(100vh - 85px - 130px); overflow-y: auto" slim>
+    <v-list density="compact" style="height: calc(100vh - 85px - 130px - 48px); overflow-y: auto" slim>
       <template v-for="item in items">
         <v-list-item
           v-if="item.icon && item.show && show(item.path)"
@@ -35,12 +44,10 @@
           class="outline"
           no-action
         >
-          <template #activator="{props}">
-            <v-list-item v-bind="props" :prepend-icon="item.icon" :title="item.text" />
-          </template>
           <template v-for="i in item.items" :key="i.text">
             <v-list-item
               v-if="show(i.path)"
+              v-show="!rail"
               v-has-perms="i.perms"
               :to="i.path"
               active-class="active-group"
@@ -48,20 +55,63 @@
               :title="i.text"
             />
           </template>
+          <template #activator="{props}">
+            <v-menu
+              v-if="rail"
+              v-show="showGroup(item.text)"
+              :key="'menuItems' + item.text"
+              location="right"
+              :ref="item.text"
+              class="outline"
+              v-bind="props"
+              no-action
+            >
+              <template #activator="{props}">
+                <v-list-item v-bind="props" :prepend-icon="item.icon" />
+              </template>
+              <v-list>
+                <v-list-item :title="item.text" />
+                <v-divider />
+                <template v-for="i in item.items" :key="i.text">
+                  <v-list-item
+                    v-if="show(i.path)"
+                    v-has-perms="i.perms"
+                    :to="i.path"
+                    active-class="active-group"
+                    :prepend-icon="i.icon"
+                    :title="i.text"
+                  />
+                </template>
+              </v-list>
+            </v-menu>
+
+            <v-list-item v-else v-bind="props" :prepend-icon="item.icon" :title="item.text" />
+          </template>
         </v-list-group>
+
         <v-list-item v-else-if="item.divider" :key="'divider' + item.text" />
       </template>
     </v-list>
     <v-row no-gutters style="position: absolute; bottom: 0px; text-align: center; width: 100%">
+      <v-col align="start">
+        <v-btn
+          variant="text"
+          :icon="rail ? 'arrow_menu_open' : 'arrow_menu_close'"
+          @click.stop="() => (rail = !rail)"
+        />
+      </v-col>
       <v-col cols="12" class="mb-3" style="color: #98a2b3"> Version {{ gapitVersion }} </v-col>
       <!-- <v-col cols="12">
         <v-divider 
           class="border-secondary"
         />
       </v-col> -->
-      <v-col class="pt-4 pb-3 border-secondary" style="border-top: 1px solid">
+      <v-col class="pt-4 pb-3 border-secondary" style="border-top: 1px solid" v-if="!rail">
         <img v-if="isDark" src="@/assets/gapit/gapit-nordics-cts-group-blue-white.svg" alt="GapitLogo" width="150" />
         <img v-else src="@/assets/gapit/gapit-nordics-cts-group-regular.svg" alt="GapitLogo" width="150" />
+      </v-col>
+      <v-col class="pt-4 pb-3 border-secondary" style="border-top: 1px solid" v-else>
+        <img src="@/assets/gapit/gapit-logo-small.svg" alt="GapitLogo" width="35" />
       </v-col>
     </v-row>
   </v-navigation-drawer>
@@ -70,7 +120,7 @@
 <script setup lang="ts">
 import {useStore} from 'vuex'
 import type {State, Store} from '@/plugins/store/types'
-import {computed} from 'vue'
+import {computed, ref} from 'vue'
 import {useI18n} from 'vue-i18n'
 import config from '@/services/config'
 import {checkPerms} from '@/directives/hasPerms'
@@ -79,6 +129,7 @@ const store: Store = useStore<State>()
 const {t} = useI18n()
 const $config = config.$get()
 
+const rail = ref(true)
 const hiddenPages = computed(() => store.getters.getConfig('hidden_pages'))
 const show = (path: string) => !hiddenPages.value.includes(path.replace('/', ''))
 const items = computed(() => [
