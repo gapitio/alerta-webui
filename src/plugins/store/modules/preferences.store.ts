@@ -34,7 +34,8 @@ const getDefaults = (): State => {
     shelveTimeout: null,
     blackoutStartNow: true,
     blackoutPeriod: null,
-    queries: []
+    queries: [],
+    navBarCollapsed: false
   }
 }
 
