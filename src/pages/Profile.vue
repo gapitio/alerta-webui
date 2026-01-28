@@ -13,7 +13,7 @@
         <g-text-field v-model="profile.provider" :label="t('Provider')" readonly show-header />
       </v-col>
     </v-row>
-    <g-text-field v-model="profile.sub" :label="t('User ID')" readonly show-header />
+    <g-text-field v-model="profile.sub" :label="t('UserID')" readonly show-header />
     <g-text-field v-model="profile.email" :label="t('Email')" readonly show-header />
     <g-combobox v-model="profile.orgs" :label="t('Organizations')" placeholder="(None)" show-header readonly multiple />
     <g-combobox v-model="profile.groups" :label="t('Groups')" placeholder="(None)" show-header readonly multiple />

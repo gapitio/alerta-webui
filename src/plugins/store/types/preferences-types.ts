@@ -38,6 +38,7 @@ export interface State {
   blackoutStartNow: boolean
   blackoutPeriod: number | null
   queries: Query[]
+  navBarCollapsed: boolean
 }
 
 export type Mutations<S = State> = {

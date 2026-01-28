@@ -58,7 +58,6 @@
           <template #activator="{props}">
             <v-menu
               v-if="rail"
-              v-show="showGroup(item.text)"
               :key="'menuItems' + item.text"
               location="right"
               :ref="item.text"
@@ -120,7 +119,7 @@
 <script setup lang="ts">
 import {useStore} from 'vuex'
 import type {State, Store} from '@/plugins/store/types'
-import {computed, ref} from 'vue'
+import {computed} from 'vue'
 import {useI18n} from 'vue-i18n'
 import config from '@/services/config'
 import {checkPerms} from '@/directives/hasPerms'
@@ -129,7 +128,10 @@ const store: Store = useStore<State>()
 const {t} = useI18n()
 const $config = config.$get()
 
-const rail = ref(true)
+const rail = computed({
+  get: () => store.getters.getPreference('navBarCollapsed'),
+  set: val => store.dispatch('setUserPrefs', {navBarCollapsed: val})
+})
 const hiddenPages = computed(() => store.getters.getConfig('hidden_pages'))
 const show = (path: string) => !hiddenPages.value.includes(path.replace('/', ''))
 const items = computed(() => [
