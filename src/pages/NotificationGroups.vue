@@ -36,7 +36,7 @@
     :row-props="{class: 'bg-surface-tertiary table-row'}"
     :cell-props="{class: 'table-column'}"
     :headers="headers"
-    style="max-height: calc(99vh - calc(43px + 64px))"
+    style="max-height: calc(100vh - calc(74px + 64px))"
     fixed-header
     :items="items"
     sort-desc-icon="arrow_drop_down"

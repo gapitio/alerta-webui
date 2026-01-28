@@ -58,8 +58,8 @@
             "
           />
         </v-col>
-        <v-col cols="2" />
-        <v-col v-if="selectableRows" cols="8">
+        <v-spacer />
+        <v-col v-if="selectableRows" cols="auto">
           <span class="subheading" style="margin-left: 10px"> {{ selected.length }} {{ t('selected') }} </span>
           <v-tooltip :text="t('Activate')">
             <template #activator="{props}">
@@ -73,6 +73,7 @@
             </template>
           </v-tooltip>
         </v-col>
+        <v-spacer />
       </v-row>
     </v-card-title>
 
@@ -83,7 +84,7 @@
       show-select
       fixed-header
       fixed-footer
-      style="max-height: 85vh"
+      style="max-height: calc(100vh - calc(74px + 54px + 64px))"
       :headers="computedHeaders"
       :items="escalationRules"
       :items-length="pagination.totalItems ?? 0"

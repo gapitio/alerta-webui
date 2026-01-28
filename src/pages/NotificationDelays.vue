@@ -11,7 +11,7 @@
     :headers="headers"
     :items-length="pagination.totalItems ?? 0"
     :items-per-page-options="pagination.itemsPerPageOptions"
-    style="max-height: calc(99vh - calc(43px + 64px))"
+    style="max-height: calc(100vh - calc(74px + 64px))"
     fixed-header
     :items="items"
     @update:options="setPagination"
