@@ -8,7 +8,7 @@ $overlay-multiplier: 2;
 }
 
 h1 {
-  padding: 16px 8px;
+  padding: 16px;
 }
 
 .table-row {
@@ -86,7 +86,7 @@ h1 {
 
 .table.v-table th,
 td {
-  padding: 0px 5px !important;
+  padding: 0px 16px !important;
 }
 
 .table {
@@ -149,4 +149,8 @@ td {
 .clickable {
   cursor: pointer;
   text-decoration: underline;
+}
+
+.v-tab__slider {
+  border-radius: 4px;
 }

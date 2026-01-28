@@ -1,6 +1,6 @@
 <template>
   <v-container width="500px" style="margin-left: calc(475px - 325px)">
-    <h1>{{ t('Application') }}</h1>
+    <h1 style="padding-left: 0px">{{ t('Application') }}</h1>
     <v-row no-gutters>
       <v-col cols="12">
         <g-checkbox v-model="isDark" :label-right="t('DarkTheme')" />

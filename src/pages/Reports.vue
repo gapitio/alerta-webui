@@ -6,7 +6,13 @@
   </h1>
   <div style="height: 90vh; overflow: auto">
     <v-tabs v-model="currentTab" slider-color="link-active">
-      <v-tab v-for="type in reportTypes" :key="type.value" :value="type.value" class="big-font bold no-cap-btn">
+      <v-tab
+        v-for="type in reportTypes"
+        :key="type.value"
+        :value="type.value"
+        class="big-font bold no-cap-btn"
+        style="padding: 0px; margin: 0px 16px"
+      >
         {{ type.title }}
       </v-tab>
     </v-tabs>

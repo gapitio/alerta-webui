@@ -20,7 +20,7 @@
   </h1>
   <blackout-add :dialog="newDialog" :item="selectedItem" @close="closeNew" />
   <v-card variant="flat">
-    <v-card-title class="title">
+    <v-card-title class="title" style="padding-left: 16px">
       <v-row>
         <v-col cols="auto">
           <g-switch v-model="showActive" :label="t('ShowActive')" class="switch-primary" />

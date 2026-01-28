@@ -45,8 +45,15 @@
       </v-col>
     </v-row>
 
-    <v-tabs v-model="currentTab" slider-color="link-active">
-      <v-tab v-for="env in environments" :key="env" :value="env" class="big-font bold no-cap-btn" @click="setEnv(env)">
+    <v-tabs v-model="currentTab" slider-color="link-active" style="padding-left: 16px">
+      <v-tab
+        v-for="env in environments"
+        :key="env"
+        :value="env"
+        class="big-font bold no-cap-btn"
+        style="padding: 0px; margin-right: 26px"
+        @click="setEnv(env)"
+      >
         {{ env }}&nbsp;({{ environmentCounts[env] || 0 }})
       </v-tab>
     </v-tabs>

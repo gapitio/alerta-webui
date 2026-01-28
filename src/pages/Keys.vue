@@ -28,7 +28,7 @@
     </v-col>
   </v-row>
 
-  <g-switch v-model="showExpired" :label="t('ShowExpired')" class="switch-primary" />
+  <g-switch v-model="showExpired" :label="t('ShowExpired')" class="switch-primary" style="padding-left: 16px" />
 
   <v-data-table
     v-model:sort-by="sortBy"

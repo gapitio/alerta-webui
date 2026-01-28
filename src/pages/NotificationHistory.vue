@@ -25,7 +25,7 @@
       <notification-history-export />
     </v-col>
   </v-row>
-  <v-row>
+  <v-row style="padding-left: 16px">
     <v-col cols="auto">
       <g-switch
         :model-value="activeFilter.sent"

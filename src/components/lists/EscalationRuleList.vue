@@ -38,9 +38,9 @@
   <escalation-rule-add :dialog="newDialog" :item="selectedItem" @close="closeNew" />
   <change-active-state-bulk :dialog="bulkDialog" :activate="bulkActivate" type="er" hide-time @close="closeBulk" />
   <v-card variant="flat">
-    <v-card-title class="title">
+    <v-card-title class="title" style="padding-left: 16px">
       <v-row>
-        <v-col cols="auto">
+        <v-col cols="auto" style="padding-left: 16px">
           <g-switch
             :model-value="status.active"
             :label="t('ShowActive')"

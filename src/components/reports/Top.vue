@@ -1,6 +1,6 @@
 <template>
   <v-card>
-    <v-card-title primary-title>
+    <v-card-title primary-title style="padding-left: 16px">
       <div>
         <div class="headline">{{ t('Top') }} {{ pagination.itemsPerPage }} {{ title }}</div>
         <br />
