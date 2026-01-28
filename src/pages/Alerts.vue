@@ -142,10 +142,17 @@ function haveDeleteScope() {
 }
 
 async function takeAction(action: string, timeout?: number | null) {
+  const splittedItems: string[][] = []
+  const max_bulk_size = store.getters.getConfig('bulk_size') ?? 1
+  for (let index = 0; index < selected.value.length; index++) {
+    const sp_index = Math.floor(index / max_bulk_size)
+    if (!splittedItems[sp_index]) splittedItems[sp_index] = []
+    splittedItems[sp_index].push(selected.value[index])
+  }
   await Promise.all(
-    selected.value.map(id => store.dispatch('alerts/takeAction', [id, action, '', timeout ?? undefined]))
+    splittedItems.map(ids => store.dispatch('alerts/takeActions', [ids, action, '', timeout ?? undefined]))
   )
-  getAlerts()
+  refreshAlerts(audio.value)
 }
 
 async function watchAlerts() {
@@ -160,9 +167,9 @@ async function unwatchAlerts() {
 
 async function deleteAlerts() {
   if (!confirm(t('ConfirmDeletes'))) return
-  await Promise.all(selected.value.map(id => store.dispatch('alerts/deleteAlert', id)))
+  await store.dispatch('alerts/deleteAlerts', selected.value)
   store.dispatch('alerts/updateSelected', [])
-  getAlerts()
+  refreshAlerts(audio.value)
 }
 
 async function removeLasNotes() {
