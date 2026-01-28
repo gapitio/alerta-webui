@@ -166,7 +166,6 @@ async function validate(close?: boolean) {
 }
 
 function toCsv(data: History[]) {
-  console.log(data)
   if (data.length < 1) {
     store.dispatch('notifications/error', {message: 'No data to export', name: 'NoData'})
     return
@@ -204,7 +203,6 @@ function toCsv(data: History[]) {
     }
     return o
   })
-  console.log('content', csvContent)
   download(options)(generateCsv(options)(csvContent))
 }
 
