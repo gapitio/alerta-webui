@@ -1,6 +1,6 @@
 <template>
   <v-container width="1000px">
-    <h1>{{ t('Profile') }}</h1>
+    <h1 style="padding-left: 0px">{{ t('Profile') }}</h1>
     <span class="bold">{{ profile.name }}</span>
     <br />
     {{ profile.email }}

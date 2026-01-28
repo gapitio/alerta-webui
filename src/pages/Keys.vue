@@ -28,7 +28,7 @@
     </v-col>
   </v-row>
 
-  <g-switch v-model="showExpired" :label="t('ShowExpired')" class="switch-primary" />
+  <g-switch v-model="showExpired" :label="t('ShowExpired')" class="switch-primary" style="padding-left: 16px" />
 
   <v-data-table
     v-model:sort-by="sortBy"
@@ -37,7 +37,7 @@
     :cell-props="{class: 'table-column'}"
     :search="search"
     :headers="headers"
-    style="max-height: calc(99vh - calc(43px + 64px))"
+    style="max-height: calc(100vh - calc(40px + 64px + 74px))"
     fixed-header
     sort-desc-icon="arrow_drop_down"
     sort-asc-icon="arrow_drop_up"

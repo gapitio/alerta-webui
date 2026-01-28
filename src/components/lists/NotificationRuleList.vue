@@ -36,7 +36,7 @@
   <notification-rule-add :dialog="newDialog" :item="selectedItem" @close="closeNew" />
   <change-active-state-bulk :dialog="bulkDialog" :activate="bulkActivate" type="nr" @close="closeBulk" />
   <v-card variant="flat">
-    <v-card-title class="title">
+    <v-card-title class="title" style="padding-left: 16px">
       <v-row>
         <v-col cols="auto">
           <g-switch
@@ -58,8 +58,8 @@
             "
           />
         </v-col>
-        <v-col cols="2" />
-        <v-col v-if="selectableRows" cols="8">
+        <v-spacer />
+        <v-col v-if="selectableRows" cols="auto">
           <span class="subheading" style="margin-left: 10px"> {{ selected.length }} {{ t('selected') }} </span>
           <v-tooltip :text="t('Activate')">
             <template #activator="{props}">
@@ -73,6 +73,7 @@
             </template>
           </v-tooltip>
         </v-col>
+        <v-spacer />
       </v-row>
       <v-row class="pt-0 mt-0">
         <div v-for="(f, d) in filter" :key="d">
@@ -93,7 +94,7 @@
       show-select
       fixed-header
       fixed-footer
-      style="max-height: 85vh"
+      style="max-height: calc(100vh - calc(74px + 50px + 64px))"
       :headers="computedHeaders"
       :items="notificationRules"
       :items-length="pagination.totalItems ?? 0"

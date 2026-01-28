@@ -35,7 +35,7 @@
     :cell-props="{class: 'table-column'}"
     :search="search"
     :headers="headers"
-    style="max-height: calc(99vh - calc(43px + 64px))"
+    style="max-height: calc(100vh - calc(74px + 64px))"
     fixed-header
     sort-desc-icon="arrow_drop_down"
     sort-asc-icon="arrow_drop_up"

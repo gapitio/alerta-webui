@@ -20,6 +20,7 @@
     class="table"
     :headers="computedHeaders"
     :items="items"
+    style="max-height: calc(100vh - calc(64px + 74px))"
     :items-length="pagination.totalItems ?? 0"
     :items-per-page-options="pagination.itemsPerPageOptions"
     :row-props="{class: 'bg-surface-tertiary table-row'}"

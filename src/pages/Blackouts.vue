@@ -20,7 +20,7 @@
   </h1>
   <blackout-add :dialog="newDialog" :item="selectedItem" @close="closeNew" />
   <v-card variant="flat">
-    <v-card-title class="title">
+    <v-card-title class="title" style="padding-left: 16px">
       <v-row>
         <v-col cols="auto">
           <g-switch v-model="showActive" :label="t('ShowActive')" class="switch-primary" />
@@ -56,7 +56,7 @@
       :row-props="{class: 'bg-surface-tertiary table-row'}"
       :cell-props="{class: 'table-column'}"
       :headers="computedHeaders"
-      style="max-height: calc(99vh - calc(43px + 64px))"
+      style="max-height: calc(100vh - calc(74px + 64px + 54px))"
       fixed-header
       :items="items"
       sort-desc-icon="arrow_drop_down"

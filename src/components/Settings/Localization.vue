@@ -1,5 +1,5 @@
 <template>
-  <h1 class="mt-2">
+  <h1 class="mt-2 pl-0">
     {{ t('Localization') }}
   </h1>
   <v-row>
