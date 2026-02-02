@@ -221,6 +221,7 @@ const actions: Actions & ActionTree<State, RootState> = {
       else params.append(key, `~${state.historyFilter[key]}`)
     }
 
+    !state.historyFilter.environment && state.historyFilter.environments?.map(env => params.append('environment', env))
     state.historyFilter.environment && params.append('environment', state.historyFilter.environment)
     const dateRange = state.historyFilter.dateRange
     if (dateRange.select) {
