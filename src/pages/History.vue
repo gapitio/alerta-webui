@@ -213,7 +213,7 @@ function rowProps({item}: {item: any}) {
 const isDateRange = (date: DateRange | string[]): date is DateRange => !(date instanceof Array)
 
 function selectItem(item: History) {
-  router.push({path: `/alert/${item.id}`, query: {redirect: route.fullPath}})
+  router.push({path: `/alert/${item.alertId}`, query: {redirect: route.fullPath}})
 }
 
 function setEnv(env: string) {

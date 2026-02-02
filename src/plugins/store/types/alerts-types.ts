@@ -93,6 +93,7 @@ interface Note {
 
 export interface History {
   id: string
+  alertId: string
   href: string
   environment: string
   attributes: Attributes
