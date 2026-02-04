@@ -1,24 +1,34 @@
 <template>
   <audio ref="audio" :src="audioUrl" />
-  <g-combobox
-    v-model="query"
-    prepend-inner-icon="search"
-    append-inner-icon="push_pin"
-    :label="t('Search')"
-    variant="outlined"
-    clearable
-    hide-details
-    :items="userQueries"
-    validate-on="submit"
-    style="position: absolute; top: 2.5px; right: calc(25vw); width: 40vw; background: white"
-    delete-items
-    @keydown.enter="(e: any) => setSearch(e.target.value)"
-    @click:prepend-inner="setSearch(query ?? '')"
-    @click:append-inner="saveSearch(query ?? '')"
-    @click:clear="clearSearch"
-    @select-item="(item: any) => setSearch(item.value)"
-    @delete-item="(item: any) => deleteSearch(item.value)"
-  />
+  <v-container style="position: absolute; top: 0px; right: calc(25vw - 115px - 48px)">
+    <v-row align="center">
+      <v-spacer></v-spacer>
+      <v-col>
+        <g-combobox
+          v-model="query"
+          prepend-inner-icon="search"
+          append-inner-icon="push_pin"
+          :label="t('Search')"
+          variant="outlined"
+          clearable
+          hide-details
+          :items="userQueries"
+          validate-on="submit"
+          style="position: relative; top: -12px; width: 40vw; background: white"
+          delete-items
+          @keydown.enter="(e: any) => setSearch(e.target.value)"
+          @click:prepend-inner="setSearch(query ?? '')"
+          @click:append-inner="saveSearch(query ?? '')"
+          @click:clear="clearSearch"
+          @select-item="(item: any) => setSearch(item.value)"
+          @delete-item="(item: any) => deleteSearch(item.value)"
+        />
+      </v-col>
+      <v-col cols="auto">
+        <g-switch style="position: relative; top: -12px" v-model="isWatch" :label="t('Watch')" />
+      </v-col>
+    </v-row>
+  </v-container>
 
   <v-card variant="flat">
     <v-row>
@@ -117,8 +127,14 @@ const routeHash = computed(() => route.hash)
 const routeQuery = computed(() => route.query)
 const audioUrl = computed(() => store.getters.getConfig('audio').new ?? store.getters.getPreference('audioURL'))
 
+const isWatch = computed({
+  get: () => store.state.alerts.isWatch,
+  set: val => store.dispatch('alerts/toggle', ['isWatch', val])
+})
+
 watch(storeQuery, val => (query.value = val))
 watch(routeHash, val => setHash(val))
+watch(isWatch, () => refreshAlerts(audio.value))
 
 const isDateRange = (date: DateRange | string[]): date is DateRange => !(date instanceof Array)
 
