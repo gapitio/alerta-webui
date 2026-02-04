@@ -213,11 +213,11 @@ const actions: Actions & ActionTree<State, RootState> = {
     const params = new URLSearchParams(state.query)
 
     const specialKeys = ['environment', 'environments', 'dateRange', 'search']
-    const notWildcards = ['duplicateCount']
+    const notWildcards = ['duplicateCount', 'service', 'tags', 'tag']
     for (const key of Object.keys(state.historyFilter)) {
       if (specialKeys.includes(key) || !state.historyFilter[key]) continue
       else if (typeof state.historyFilter[key] === 'object')
-        state.historyFilter[key].map((k: any) => params.append(key, k))
+        state.historyFilter[key].map((k: any) => params.append(key, notWildcards.includes(key) ? k : '~' + k))
       else if (notWildcards.includes(key)) params.append(key, state.historyFilter[key])
       else params.append(key, `~${state.historyFilter[key]}`)
     }
