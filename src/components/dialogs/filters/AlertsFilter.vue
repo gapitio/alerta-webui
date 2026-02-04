@@ -108,21 +108,12 @@
                 show-header
                 show-details
                 :label="t('Resource')"
-                :hint="t('RegexHint')"
                 clearable
                 multiple
               />
             </v-col>
             <v-col cols="12" class="pb-0">
-              <g-combobox
-                v-model="editedItem.event"
-                show-header
-                show-details
-                :label="t('Event')"
-                :hint="t('RegexHint')"
-                clearable
-                multiple
-              />
+              <g-combobox v-model="editedItem.event" show-header show-details :label="t('Event')" clearable multiple />
             </v-col>
             <v-col cols="12" class="pb-0">
               <g-combobox
@@ -130,32 +121,15 @@
                 show-header
                 show-details
                 :label="t('Description')"
-                :hint="t('RegexHint')"
                 clearable
                 multiple
               />
             </v-col>
             <v-col cols="12" class="pb-0">
-              <g-combobox
-                v-model="editedItem.value"
-                show-header
-                show-details
-                :label="t('Value')"
-                :hint="t('RegexHint')"
-                clearable
-                multiple
-              />
+              <g-combobox v-model="editedItem.value" show-header show-details :label="t('Value')" clearable multiple />
             </v-col>
             <v-col v-for="col in columns" :key="col" cols="12" class="pb-0">
-              <g-combobox
-                v-model="editedItem[col]"
-                show-header
-                show-details
-                :label="col"
-                :hint="t('RegexHint')"
-                clearable
-                multiple
-              />
+              <g-combobox v-model="editedItem[col]" show-header show-details :label="col" clearable multiple />
             </v-col>
           </v-row>
         </v-card-text>
