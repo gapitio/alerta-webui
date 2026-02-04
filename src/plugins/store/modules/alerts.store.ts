@@ -145,7 +145,9 @@ const actions: Actions & ActionTree<State, RootState> = {
     for (const key of Object.keys(state.filter)) {
       if (specialKeys.includes(key) || !state.filter[key]) continue
       else if (typeof state.filter[key] === 'object')
-        state.filter[key].map((k: any) => params.append(key, notWildcards.includes(key) ? k : '~' + k))
+        state.filter[key].map((k: any) =>
+          params.append(key, notWildcards.includes(key) ? k : ('~' + k).replace('~~', '~'))
+        )
       else if (notWildcards.includes(key)) params.append(key, state.filter[key])
       else params.append(key, `~${state.filter[key]}`)
     }
@@ -217,7 +219,9 @@ const actions: Actions & ActionTree<State, RootState> = {
     for (const key of Object.keys(state.historyFilter)) {
       if (specialKeys.includes(key) || !state.historyFilter[key]) continue
       else if (typeof state.historyFilter[key] === 'object')
-        state.historyFilter[key].map((k: any) => params.append(key, notWildcards.includes(key) ? k : '~' + k))
+        state.historyFilter[key].map((k: any) =>
+          params.append(key, notWildcards.includes(key) ? k : ('~' + k).replace('~~', '~'))
+        )
       else if (notWildcards.includes(key)) params.append(key, state.historyFilter[key])
       else params.append(key, `~${state.historyFilter[key]}`)
     }
