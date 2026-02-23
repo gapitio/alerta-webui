@@ -89,11 +89,6 @@
             &nbsp;
             {{ t('History') }}
           </v-tab>
-          <v-tab value="data">
-            <v-icon icon="analytics" size="x-large" />
-            &nbsp;
-            {{ t('Data') }}
-          </v-tab>
         </v-tabs>
         <v-tabs-window v-model="active">
           <v-tabs-window-item
@@ -107,13 +102,6 @@
 
           <v-tabs-window-item value="history" :transition="false" :reverse-transition="false">
             <history :alert="item" />
-          </v-tabs-window-item>
-          <v-tabs-window-item value="data" :transition="false" :reverse-transition="false">
-            <v-card color="" class="mx-1" style="overflow-x: auto" flat>
-              <v-card-text>
-                <span class="console-text">{{ item?.rawData || 'no raw data' }}</span>
-              </v-card-text>
-            </v-card>
           </v-tabs-window-item>
         </v-tabs-window>
       </v-card>
