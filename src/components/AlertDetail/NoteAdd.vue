@@ -2,6 +2,11 @@
   <v-container fluid>
     <v-row align="start">
       <v-col cols="auto">
+        <v-btn variant="outlined" @click="() => (showMore = !showMore)">
+          {{ t(`Show${showMore ? 'Less' : 'More'}`) }}
+        </v-btn>
+      </v-col>
+      <v-col cols="auto">
         <v-btn v-show="!isWatched" prepend-icon="visibility" variant="outlined" @click="watchAlert">
           {{ t('Watch') }}
         </v-btn>
@@ -117,6 +122,9 @@ const isAcked = computed(() => ['ack', 'ACKED'].includes(props.status))
 const isShelved = computed(() => ['shelved', 'SHLVD'].includes(props.status))
 const isClosed = computed(() => props.status == 'closed')
 const isAlertAlarmModel = computed(() => !store.getters.getConfig('alarm_model').name.includes('ISA'))
+const showMore = ref(false)
+
+watch(showMore, val => emits('show', val))
 
 const actions: Action[] = [
   {title: t('Open'), value: 'open', action: 'take-action', show: () => isClosed.value},
@@ -135,6 +143,7 @@ const actions: Action[] = [
 
 const filteredActions = computed(() => actions.filter(a => (a.show === undefined ? true : a.show())))
 const emits = defineEmits([
+  'show',
   'take-action',
   'ack-alert',
   'shelve-alert',

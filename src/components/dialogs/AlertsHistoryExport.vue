@@ -103,7 +103,6 @@ const defaultKeys: Key[] = [
   'origin',
   'customer',
   'severity',
-  'group',
   'status',
   'value',
   'text',
@@ -131,7 +130,6 @@ const customKeys: (Key | 'attributes.Full_tag')[] = [
   'value',
   'id',
   'type',
-  'group',
   'origin',
   'tags'
 ]

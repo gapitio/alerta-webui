@@ -7,7 +7,6 @@ export interface Blackout {
   endTime: string
   environment: string
   event: string | null
-  group: string | null
   href?: string
   id?: string
   origin: string | null

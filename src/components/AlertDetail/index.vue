@@ -89,11 +89,6 @@
             &nbsp;
             {{ t('History') }}
           </v-tab>
-          <v-tab value="data">
-            <v-icon icon="analytics" size="x-large" />
-            &nbsp;
-            {{ t('Data') }}
-          </v-tab>
         </v-tabs>
         <v-tabs-window v-model="active">
           <v-tabs-window-item
@@ -102,18 +97,11 @@
             :reverse-transition="false"
             style="max-height: calc(100vh - calc(74px + 64px + 48px + 48px + 80px)); overflow: auto"
           >
-            <detail />
+            <detail :showMore="showMore" />
           </v-tabs-window-item>
 
           <v-tabs-window-item value="history" :transition="false" :reverse-transition="false">
             <history :alert="item" />
-          </v-tabs-window-item>
-          <v-tabs-window-item value="data" :transition="false" :reverse-transition="false">
-            <v-card color="" class="mx-1" style="overflow-x: auto" flat>
-              <v-card-text>
-                <span class="console-text">{{ item?.rawData || 'no raw data' }}</span>
-              </v-card-text>
-            </v-card>
           </v-tabs-window-item>
         </v-tabs-window>
       </v-card>
@@ -129,6 +117,7 @@
         @unwatch-alert="unwatchAlert"
         @add-note="addNote"
         @delete-alert="deleteAlert"
+        @show="show"
       />
     </v-card>
   </v-card>
@@ -291,6 +280,8 @@ const deleteAlert = debounce(
   200,
   {leading: true, trailing: false}
 )
+const showMore = ref(false)
+const show = (val: boolean) => (showMore.value = val)
 
 function clipboardCopy(item: Alert | null) {
   copyIconText.value = t('Copied')

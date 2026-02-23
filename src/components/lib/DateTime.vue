@@ -1,5 +1,6 @@
 <template>
-  <v-tooltip 
+  <v-tooltip
+    :disabled="hideTooltip"
     :text="filters.date(value, displayMode, store.getters.getConfig('dates').longDate)"
     location="top"
   >
@@ -24,7 +25,7 @@ import { useStore } from 'vuex'
 const store: Store = useStore()
 const filters = useFilters()
 
-const compProps = defineProps<{value: string, format?: 'mediumDate' | 'longDate' | 'shortTime', noBreak?: boolean}>()
+const compProps = defineProps<{value: string, format?: 'mediumDate' | 'longDate' | 'shortTime', noBreak?: boolean, hideTooltip?: boolean}>()
 
 const format = computed(() => compProps.format ?? 'mediumDate')
 const displayMode = computed(() => store.getters.getPreference('timezone'))

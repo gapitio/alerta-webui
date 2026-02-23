@@ -13,7 +13,6 @@ export type NotificationRule = {
   environment: string
   event: string | null
   excludedTags: Tag[]
-  group: string | null
   groupIds: string[]
   href?: string
   id?: string
@@ -39,7 +38,6 @@ export type Filter = {
   service?: string[]
   resource?: string[]
   event?: string[]
-  group?: string[]
   text?: string[]
 }
 

@@ -18,7 +18,6 @@ const state: State = {
   environments: [],
   historyEnvironments: {},
   services: [],
-  groups: [],
   tags: [],
 
   alert: null,
@@ -43,7 +42,6 @@ const state: State = {
     status: ['open', 'ack'],
     customer: null,
     service: null,
-    group: null,
     dateRange: {}
   },
 
@@ -108,9 +106,6 @@ const mutations: Mutations = {
   SET_SERVICES(state, services) {
     state.services = services
   },
-  SET_GROUPS(state, groups) {
-    state.groups = groups
-  },
   SET_TAGS(state, tags) {
     state.tags = tags
   },
@@ -157,8 +152,6 @@ const actions: Actions & ActionTree<State, RootState> = {
     state.filter.status && state.filter.status.map(st => params.append('status', st))
     state.filter.customer && state.filter.customer.map(c => params.append('customer', c))
     // state.filter.service && state.filter.service.map(s => params.append('service', s))
-    state.filter.group && state.filter.group.map(g => params.append('group', g))
-
     // add server-side sorting
     let sortBy = state.pagination.sortBy
     if (sortBy?.length === 0 || !sortBy) {
@@ -336,8 +329,6 @@ const actions: Actions & ActionTree<State, RootState> = {
     state.filter.status && state.filter.status.map(st => params.append('status', st))
     state.filter.customer && state.filter.customer.map(c => params.append('customer', c))
     state.filter.service && state.filter.service.map(s => params.append('service', s))
-    state.filter.group && state.filter.group.map(g => params.append('group', g))
-
     // apply any date/time filters
     const dateRange = state.filter.dateRange
     if (dateRange.select) {
@@ -355,9 +346,6 @@ const actions: Actions & ActionTree<State, RootState> = {
   },
   getServices({commit}) {
     return AlertsApi.getServices({}).then(({services}) => commit('SET_SERVICES', services))
-  },
-  getGroups({commit}) {
-    return AlertsApi.getGroups({}).then(({groups}) => commit('SET_GROUPS', groups))
   },
   getTags({commit}) {
     return AlertsApi.getTags({}).then(({tags}) => commit('SET_TAGS', tags))
@@ -416,9 +404,6 @@ const getters: Getters = {
   },
   services: state => {
     return [...new Set(state.services.map(s => s.service).sort())]
-  },
-  groups: state => {
-    return [...new Set(state.groups.map(g => g.group).sort())]
   },
   tags: state => {
     return [...new Set(state.tags.map(t => t.tag).sort())]

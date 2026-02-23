@@ -53,10 +53,6 @@ interface Count {
   environment: string
 }
 
-interface Group extends Count {
-  group: string
-}
-
 interface Tag extends Count {
   tag: string
 }
@@ -102,7 +98,6 @@ export interface History {
   origin: string
   customer: string
   severity: string
-  group: string
   status: string
   value: string
   text: string
@@ -124,7 +119,6 @@ export interface Alert {
   correlate: string[]
   status: string
   service: string[]
-  group: string
   value: string
   text: string
   tags: string[]
@@ -155,7 +149,6 @@ export interface Filter {
   severity?: string[] | null
   customer?: string[] | null
   service?: string[] | null
-  group?: string[] | null
   dateRange: DateRange
   [key: string]: any
 }
@@ -173,7 +166,6 @@ export interface State {
   environments: Environment[]
   historyEnvironments: EnvironmentsCount
   services: Service[]
-  groups: Group[]
   tags: Tag[]
 
   alert: Alert | null
@@ -206,7 +198,6 @@ export type Mutations<S = State> = {
   SET_NOTES(state: S, notes: Note[]): void
   SET_ENVIRONMENTS(state: S, environments: Environment[]): void
   SET_SERVICES(state: S, services: Service[]): void
-  SET_GROUPS(state: S, groups: Group[]): void
   SET_TAGS(state: S, tags: Tag[]): void
   SET_SETTING<T extends keyof S>(state: S, {s, v}: {s: T; v: S[T]}): void
   SET_FILTER(state: S, filter: Partial<Filter>): void
@@ -247,7 +238,6 @@ export type Actions<S = State> = {
   deleteAlerts(_: AugmentedActionContext, alertIds: string[]): Promise<any>
   getEnvironments({commit, state}: AugmentedActionContext): void
   getServices({commit}: AugmentedActionContext): void
-  getGroups({commit}: AugmentedActionContext): void
   getTags({commit}: AugmentedActionContext): void
   toggle<T extends keyof S>({commit}: AugmentedActionContext, [s, v]: [T, S[T]]): void
   set<T extends keyof S>({commit}: AugmentedActionContext, [s, v]: [T, S[T]]): void
@@ -265,7 +255,6 @@ export type Getters = {
   counts(state: State): {All: number; [key: string]: number}
   historyCounts(state: State): EnvironmentsCount
   services(state: State): string[]
-  groups(state: State): string[]
   tags(state: State): string[]
   getHash(state: State): string
   getHistoryHash(state: State): string

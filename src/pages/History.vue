@@ -60,7 +60,7 @@
   <v-data-table-server
     v-model:sort-by="pagination.sortBy"
     v-model:items-per-page="pagination.itemsPerPage"
-    :headers="headersMap"
+    :headers="customHeaders"
     fixed-header
     style="max-height: calc(99vh - calc(48px + 74px + 64px))"
     :items="history"
@@ -151,23 +151,49 @@ const userQueries = computed(() =>
   store.getters.getUserQueries.map(q => ({title: q.q, value: q.q, props: {appendIcon: 'delete'}}))
 )
 
-const headersMap = computed(() => [
+const headersMap = computed(() => ({
+  id: {title: t('AlertId'), key: 'id'},
+  resource: {title: t('Resource'), key: 'resource'},
+  event: {title: t('Event'), key: 'event'},
+  environment: {title: t('Environment'), key: 'environment'},
+  severity: {title: t('Severity'), key: 'severity'},
+  correlate: {title: t('Correlate'), key: 'correlate'},
+  status: {title: t('Status'), key: 'status'},
+  service: {title: t('Service'), key: 'service'},
+  value: {title: t('Value'), value: 'value'},
+  tags: {title: t('Tags'), key: 'tags'},
+  attributes: {title: t('Attribute'), key: 'attributes'},
+  origin: {title: t('Origin'), key: 'origin'},
+  timeout: {title: t('Timeout'), key: 'timeout'},
+  timeoutLeft: {title: t('TimeoutLeft'), key: 'timeoutLeft'},
+  customer: {title: t('Customer'), key: 'customer'},
+  duplicateCount: {title: t('Dupl'), key: 'duplicateCount'},
+  repeat: {title: t('Repeat'), key: 'repeat'},
+  previousSeverity: {title: t('PrevSeverity'), key: 'previousSeverity'},
+  trendIndication: {title: t('TrendIndication'), key: 'trendIndication'},
+  receiveTime: {title: t('ReceiveTime'), key: 'receiveTime'},
+  duration: {title: t('Duration'), key: 'duration'},
+  lastReceiveId: {title: t('LastReceiveId'), key: 'lastReceiveId', headerProps: {class: 'text-no-wrap'}},
+  lastReceiveTime: {sortable: false},
+  text: {title: t('Description'), key: 'text'},
+  note: {title: t('LastNote'), key: 'note', sortable: false}
+}))
+
+const defaultHeaders = computed(() => [
   {title: t('UpdateTime'), key: 'updateTime', sortable: false},
-  {title: t('Severity'), key: 'severity', sortable: false},
-  {title: t('Status'), key: 'status', sortable: false},
-  {title: t('Environment'), key: 'environment', sortable: false},
-  {title: t('Resource'), key: 'resource', sortable: false},
-  {title: t('Event'), key: 'event', sortable: false},
-  {title: t('Service'), key: 'service', sortable: false},
-  {title: 'FullTag', value: 'attributes.Full_tag', sortable: false},
-  {title: t('Description'), key: 'text', sortable: false},
-  {title: t('Value'), value: 'value', sortable: false},
-  {title: t('AlertId'), key: 'id', sortable: false},
-  {title: t('Type'), key: 'type', sortable: false},
-  {title: t('Group'), key: 'group', sortable: false},
-  {title: t('Origin'), key: 'origin', sortable: false},
-  {title: t('Tags'), key: 'tags', sortable: false}
+  {title: t('Type'), key: 'type', sortable: false}
 ])
+
+const customHeaders = computed(() => {
+  const configHeaders = store.state.config.columns.map(
+    c =>
+      headersMap.value[c as keyof typeof headersMap.value] ?? {
+        title: c.charAt(0).toUpperCase() + c.slice(1),
+        value: 'attributes.' + c
+      }
+  )
+  return [...new Set([...defaultHeaders.value, ...configHeaders])]
+})
 
 function setPagination(value: Pagination) {
   store.dispatch('alerts/setHistoryPagination', value)

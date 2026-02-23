@@ -23,58 +23,60 @@
   </v-container>
 
   <v-container v-if="item?.id" fluid>
-    <v-row v-for="detail in alertDetails" :key="detail.text" dense>
-      <v-col cols="3" class="text-grey">
-        {{ detail.text }}
-      </v-col>
-      <v-col v-if="detail.value === 'severity'" cols="9">
-        <v-chip label size="small" class="chip" :class="[item.previousSeverity]">
-          {{ filters.capitalize(item?.previousSeverity) }}
-        </v-chip>
-        &nbsp;&rarr;&nbsp;
-        <v-chip label size="small" class="chip" :class="[item.severity]">
-          {{ filters.capitalize(item?.severity) }}
-        </v-chip>
-      </v-col>
-      <v-col v-else-if="['tags', 'customTags'].includes(detail.value)" cols="9">
-        <v-chip
-          v-for="tag in item[detail.value]"
-          :key="tag"
-          class="chip"
-          variant="flat"
-          @click="queryBy(detail.value, tag)"
-        >
-          {{ filters.capitalize(tag) }}
-        </v-chip>
-      </v-col>
-      <v-col v-else-if="detail.value.includes('Time')" cols="9">
-        <date-time v-if="item[detail.value]" :value="item[detail.value]" format="longDate" />
-      </v-col>
-      <v-col v-else-if="detail.searchable" cols="9">
-        <div v-if="typeof item[detail.value] === 'object'">
-          <v-row style="width: fit-content" dense>
-            <v-col
-              v-for="i in item[detail.value]"
-              :key="i"
-              cols="auto"
-              class="clickable"
-              @click="queryBy(detail.value, item[detail.value])"
-            >
-              {{ i }}
-            </v-col>
-          </v-row>
-        </div>
-        <span v-else class="clickable" @click="queryBy(detail.value, item[detail.value])">
+    <template v-for="detail in alertDetails" :key="detail.text">
+      <v-row v-if="!detail.more || props.showMore" dense>
+        <v-col cols="3" class="text-grey">
+          {{ detail.text }}
+        </v-col>
+        <v-col v-if="detail.value === 'severity'" cols="9">
+          <v-chip label size="small" class="chip" :class="[item.previousSeverity]">
+            {{ filters.capitalize(item?.previousSeverity) }}
+          </v-chip>
+          &nbsp;&rarr;&nbsp;
+          <v-chip label size="small" class="chip" :class="[item.severity]">
+            {{ filters.capitalize(item?.severity) }}
+          </v-chip>
+        </v-col>
+        <v-col v-else-if="['tags', 'customTags'].includes(detail.value)" cols="9">
+          <v-chip
+            v-for="tag in item[detail.value]"
+            :key="tag"
+            class="chip"
+            variant="flat"
+            @click="queryBy(detail.value, tag)"
+          >
+            {{ filters.capitalize(tag) }}
+          </v-chip>
+        </v-col>
+        <v-col v-else-if="detail.value.includes('Time')" cols="auto">
+          <date-time v-if="item[detail.value]" :value="item[detail.value]" hide-tooltip no-break format="longDate" />
+        </v-col>
+        <v-col v-else-if="detail.searchable" cols="9">
+          <div v-if="typeof item[detail.value] === 'object'">
+            <v-row style="width: fit-content" dense>
+              <v-col
+                v-for="i in item[detail.value]"
+                :key="i"
+                cols="auto"
+                class="clickable"
+                @click="queryBy(detail.value, item[detail.value])"
+              >
+                {{ i }}
+              </v-col>
+            </v-row>
+          </div>
+          <span v-else class="clickable" @click="queryBy(detail.value, item[detail.value])">
+            {{ item[detail.value] }}
+          </span>
+        </v-col>
+        <v-col v-else-if="detail.value == 'text'" cols="9" style="white-space: pre-wrap">
           {{ item[detail.value] }}
-        </span>
-      </v-col>
-      <v-col v-else-if="detail.value == 'text'" cols="9" style="white-space: pre-wrap">
-        {{ item[detail.value] }}
-      </v-col>
-      <v-col v-else cols="9">
-        {{ item[detail.value] }}
-      </v-col>
-    </v-row>
+        </v-col>
+        <v-col v-else cols="9">
+          {{ item[detail.value] }}
+        </v-col>
+      </v-row>
+    </template>
     <v-row dense>
       <v-col>
         <span> {{ t('Attributes') }}</span>
@@ -106,31 +108,30 @@ const router = useRouter()
 const {t} = useI18n()
 const filters = useFilters()
 
-const alertDetails: Ref<{text: string; value: keyof Alert; searchable?: boolean}[]> = ref([
-  {text: t('AlertId'), value: 'id'},
-  {text: t('LastReceiveAlertId'), value: 'lastReceiveId'},
-  {text: t('CreateTime'), value: 'createTime'},
-  {text: t('ReceiveTime'), value: 'receiveTime'},
-  {text: t('LastReceiveTime'), value: 'lastReceiveTime'},
-  {text: t('Service'), value: 'service', searchable: true},
-  {text: t('Environment'), value: 'environment', searchable: true},
-  {text: t('Resource'), value: 'resource', searchable: true},
-  {text: t('Event'), value: 'event', searchable: true},
-  {text: t('Correlate'), value: 'correlate', searchable: true},
-  {text: t('Group'), value: 'group', searchable: true},
+const alertDetails: Ref<{text: string; value: keyof Alert; searchable?: boolean; more?: boolean}[]> = ref([
   {text: t('Severity'), value: 'severity'},
+  {text: t('Description'), value: 'text'},
+  {text: t('Tags'), value: 'tags', searchable: true},
   {text: t('Status'), value: 'status'},
   {text: t('Value'), value: 'value'},
-  {text: t('Text'), value: 'text'},
-  {text: t('TrendIndication'), value: 'trendIndication'},
-  {text: t('Timeout'), value: 'timeout'},
-  {text: t('Type'), value: 'type'},
   {text: t('DuplicateCount'), value: 'duplicateCount'},
-  {text: t('Repeat'), value: 'repeat'},
+  {text: t('Event'), value: 'event', searchable: true},
   {text: t('Origin'), value: 'origin', searchable: true},
-  {text: t('Tags'), value: 'tags', searchable: true},
-  {text: t('CustomTags'), value: 'customTags', searchable: true}
+  {text: t('Environment'), value: 'environment', searchable: true},
+  {text: t('Resource'), value: 'resource', searchable: true},
+  {text: t('Service'), value: 'service', searchable: true},
+  {text: t('ReceiveTime'), value: 'receiveTime'},
+  {text: t('CreateTime'), value: 'createTime', more: true},
+  {text: t('LastReceiveTime'), value: 'lastReceiveTime', more: true},
+  {text: t('AlertId'), value: 'id', more: true},
+  {text: t('LastReceiveAlertId'), value: 'lastReceiveId', more: true},
+  {text: t('Timeout'), value: 'timeout', more: true},
+  {text: t('Correlate'), value: 'correlate', searchable: true, more: true},
+  {text: t('Type'), value: 'type', more: true},
+  {text: t('Watchers'), value: 'customTags', searchable: true, more: true}
 ])
+
+const props = defineProps({showMore: {type: Boolean, required: true}})
 
 const item = computed(() => store.state.alerts.alert)
 const notes = computed(() => store.state.alerts.notes)

@@ -41,6 +41,8 @@ export const en = {
   Panel: 'Panel',
   Hide: 'Hide',
   Show: 'Show',
+  ShowMore: 'Show-More',
+  ShowLess: 'Show-Less',
   DownloadAsCsv: 'Download as CSV',
 
   // Groups store

@@ -73,15 +73,6 @@
                 multiple
               />
             </v-col>
-            <v-col cols="12">
-              <g-combobox
-                v-model.trim="editedItem.group"
-                show-header
-                :items="currentGroups"
-                :label="t('Group')"
-                clearable
-              />
-            </v-col>
 
             <v-col cols="12">
               <group-edit v-model="editedItem.tags" :items="tagItems" :header="t('AlertTags')" />
@@ -141,7 +132,6 @@ const defaultItem: EscalationRule = {
   service: [],
   resource: null,
   event: null,
-  group: null,
   startTime: '',
   endTime: '',
   time: '',
@@ -243,7 +233,6 @@ const allowedCustomers = computed(() => store.getters['customers/customers'])
 const allowedEnvironments = computed(() => store.getters['alerts/environments']())
 const currentServices = computed(() => store.getters['alerts/services'])
 const currentTags = computed(() => store.getters['alerts/tags'])
-const currentGroups = computed(() => store.getters['alerts/groups'])
 const severities = computed(() => Object.keys(store.getters.getConfig('alarm_model').severity))
 const statuses = computed(() => Object.keys(store.getters.getConfig('alarm_model').status))
 const tagItems = computed(() => ({
@@ -274,7 +263,6 @@ async function save() {
         service: editedItem.value.service,
         resource: editedItem.value.resource,
         event: editedItem.value.event,
-        group: editedItem.value.group,
         tags: editedItem.value.tags,
         excludedTags: editedItem.value.excludedTags,
         time: editedItem.value.timeObj.time
