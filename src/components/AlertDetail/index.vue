@@ -102,7 +102,7 @@
             :reverse-transition="false"
             style="max-height: calc(100vh - calc(74px + 64px + 48px + 48px + 80px)); overflow: auto"
           >
-            <detail />
+            <detail :showMore="showMore" />
           </v-tabs-window-item>
 
           <v-tabs-window-item value="history" :transition="false" :reverse-transition="false">
@@ -129,6 +129,7 @@
         @unwatch-alert="unwatchAlert"
         @add-note="addNote"
         @delete-alert="deleteAlert"
+        @show="show"
       />
     </v-card>
   </v-card>
@@ -291,6 +292,8 @@ const deleteAlert = debounce(
   200,
   {leading: true, trailing: false}
 )
+const showMore = ref(false)
+const show = (val: boolean) => (showMore.value = val)
 
 function clipboardCopy(item: Alert | null) {
   copyIconText.value = t('Copied')
