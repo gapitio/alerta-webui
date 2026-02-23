@@ -110,12 +110,6 @@ export default {
     }
     return api.get('/services', config)
   },
-  getGroups(query: object) {
-    const config = {
-      params: query
-    }
-    return api.get('/alerts/groups', config)
-  },
   getTags(query: object) {
     const config = {
       params: query

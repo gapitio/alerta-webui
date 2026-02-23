@@ -55,10 +55,6 @@
             <v-col cols="12">
               <g-combobox v-model="editedItem.event" show-header :label="t('Event')" clearable multiple />
             </v-col>
-
-            <v-col cols="12">
-              <g-combobox v-model="editedItem.group" show-header :label="t('Group')" clearable multiple />
-            </v-col>
           </v-row>
         </v-card-text>
 

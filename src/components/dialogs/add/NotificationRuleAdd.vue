@@ -154,15 +154,6 @@
                 multiple
               />
             </v-col>
-            <v-col cols="12">
-              <g-combobox
-                v-model.trim="editedItem.group"
-                show-header
-                :items="currentGroups"
-                :label="t('Group')"
-                clearable
-              />
-            </v-col>
 
             <v-col cols="12">
               <group-edit v-model="editedItem.tags" :items="tagItems" :header="t('AlertTags')" />
@@ -230,7 +221,6 @@ const defaultItem: NotificationRule = {
   service: [],
   resource: null,
   event: null,
-  group: null,
   startTime: '',
   delayTime: null,
   reactivate: null,
@@ -367,7 +357,6 @@ const allowedEnvironments = computed(() => store.getters['alerts/environments'](
 const currentServices = computed(() => store.getters['alerts/services'])
 const currentChannelsIds = computed(() => store.getters['notificationChannels/ids'])
 const currentTags = computed(() => store.getters['alerts/tags'])
-const currentGroups = computed(() => store.getters['alerts/groups'])
 const emails = computed(() => store.state.users.emails)
 const groups = computed(() => store.state.notificationGroups.items)
 const severities = computed(() => Object.keys(store.getters.getConfig('alarm_model').severity))
@@ -408,7 +397,6 @@ async function save() {
         service: editedItem.value.service,
         resource: editedItem.value.resource,
         event: editedItem.value.event,
-        group: editedItem.value.group,
         tags: editedItem.value.tags,
         excludedTags: editedItem.value.excludedTags,
         startTime: sTimeStr,

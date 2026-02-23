@@ -102,7 +102,6 @@ const defaultKeys: Key[] = [
   'duplicateCount',
   'environment',
   'event',
-  'group',
   'href',
   'id',
   'lastReceiveId',

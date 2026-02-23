@@ -244,7 +244,6 @@ const headers = ref<
   {title: t('Service'), key: 'service', info: t('EscalationServicesInfo')},
   {title: t('Resource'), key: 'resource', info: t('EscalationResourceInfo')},
   {title: t('Event'), key: 'event', info: t('EscalationEventInfo')},
-  {title: t('Group'), key: 'group', info: t('EscalationGroupInfo')},
   {title: t('Tags'), key: 'tags'},
   {title: t('ExcludedTags'), key: 'excludedTags', info: t('ExcludedTagsInfo')},
   {title: t('User'), key: 'user'},

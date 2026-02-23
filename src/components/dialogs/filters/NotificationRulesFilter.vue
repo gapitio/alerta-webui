@@ -71,10 +71,6 @@
             </v-col>
 
             <v-col cols="12">
-              <g-combobox v-model="editedItem.group" show-header :label="t('Group')" clearable multiple />
-            </v-col>
-
-            <v-col cols="12">
               <g-combobox v-model="editedItem.text" show-header :label="t('Text')" clearable multiple />
             </v-col>
           </v-row>

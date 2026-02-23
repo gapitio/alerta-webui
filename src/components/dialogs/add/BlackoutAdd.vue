@@ -70,15 +70,6 @@
                 multiple
               />
             </v-col>
-            <v-col cols="12">
-              <g-combobox
-                v-model.trim="editedItem.group"
-                show-header
-                :items="currentGroups"
-                :label="t('Group')"
-                clearable
-              />
-            </v-col>
 
             <v-col cols="12">
               <g-select v-model="editedItem.tags" :items="currentTags" multiple show-header :label="t('Tags')" />
@@ -131,7 +122,6 @@ const defaultItem: Blackout = {
   service: [],
   resource: null,
   event: null,
-  group: null,
   startTime: '',
   endTime: '',
   text: '',
@@ -250,13 +240,11 @@ const times = computed(() =>
 const allowedCustomers = computed(() => store.getters['customers/customers'])
 const allowedEnvironments = computed(() => store.getters['alerts/environments']())
 const currentServices = computed(() => store.getters['alerts/services'])
-const currentGroups = computed(() => store.getters['alerts/groups'])
 const currentTags = computed(() => store.getters['alerts/tags'])
 
 const getData = () => {
   store.dispatch('alerts/getEnvironments')
   store.dispatch('alerts/getServices')
-  store.dispatch('alerts/getGroups')
   store.dispatch('alerts/getTags')
 }
 getData()
@@ -271,7 +259,6 @@ async function save() {
         service: editedItem.value.service,
         resource: editedItem.value.resource,
         event: editedItem.value.event,
-        group: editedItem.value.group,
         tags: editedItem.value.tags,
         origin: editedItem.value.origin,
         startTime: toISODate(editedStartDate.value, editedItem.value.period.startTime),

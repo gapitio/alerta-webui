@@ -134,7 +134,6 @@ const headers = ref<{title: string; key: keyof Blackout | 'actions'; info?: stri
   {title: t('Service'), key: 'service', info: t('ServicesInfo')},
   {title: t('Resource'), key: 'resource', info: t('ResourceInfo')},
   {title: t('Event'), key: 'event', info: t('EventInfo')},
-  {title: t('Group'), key: 'group', info: t('GroupInfo')},
   {title: t('Tags'), key: 'tags'},
   {title: t('User'), key: 'user'},
   {title: 'Description', key: 'text'},

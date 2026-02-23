@@ -24,7 +24,6 @@ export interface EscalationRule {
   triggers: Trigger[]
   resource: string | null
   event: string | null
-  group: string | null
   tags: Tag[]
   excludedTags: Tag[]
   customer: string | null
@@ -40,7 +39,6 @@ export type Filter = {
   service?: string[]
   resource?: string[]
   event?: string[]
-  group?: string[]
   user?: string[]
   tags?: string[]
 }

@@ -311,7 +311,6 @@ const headers = ref([
   {title: t('Service'), key: 'service', info: t('ServicesInfo')},
   {title: t('Resource'), key: 'resource', info: t('ResourceInfo')},
   {title: t('Event'), key: 'event', info: t('EventInfo')},
-  {title: t('Group'), key: 'group', info: t('GroupInfo')},
   {title: t('Tags'), key: 'tags'},
   {title: t('ExcludedTags'), key: 'excludedTags'},
   {title: t('User'), key: 'user'},
