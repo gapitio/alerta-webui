@@ -141,7 +141,7 @@ const actions: Actions & ActionTree<State, RootState> = {
     const params = new URLSearchParams(state.query)
 
     const specialKeys = ['environment', 'environments', 'dateRange', 'search']
-    const notWildcards = ['duplicateCount', 'service', 'tags', 'tag']
+    const notWildcards = ['duplicateCount', 'service', 'tags', 'tag', 'status']
     for (const key of Object.keys(state.filter)) {
       if (specialKeys.includes(key) || !state.filter[key]) continue
       else if (typeof state.filter[key] === 'object')
@@ -215,7 +215,7 @@ const actions: Actions & ActionTree<State, RootState> = {
     const params = new URLSearchParams(state.query)
 
     const specialKeys = ['environment', 'environments', 'dateRange', 'search']
-    const notWildcards = ['duplicateCount', 'service', 'tags', 'tag']
+    const notWildcards = ['duplicateCount', 'service', 'tags', 'tag', 'status']
     for (const key of Object.keys(state.historyFilter)) {
       if (specialKeys.includes(key) || !state.historyFilter[key]) continue
       else if (typeof state.historyFilter[key] === 'object')
