@@ -24,32 +24,19 @@
         <v-tooltip location="bottom" activator="parent" :text="t('Unwatch')" />
       </v-btn>
 
-      <v-btn
-        v-show="!isAcked(item?.status!)"
-        :disabled="!isOpen(item?.status!)"
-        variant="text"
-        icon
-        @click="ackAlert(item?.id!, '')"
-      >
-        <v-icon icon="check" />
-        <v-tooltip location="bottom" activator="parent" :text="t('Ack')" />
-      </v-btn>
+      <timeout-action :hide="isAcked(item?.status!)" :disabled="!isOpen(item?.status!)" action="ack" :id="item?.id!" />
 
       <v-btn v-show="isAcked(item?.status!)" variant="text" icon @click="takeAction(item?.id!, 'unack', '')">
         <v-icon icon="undo" />
         <v-tooltip location="bottom" activator="parent" :text="t('Unack')" />
       </v-btn>
 
-      <v-btn
-        v-show="!isShelved(item?.status!)"
+      <timeout-action
+        :hide="isShelved(item?.status!)"
         :disabled="!isOpen(item?.status!) && !isAcked(item?.status!)"
-        variant="text"
-        icon
-        @click="shelveAlert(item?.id!)"
-      >
-        <v-icon icon="schedule" />
-        <v-tooltip location="bottom" activator="parent" :text="t('Shelve')" />
-      </v-btn>
+        action="shelve"
+        :id="item?.id!"
+      />
 
       <v-btn v-show="isShelved(item?.status!)" variant="text" icon @click="takeAction(item?.id!, 'unshelve')">
         <v-icon icon="restore" />
