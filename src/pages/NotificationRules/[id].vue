@@ -93,13 +93,12 @@
 
 <script setup lang="ts">
 import {useFilters} from '@/filters'
-import router from '@/plugins/router'
 import type {Store} from '@/plugins/store/types'
 import type {Pagination} from '@/plugins/store/types/alerts-types'
 import type {NotificationRule} from '@/plugins/store/types/notificationRule-types'
 import {computed, ref} from 'vue'
 import {useI18n} from 'vue-i18n'
-import {useRoute} from 'vue-router'
+import {useRoute, useRouter} from 'vue-router'
 import {useStore} from 'vuex'
 
 definePage({
@@ -112,6 +111,7 @@ definePage({
 const {t} = useI18n()
 const store: Store = useStore()
 const route = useRoute()
+const router = useRouter()
 const filters = useFilters()
 
 const showAllData = ref(false)
