@@ -13,7 +13,7 @@ import { version } from './package.json'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: process.env.BASE_URL,
+  base: './',
   plugins: [
     VueRouter(),
     Vue({
