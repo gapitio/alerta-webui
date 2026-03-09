@@ -9,7 +9,7 @@ type AuthenticateOptionsFix = AuthenticateOptions & {tokenPath: string}
 
 export function registerVueAuth(app: App) {
   const config = app.config.globalProperties.$config
-  const basePath = __BASE_URL__ ?? '/'
+  const basePath = config.base ?? '/'
   const options: AuthenticateOptionsFix = {
     tokenPath: 'token',
     tokenName: 'token',
