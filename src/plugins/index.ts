@@ -6,7 +6,7 @@
 
 // Plugins
 import vuetify from './vuetify'
-import router, {registerBefore} from './router'
+import registerRouter, {registerBefore} from './router'
 import i18n from './i18n'
 import store from './store'
 import VueAxios from 'vue-axios'
@@ -20,7 +20,9 @@ import type {VueAuthenticateFix} from './store/modules/auth.store'
 import {makeInterceptors} from '@/services/interceptors'
 
 export function registerPlugins(app: App) {
-  app.use(vuetify).use(router).use(i18n).use(store).use(VueAxios, axios)
+  app.use(vuetify)
+  const router = registerRouter(app)
+  app.use(i18n).use(store).use(VueAxios, axios)
   const config = app.config.globalProperties.$config
   registerVueAuth(app)
   axios.defaults.baseURL = config.endpoint
@@ -31,5 +33,5 @@ export function registerPlugins(app: App) {
   store.dispatch('updateConfig', config)
   store.dispatch('alerts/setFilter', config.filter)
   store.registerModule('auth', makeStore(app.config.globalProperties.$auth as VueAuthenticateFix))
+  registerBefore(store, router)
 }
-registerBefore(store)
