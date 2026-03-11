@@ -23,8 +23,24 @@
         <v-icon icon="visibility_off" />
         <v-tooltip location="bottom" activator="parent" :text="t('Unwatch')" />
       </v-btn>
-
-      <timeout-action :hide="isAcked(item?.status!)" :disabled="!isOpen(item?.status!)" action="ack" :id="item?.id!" />
+      <timeout-action
+        v-if="ackIsTimeout"
+        :hide="isAcked(item?.status!)"
+        :disabled="!isOpen(item?.status!)"
+        action="ack"
+        :id="item?.id!"
+      />
+      <v-btn
+        v-else
+        v-show="!isAcked(item?.status!)"
+        :disabled="!isOpen(item?.status!)"
+        variant="text"
+        icon
+        @click="takeAction(item?.id!, 'ack', '')"
+      >
+        <v-icon icon="check" />
+        <v-tooltip location="bottom" activator="parent" :text="t('Ack')" />
+      </v-btn>
 
       <v-btn v-show="isAcked(item?.status!)" variant="text" icon @click="takeAction(item?.id!, 'unack', '')">
         <v-icon icon="undo" />
@@ -154,6 +170,7 @@ const redirect = computed(() => {
   }
   return {path: '/alerts'}
 })
+const ackIsTimeout = computed(() => store.getters.getConfig('ack_timeout'))
 
 const refresh = () => {
   if (timeout.value) clearTimeout(timeout.value)

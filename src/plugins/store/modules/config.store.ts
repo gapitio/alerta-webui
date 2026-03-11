@@ -88,7 +88,8 @@ const state: State = {
   oidc_auth_url: '',
   version: 'DEV',
   hidden_pages: [],
-  bulk_size: 20
+  bulk_size: 20,
+  ack_timeout: false
 }
 
 export const deepCopy = function (state: any, value: any, propName?: string) {

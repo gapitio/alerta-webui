@@ -44,7 +44,8 @@
       <v-col v-if="selected.length > 0" align-self="center">
         <v-btn icon="visibility" variant="text" @click.stop="watchAlerts" />
         <v-btn icon="visibility_off" variant="text" @click.stop="unwatchAlerts" />
-        <timeout-actions action="ack" />
+        <timeout-actions v-if="ackIsTimeout" action="ack" />
+        <v-btn v-else icon="check" variant="text" @click.stop="takeAction('ack')" />
         <v-btn icon="undo" variant="text" @click.stop="takeAction('unack')" />
         <timeout-actions action="shelve" />
         <v-btn icon="restore" variant="text" @click.stop="takeAction('unshelve')" />
@@ -224,6 +225,7 @@ const isNewOpenAlerts = computed(() =>
 )
 
 const showAllowedEnvs = computed(() => store.getters.getPreference('showAllowedEnvs'))
+const ackIsTimeout = computed(() => store.getters.getConfig('ack_timeout'))
 
 const environments = computed(() => ['All', ...store.getters['alerts/environments'](showAllowedEnvs.value)])
 

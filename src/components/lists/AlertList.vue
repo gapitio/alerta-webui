@@ -76,7 +76,11 @@
           icon="visibility_off"
           @click.stop="unwatchAlert(item.id)"
         />
-        <timeout-action v-if="isOpen(item.status)" action="ack" :id="item.id" dense />
+        <v-template v-if="isOpen(item.status)">
+          <timeout-action v-if="ackIsTimeout" action="ack" :id="item.id" dense />
+          <v-btn v-else density="compact" variant="text" icon="check" @click.stop="takeAction(item.id, 'ack')" />
+        </v-template>
+
         <v-btn
           v-if="isAcked(item.status)"
           density="compact"
@@ -198,6 +202,8 @@ const selected = computed({
   get: () => store.state.alerts.selected,
   set: value => store.dispatch('alerts/updateSelected', value)
 })
+
+const ackIsTimeout = computed(() => store.getters.getConfig('ack_timeout'))
 
 const username = computed(() => store.getters['auth/getUsername'])
 

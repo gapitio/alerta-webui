@@ -103,6 +103,7 @@ export interface State {
   pingfederate_url: string | null
   hidden_pages: string[]
   bulk_size: number
+  ack_timeout: boolean
 }
 
 export type ExternalConfig = {sort_by: (SortBy | string)[]} & Omit<State, 'sort_by'>
