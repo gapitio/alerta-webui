@@ -44,9 +44,10 @@
       <v-col v-if="selected.length > 0" align-self="center">
         <v-btn icon="visibility" variant="text" @click.stop="watchAlerts" />
         <v-btn icon="visibility_off" variant="text" @click.stop="unwatchAlerts" />
-        <v-btn icon="check" variant="text" @click.stop="takeAction('ack', ackTimeout)" />
+        <timeout-actions v-if="ackIsTimeout" action="ack" />
+        <v-btn v-else icon="check" variant="text" @click.stop="takeAction('ack')" />
         <v-btn icon="undo" variant="text" @click.stop="takeAction('unack')" />
-        <v-btn icon="schedule" variant="text" @click.stop="takeAction('shelve', shelveTimeout)" />
+        <timeout-actions action="shelve" />
         <v-btn icon="restore" variant="text" @click.stop="takeAction('unshelve')" />
         <v-btn v-if="isAlertAlarmModel" icon="highlight_off" variant="text" @click.stop="takeAction('close')" />
         <v-btn v-if="haveDeleteScope()" icon="delete" variant="text" @click.stop="deleteAlerts" />
@@ -151,9 +152,6 @@ const defaultTab = computed(() => filter.value.environment || 'All')
 const selected = computed(() => store.state.alerts.selected)
 const isAlertAlarmModel = computed(() => !store.getters.getConfig('alarm_model').name.includes('ISA'))
 
-const ackTimeout = computed(() => store.getters.getPreference('ackTimeout'))
-const shelveTimeout = computed(() => store.getters.getPreference('shelveTimeout'))
-
 function haveDeleteScope() {
   const scopes = store.getters['auth/scopes']
   const config = store.state.config
@@ -227,6 +225,7 @@ const isNewOpenAlerts = computed(() =>
 )
 
 const showAllowedEnvs = computed(() => store.getters.getPreference('showAllowedEnvs'))
+const ackIsTimeout = computed(() => store.getters.getConfig('ack_timeout'))
 
 const environments = computed(() => ['All', ...store.getters['alerts/environments'](showAllowedEnvs.value)])
 

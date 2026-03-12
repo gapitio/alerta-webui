@@ -76,13 +76,11 @@
           icon="visibility_off"
           @click.stop="unwatchAlert(item.id)"
         />
-        <v-btn
-          v-if="isOpen(item.status)"
-          density="compact"
-          variant="text"
-          icon="check"
-          @click.stop="ackAlert(item.id)"
-        />
+        <v-template v-if="isOpen(item.status)">
+          <timeout-action v-if="ackIsTimeout" action="ack" :id="item.id" dense />
+          <v-btn v-else density="compact" variant="text" icon="check" @click.stop="takeAction(item.id, 'ack')" />
+        </v-template>
+
         <v-btn
           v-if="isAcked(item.status)"
           density="compact"
@@ -90,13 +88,7 @@
           icon="undo"
           @click.stop="takeAction(item.id, 'unack')"
         />
-        <v-btn
-          v-if="isOpen(item.status) || isAcked(item.status)"
-          density="compact"
-          variant="text"
-          icon="schedule"
-          @click.stop="shelveAlert(item.id)"
-        />
+        <timeout-action v-if="isOpen(item.status) || isAcked(item.status)" action="shelve" :id="item.id" dense />
         <v-btn
           v-if="isShelved(item.status)"
           density="compact"
@@ -211,8 +203,8 @@ const selected = computed({
   set: value => store.dispatch('alerts/updateSelected', value)
 })
 
-const ackTimeout = computed(() => store.getters.getPreference('ackTimeout'))
-const shelveTimeout = computed(() => store.getters.getPreference('shelveTimeout'))
+const ackIsTimeout = computed(() => store.getters.getConfig('ack_timeout'))
+
 const username = computed(() => store.getters['auth/getUsername'])
 
 function setPagination(value: Pagination) {
@@ -285,26 +277,6 @@ function isAlertAlarmModel() {
 const takeAction = debounce(
   (id: string, action: string) => {
     store.dispatch('alerts/takeAction', [id, action, '']).then(() => store.dispatch('alerts/getAlerts'))
-  },
-  200,
-  {leading: true, trailing: false}
-)
-
-const ackAlert = debounce(
-  (id: string) => {
-    store
-      .dispatch('alerts/takeAction', [id, 'ack', '', ackTimeout.value!])
-      .then(() => store.dispatch('alerts/getAlerts'))
-  },
-  200,
-  {leading: true, trailing: false}
-)
-
-const shelveAlert = debounce(
-  (id: string) => {
-    store
-      .dispatch('alerts/takeAction', [id, 'shelve', '', shelveTimeout.value!])
-      .then(() => store.dispatch('alerts/getAlerts'))
   },
   200,
   {leading: true, trailing: false}

@@ -62,6 +62,8 @@ declare module 'vue' {
     Snackbar: typeof import('./src/components/lib/Snackbar.vue')['default']
     TagsInformation: typeof import('./src/components/dialogs/information/TagsInformation.vue')['default']
     TextInformationDialog: typeof import('./src/components/dialogs/information/TextInformationDialog.vue')['default']
+    TimeoutAction: typeof import('./src/components/dialogs/TimeoutAction.vue')['default']
+    TimeoutActions: typeof import('./src/components/dialogs/TimeoutActions.vue')['default']
     Top: typeof import('./src/components/reports/Top.vue')['default']
     TriggerInformation: typeof import('./src/components/dialogs/information/TriggerInformation.vue')['default']
     UserAdd: typeof import('./src/components/dialogs/add/UserAdd.vue')['default']

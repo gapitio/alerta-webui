@@ -62,6 +62,9 @@
                   counter
                 />
               </v-col>
+              <v-col cols="12" v-if="type.timeout">
+                <g-text-field v-model="timeout" show-header :label="t('Timeout')" type="number" />
+              </v-col>
             </v-row>
           </v-card-text>
           <v-card-actions class="dialog-card-actions">
@@ -113,6 +116,7 @@ const props = defineProps({
 })
 type Action = {
   title: string
+  timeout?: true
   value: 'open' | 'close' | 'unack' | 'ack' | 'shelve' | 'unshelve' | 'note'
   action: s
   show?: () => boolean
@@ -134,9 +138,10 @@ const actions: Action[] = [
     title: t('Ack'),
     value: 'ack',
     action: 'ack-alert',
+    timeout: true,
     show: () => !isClosed.value && !isAcked.value && !isShelved.value
   },
-  {title: t('Shelve'), value: 'shelve', action: 'shelve-alert', show: () => !isShelved.value},
+  {title: t('Shelve'), value: 'shelve', action: 'shelve-alert', timeout: true, show: () => !isShelved.value},
   {title: t('Unshelve'), value: 'unshelve', action: 'take-action', show: () => isShelved.value},
   {title: t('AddNote'), value: 'note', action: 'add-note'}
 ]
@@ -153,6 +158,7 @@ const emits = defineEmits([
   'delete-alert'
 ])
 const type = ref<Action>({title: t('AddNote'), value: 'note', action: 'add-note'})
+const timeout = ref<number | null>(null)
 
 const editNote = ref(false)
 const text = ref('')
@@ -174,7 +180,7 @@ async function validate() {
 
 function save() {
   const actionType = type.value.action
-  if (actionType == 'take-action') emits(actionType, props.id, type.value.value, text.value)
+  if (actionType == 'take-action') emits(actionType, props.id, type.value.value, text.value, timeout.value)
   else emits(actionType, props.id, text.value)
   close()
 }
