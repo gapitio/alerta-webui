@@ -137,8 +137,7 @@ async function copyKey(item: Key) {
   try {
     await navigator.clipboard.writeText(item.key!)
     keyTooltip.value = t('Copied')
-  } catch (error) {
-    console.error('Failed to copy key: ', error)
+  } catch {
     keyTooltip.value = t('CopyFail')
   }
   setTimeout(() => (keyTooltip.value = t('Copy')), 2000)
