@@ -55,13 +55,14 @@ class Config {
   }
 
   getLocalConfig() {
-    const basePath = import.meta.env.BASE_URL ?? '/'
+    const basePath = import.meta.env.BASE_URL ?? '/test/'
     return this.$http
       .get(`${basePath}config.json`)
       .then(response => {
         return response.data
       })
       .catch((error: any) => {
+        // eslint-disable-next-line no-console
         console.warn(error.message)
       })
   }

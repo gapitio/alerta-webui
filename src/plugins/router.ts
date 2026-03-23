@@ -18,6 +18,7 @@ export default function registerRouter(app: App) {
   })
 
   // Workaround for https://github.com/vitejs/vite/issues/11804
+  /* eslint-disable no-console */
   router.onError((err, to) => {
     if (err?.message?.includes?.('Failed to fetch dynamically imported module')) {
       if (!localStorage.getItem('vuetify:dynamic-reload')) {
@@ -31,6 +32,7 @@ export default function registerRouter(app: App) {
       console.error(err)
     }
   })
+  /* eslint-enable no-console */
 
   router.isReady().then(() => {
     localStorage.removeItem('vuetify:dynamic-reload')

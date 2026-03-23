@@ -117,12 +117,10 @@ watch(dialog, val => {
 async function send() {
   const mails = {notifications: props.items.filter(a => a.mail)}
   const sms = {notifications: props.items.filter(a => a.sms)}
-  if (mailChannel.value && mails.notifications.length > 0) console.log('sending mails', mails.notifications)
   await store.dispatch('notificationSends/sendNotification', [
     mailChannel.value,
     Object.assign(editedItem.value, mails)
   ])
-  if (smsChannel.value && sms.notifications.length > 0) console.log('sending sms', sms.notifications)
   await store.dispatch('notificationSends/sendNotification', [smsChannel.value, Object.assign(editedItem.value, sms)])
   close(true)
 }
