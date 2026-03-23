@@ -11,6 +11,9 @@
       <g-checkbox v-model="noteIcon" :label-right="t('ShowNotesIcon')" />
     </v-col>
     <v-col cols="12">
+      <g-checkbox v-model="searchBar" :label-right="t('ShowSearchBar')" />
+    </v-col>
+    <v-col cols="12">
       <g-select v-model="refreshInterval" show-header :items="refreshOptions" :label="t('RefreshInterval')" />
     </v-col>
   </v-row>
@@ -39,5 +42,10 @@ const refreshInterval = computed({
 const noteIcon = computed({
   get: () => store.getters.getPreference('showNotesIcon'),
   set: val => store.dispatch('setUserPrefs', {showNotesIcon: val})
+})
+
+const searchBar = computed({
+  get: () => store.getters.getPreference('showSearchBar'),
+  set: val => store.dispatch('setUserPrefs', {showSearchBar: val})
 })
 </script>

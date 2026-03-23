@@ -35,7 +35,8 @@ const getDefaults = (): State => {
     blackoutStartNow: true,
     blackoutPeriod: null,
     queries: [],
-    navBarCollapsed: false
+    navBarCollapsed: false,
+    showSearchBar: false
   }
 }
 

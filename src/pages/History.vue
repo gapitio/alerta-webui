@@ -1,5 +1,6 @@
 <template>
   <g-combobox
+    v-if="showSearchBar"
     v-model="query"
     prepend-inner-icon="search"
     append-inner-icon="push_pin"
@@ -144,6 +145,7 @@ const storeQuery = computed(() => store.state.alerts.query.q)
 const interval = computed(() => store.getters.getPreference('refreshInterval'))
 const routeHash = computed(() => route.hash)
 const routeQuery = computed(() => route.query)
+const showSearchBar = computed(() => store.getters.getPreference('showSearchBar'))
 
 const query = ref('')
 const timeout = ref<number | undefined>(undefined)

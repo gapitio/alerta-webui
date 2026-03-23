@@ -39,11 +39,11 @@
         </v-col>
         <v-col v-else-if="['tags', 'customTags'].includes(detail.value)" cols="9">
           <v-chip
-            v-for="tag in item[detail.value]"
+            v-for="tag in item[detail.value as 'tags' | 'customTags']"
             :key="tag"
             class="chip"
             variant="flat"
-            @click="queryBy(detail.value, tag)"
+            @click="(e: MouseEventInit) => queryBy(detail.value, tag, e.shiftKey)"
           >
             {{ filters.capitalize(tag) }}
           </v-chip>
@@ -52,20 +52,24 @@
           <date-time v-if="item[detail.value]" :value="item[detail.value]" hide-tooltip no-break format="longDate" />
         </v-col>
         <v-col v-else-if="detail.searchable" cols="9">
-          <div v-if="typeof item[detail.value] === 'object'">
+          <template v-if="Array.isArray(item[detail.value])">
             <v-row style="width: fit-content" dense>
               <v-col
-                v-for="i in item[detail.value]"
+                v-for="i in item[detail.value] as [string]"
                 :key="i"
                 cols="auto"
                 class="clickable"
-                @click="queryBy(detail.value, item[detail.value])"
+                @click="(e: MouseEventInit) => queryBy(detail.value, i, e.shiftKey)"
               >
                 {{ i }}
               </v-col>
             </v-row>
-          </div>
-          <span v-else class="clickable" @click="queryBy(detail.value, item[detail.value])">
+          </template>
+          <span
+            v-else
+            class="clickable"
+            @click="(e: MouseEventInit) => queryBy(detail.value, item![detail.value], e.shiftKey)"
+          >
             {{ item[detail.value] }}
           </span>
         </v-col>
@@ -88,7 +92,9 @@
         {{ key }}
       </v-col>
       <v-col cols="9">
-        <span class="clickable" @click="queryBy(`_.${key}`, value)">{{ value }}</span>
+        <span class="clickable" @click="(e: MouseEventInit) => queryBy(`attributes.${key}`, value, e.shiftKey)">{{
+          value
+        }}</span>
       </v-col>
     </v-row>
   </v-container>
@@ -134,7 +140,18 @@ const props = defineProps({showMore: {type: Boolean, required: true}})
 
 const item = computed(() => store.state.alerts.alert)
 const notes = computed(() => store.state.alerts.notes)
+const alertFilter = computed(() => store.state.alerts.filter)
 
-const queryBy = (attribute: string, value: any) => router.push({path: '/alerts', query: {q: `${attribute}:${value}`}})
+const queryBy = (attribute: string, value: any, shift?: boolean) => {
+  const filter = shift
+    ? {[attribute]: value}
+    : {
+        ...alertFilter.value,
+        [attribute]: [...new Set([...(attribute in alertFilter.value ? alertFilter.value[attribute] : []), value])]
+      }
+
+  store.dispatch('alerts/setFilter', filter)
+  router.push({path: '/alerts'})
+}
 const deleteNote = (alertId: string, noteId: string) => store.dispatch('alerts/deleteNote', [alertId, noteId])
 </script>

@@ -5,6 +5,7 @@
       <v-spacer></v-spacer>
       <v-col>
         <g-combobox
+          v-if="showSearchBar"
           v-model="query"
           prepend-inner-icon="search"
           append-inner-icon="push_pin"
@@ -24,9 +25,6 @@
           @delete-item="(item: any) => deleteSearch(item.value)"
         />
       </v-col>
-      <v-col cols="auto">
-        <g-switch style="position: relative; top: -12px" v-model="isWatch" :label="t('Watch')" />
-      </v-col>
     </v-row>
   </v-container>
 
@@ -40,6 +38,9 @@
       </v-col>
       <v-col cols="auto" align-self="center">
         <alerts-export />
+      </v-col>
+      <v-col cols="auto" align-self="center">
+        <g-switch v-model="isWatch" :label="t('Watch')" />
       </v-col>
       <v-col v-if="selected.length > 0" align-self="center">
         <v-btn icon="visibility" variant="text" @click.stop="watchAlerts" />
@@ -127,6 +128,7 @@ const query = ref<string | null>(null)
 const routeHash = computed(() => route.hash)
 const routeQuery = computed(() => route.query)
 const audioUrl = computed(() => store.getters.getConfig('audio').new ?? store.getters.getPreference('audioURL'))
+const showSearchBar = computed(() => store.getters.getPreference('showSearchBar'))
 
 const isWatch = computed({
   get: () => store.state.alerts.isWatch,
