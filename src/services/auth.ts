@@ -10,6 +10,7 @@ type AuthenticateOptionsFix = AuthenticateOptions & {tokenPath: string}
 export function registerVueAuth(app: App) {
   const config = app.config.globalProperties.$config
   const basePath = config.base ?? '/'
+  const scopes = config.oidc_scopes ?? []
   const options: AuthenticateOptionsFix = {
     tokenPath: 'token',
     tokenName: 'token',
@@ -28,7 +29,7 @@ export function registerVueAuth(app: App) {
         redirectUri: getRedirectUri(basePath),
         requiredUrlParams: ['scope'],
         optionalUrlParams: ['display', 'state'],
-        scope: ['openid', 'profile', 'email'],
+        scope: ['openid', 'profile', 'email', ...scopes],
         scopeDelimiter: ' ',
         display: 'popup',
         oauthType: '2.0',
@@ -43,7 +44,7 @@ export function registerVueAuth(app: App) {
         redirectUri: getRedirectUri(basePath),
         requiredUrlParams: ['scope'],
         optionalUrlParams: ['display', 'state'],
-        scope: ['openid', 'profile', 'email'],
+        scope: ['openid', 'profile', 'email', ...scopes],
         scopeDelimiter: ' ',
         display: 'popup',
         oauthType: '2.0',
@@ -56,7 +57,7 @@ export function registerVueAuth(app: App) {
         clientId: config.client_id!,
         authorizationEndpoint: `${config.github_url}/login/oauth/authorize`,
         redirectUri: getRedirectUri(basePath),
-        scope: ['user:email', 'read:org']
+        scope: ['user:email', 'read:org', ...scopes]
       },
       gitlab: {
         name: 'GitLab',
@@ -66,7 +67,7 @@ export function registerVueAuth(app: App) {
         redirectUri: getRedirectUri(basePath),
         requiredUrlParams: ['scope'],
         optionalUrlParams: ['display', 'state'],
-        scope: ['openid'],
+        scope: ['openid', ...scopes],
         display: 'popup',
         oauthType: '2.0',
         popupOptions: {width: 1020, height: 618},
@@ -86,7 +87,7 @@ export function registerVueAuth(app: App) {
         redirectUri: getRedirectUri(basePath),
         requiredUrlParams: ['scope'],
         optionalUrlParams: ['display', 'state'],
-        scope: ['openid', 'profile', 'email'],
+        scope: ['openid', 'profile', 'email', ...scopes],
         scopeDelimiter: ' ',
         display: 'popup',
         oauthType: '2.0',
@@ -101,7 +102,7 @@ export function registerVueAuth(app: App) {
         redirectUri: getRedirectUri(basePath),
         requiredUrlParams: ['scope'],
         optionalUrlParams: ['display', 'state'],
-        scope: ['openid', 'profile', 'email'],
+        scope: ['openid', 'profile', 'email', ...scopes],
         scopeDelimiter: ' ',
         display: 'popup',
         oauthType: '2.0',
@@ -115,7 +116,7 @@ export function registerVueAuth(app: App) {
         authorizationEndpoint: config.pingfederate_url!,
         redirectUri: getRedirectUri(basePath || '/'),
         requiredUrlParams: ['pfidpadapterid', 'scope'],
-        scope: ['openid', 'profile', 'email'],
+        scope: ['openid', 'profile', 'email', ...scopes],
         scopeDelimiter: ' ',
         // pfidpadapterid: 'kerberos',
         oauthType: '2.0'

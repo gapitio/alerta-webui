@@ -86,6 +86,7 @@ const state: State = {
   indicators: {queries: [], severity: []},
   ldap_email_edit: false,
   oidc_auth_url: '',
+  oidc_scopes: null,
   version: 'DEV',
   hidden_pages: [],
   bulk_size: 20,
