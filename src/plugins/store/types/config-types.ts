@@ -91,6 +91,7 @@ export interface State {
   keycloak_url: string | null
   ldap_email_edit: boolean
   oidc_auth_url: string | null
+  oidc_scopes: string[] | null
   provider: string
   readonly_scopes: string[]
   refresh_interval: number
