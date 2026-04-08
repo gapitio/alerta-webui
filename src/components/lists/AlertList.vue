@@ -192,7 +192,8 @@ const customHeaders = computed(() => {
     c =>
       headersMap.value[c as keyof typeof headersMap.value] ?? {
         title: c.charAt(0).toUpperCase() + c.slice(1),
-        value: 'attributes.' + c
+        value: 'attributes.' + c,
+        sortable: true
       }
   )
   return [...configHeaders, headersMap.value.actions]
