@@ -1,4 +1,5 @@
 <template>
+  <confirm ref="confirm" />
   <h1>
     {{ t('Blackouts') }}
     <g-text-field
@@ -105,6 +106,7 @@ import type {Store} from '@/plugins/store/types'
 import {useI18n} from 'vue-i18n'
 import type {Blackout} from '@/plugins/store/types/blackout-types'
 import type {SortBy} from '@/plugins/store/types/alerts-types'
+import Confirm from '@/components/dialogs/Confirm.vue'
 
 definePage({
   meta: {
@@ -118,6 +120,7 @@ const {t} = useI18n()
 
 const selectedItem: Ref<Blackout | null> = ref(null)
 
+const confirm = ref<InstanceType<typeof Confirm> | null>(null)
 const search = ref('')
 const showActive = ref(true)
 const showPending = ref(true)
@@ -185,8 +188,10 @@ function closeNew() {
   selectedItem.value = null
 }
 
-function deleteItem(item: Blackout) {
-  confirm(t('ConfirmDelete')) && store.dispatch('blackouts/deleteBlackout', item.id!)
+async function deleteItem(item: Blackout) {
+  confirm.value &&
+    (await confirm.value.open(t('ConfirmDelete'))) &&
+    store.dispatch('blackouts/deleteBlackout', item.id!)
 }
 const timeout = ref<number | undefined>(undefined)
 const interval = computed(() => store.getters.getPreference('refreshInterval'))

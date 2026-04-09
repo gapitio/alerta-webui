@@ -1,4 +1,5 @@
 <template>
+  <confirm ref="confirm" />
   <g-text-field
     v-model="search"
     prepend-inner-icon="search"
@@ -105,6 +106,7 @@
 
 <script lang="ts" setup>
 import utils from '@/common/utils'
+import Confirm from '@/components/dialogs/Confirm.vue'
 import type {Store} from '@/plugins/store/types'
 import type {SortBy} from '@/plugins/store/types/alerts-types'
 import type {User} from '@/plugins/store/types/users-types'
@@ -125,6 +127,7 @@ const store: Store = useStore()
 const route = useRoute()
 const router = useRouter()
 
+const confirm = ref<InstanceType<typeof Confirm> | null>(null)
 const dialog = ref(false)
 const selectedItem = ref<User | null>(null)
 const search = ref('')
@@ -158,8 +161,8 @@ function getUsers() {
   selectedItem.value = null
 }
 
-function deleteUser(id: string) {
-  if (confirm(t('ConfirmDelete'))) store.dispatch('users/deleteUser', id)
+async function deleteUser(id: string) {
+  if (confirm.value && (await confirm.value.open(t('ConfirmDelete')))) store.dispatch('users/deleteUser', id)
 }
 
 function editItem(item: User) {

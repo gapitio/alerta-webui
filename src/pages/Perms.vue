@@ -1,4 +1,5 @@
 <template>
+  <confirm ref="confirm" />
   <g-text-field
     v-model="search"
     prepend-inner-icon="search"
@@ -80,6 +81,7 @@
 
 <script lang="ts" setup>
 import utils from '@/common/utils'
+import Confirm from '@/components/dialogs/Confirm.vue'
 import type {Store} from '@/plugins/store/types'
 import type {SortBy} from '@/plugins/store/types/alerts-types'
 import type {Permission} from '@/plugins/store/types/perms-types'
@@ -100,6 +102,7 @@ const store: Store = useStore()
 const route = useRoute()
 const router = useRouter()
 
+const confirm = ref<InstanceType<typeof Confirm> | null>(null)
 const sortBy = ref<SortBy[]>([{key: 'role', order: 'asc'}])
 const dialog = ref(false)
 const selectedItem = ref<Partial<Permission> | null>(null)
@@ -129,8 +132,8 @@ function getScopes() {
   store.dispatch('perms/getScopes')
 }
 
-function deleteItem(item: Permission) {
-  confirm(t('ConfirmDelete')) && store.dispatch('perms/deletePerm', item.id!)
+async function deleteItem(item: Permission) {
+  confirm.value && (await confirm.value.open(t('ConfirmDelete'))) && store.dispatch('perms/deletePerm', item.id!)
   getItems()
 }
 

@@ -1,4 +1,5 @@
 <template>
+  <confirm ref="confirm" />
   <v-dialog v-model="dialog" scrollable max-width="540px">
     <v-form ref="form">
       <v-card class="dialog-card">
@@ -105,6 +106,7 @@ import {useI18n} from 'vue-i18n'
 import type {Store} from '@/plugins/store/types'
 import type {VForm} from 'vuetify/components'
 import type {NotificationChannel, NotificationChannelType} from '@/plugins/store/types/notificationChannel-types'
+import Confirm from '../Confirm.vue'
 
 const store: Store = useStore()
 const {t} = useI18n()
@@ -119,6 +121,7 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits(['close'])
+const confirm = ref<InstanceType<typeof Confirm> | null>(null)
 
 const types: {title: string; value: NotificationChannelType}[] = [
   {title: 'sendgrid (email)', value: 'sendgrid'},
@@ -212,9 +215,9 @@ function compareDict(a: any, b: any) {
   return true
 }
 
-function close(saved: boolean) {
+async function close(saved: boolean) {
   const change = !compareDict(editedItem.value, valueStart.value)
-  if (saved || !change || confirm('Are you sure you want to close the dialog?')) {
+  if (saved || !change || (confirm.value && (await confirm.value.open('Are you sure you want to close the dialog?')))) {
     emit('close')
   }
 }

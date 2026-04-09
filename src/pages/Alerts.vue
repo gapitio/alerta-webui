@@ -1,5 +1,6 @@
 <template>
   <audio ref="audio" :src="audioUrl" />
+  <confirm ref="confirm" />
   <v-container style="position: absolute; top: 0px; right: calc(25vw - 115px - 48px)">
     <v-row align="center">
       <v-spacer></v-spacer>
@@ -105,6 +106,7 @@ import type {Query, SortBy} from '@/plugins/store/types/alerts-types'
 import type {State, Store} from '@/plugins/store/types'
 import moment from 'moment'
 import type {DateRange} from '@/plugins/store/types/notificationHistory-types'
+import Confirm from '@/components/dialogs/Confirm.vue'
 
 definePage({
   meta: {
@@ -120,6 +122,7 @@ const {t} = useI18n()
 const timeout = ref<ReturnType<typeof setTimeout> | undefined>(undefined)
 const tab = ref('All')
 const audio = ref<null | HTMLAudioElement>(null)
+const confirm = ref<InstanceType<typeof Confirm> | null>(null)
 const currentTab = computed(() => store.state.alerts.filter.environment ?? 'All')
 
 const filter = computed(() => store.state.alerts.filter)
@@ -189,10 +192,11 @@ async function unwatchAlerts() {
 }
 
 async function deleteAlerts() {
-  if (!confirm(t('ConfirmDeletes'))) return
-  await store.dispatch('alerts/deleteAlerts', selected.value)
-  store.dispatch('alerts/updateSelected', [])
-  refreshAlerts(audio.value)
+  if (confirm.value && (await confirm.value.open(t('ConfirmDeletes')))) {
+    await store.dispatch('alerts/deleteAlerts', selected.value)
+    store.dispatch('alerts/updateSelected', [])
+    refreshAlerts(audio.value)
+  }
 }
 
 async function removeLasNotes() {

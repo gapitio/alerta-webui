@@ -1,4 +1,5 @@
 <template>
+  <confirm ref="confirm" />
   <v-row>
     <v-col cols="auto">
       <h1>
@@ -281,6 +282,7 @@ import {useRouter} from 'vue-router'
 import {useI18n} from 'vue-i18n'
 import type {Pagination} from '@/plugins/store/types/alerts-types'
 import type {NotificationRule} from '@/plugins/store/types/notificationRule-types'
+import Confirm from '../dialogs/Confirm.vue'
 
 const store: Store = useStore()
 const filters = useFilters()
@@ -288,6 +290,7 @@ const router = useRouter()
 const {t} = useI18n()
 
 const selectedItem: Ref<NotificationRule | null> = ref(null)
+const confirm = ref<InstanceType<typeof Confirm> | null>(null)
 
 const status = computed(() => store.state.notificationRules.activeFilter)
 const activeDialog = ref(false)
@@ -411,8 +414,10 @@ function closeNew() {
   selectedItem.value = null
 }
 
-function deleteItem(item: NotificationRule) {
-  confirm(t('ConfirmDelete')) && store.dispatch('notificationRules/deleteNotificationRule', item.id!)
+async function deleteItem(item: NotificationRule) {
+  confirm.value &&
+    (await confirm.value.open(t('ConfirmDelete'))) &&
+    store.dispatch('notificationRules/deleteNotificationRule', item.id!)
 }
 
 const paginationTimeout = ref(0)

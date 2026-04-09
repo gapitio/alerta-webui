@@ -1,4 +1,5 @@
 <template>
+  <confirm ref="confirm" />
   <g-text-field
     v-model="search"
     prepend-inner-icon="search"
@@ -84,6 +85,7 @@
 
 <script lang="ts" setup>
 import utils from '@/common/utils'
+import Confirm from '@/components/dialogs/Confirm.vue'
 import type {Store} from '@/plugins/store/types'
 import type {SortBy} from '@/plugins/store/types/alerts-types'
 import type {Key} from '@/plugins/store/types/keys-types'
@@ -104,6 +106,7 @@ const store: Store = useStore()
 const route = useRoute()
 const router = useRouter()
 
+const confirm = ref<InstanceType<typeof Confirm> | null>(null)
 const dialog = ref(false)
 const selectedItem = ref<Partial<Key> | null>(null)
 const showExpired = ref(true)
@@ -143,8 +146,8 @@ async function copyKey(item: Key) {
   setTimeout(() => (keyTooltip.value = t('Copy')), 2000)
 }
 
-function deleteItem(item: Key) {
-  confirm(t('ConfirmDelete')) && store.dispatch('keys/deleteKey', item.id!)
+async function deleteItem(item: Key) {
+  confirm.value && (await confirm.value.open(t('ConfirmDelete'))) && store.dispatch('keys/deleteKey', item.id!)
   getItems()
 }
 
