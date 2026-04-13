@@ -1,4 +1,5 @@
 <template>
+  <confirm ref="confirm" />
   <g-text-field
     v-model="search"
     prepend-inner-icon="search"
@@ -89,6 +90,7 @@
 
 <script lang="ts" setup>
 import utils from '@/common/utils'
+import Confirm from '@/components/dialogs/Confirm.vue'
 import type {Store} from '@/plugins/store/types'
 import type {SortBy} from '@/plugins/store/types/alerts-types'
 import type {NotificationChannel} from '@/plugins/store/types/notificationChannel-types'
@@ -109,6 +111,7 @@ const store: Store = useStore()
 const route = useRoute()
 const router = useRouter()
 
+const confirm = ref<InstanceType<typeof Confirm> | null>(null)
 const search = ref('')
 const dialog = ref(false)
 const sendDialog = ref(false)
@@ -144,8 +147,10 @@ function getItems() {
 }
 const filter = computed(() => store.state.notificationChannels.filter)
 
-function deleteItem(item: NotificationChannel) {
-  confirm(t('ConfirmDelete')) && store.dispatch('notificationChannels/deleteNotificationChannel', item.id)
+async function deleteItem(item: NotificationChannel) {
+  confirm.value &&
+    (await confirm.value.open(t('ConfirmDelete'))) &&
+    store.dispatch('notificationChannels/deleteNotificationChannel', item.id)
   getItems()
 }
 

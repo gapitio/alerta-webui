@@ -1,4 +1,5 @@
 <template>
+  <confirm ref="confirm" />
   <v-row>
     <v-col cols="auto">
       <h1>
@@ -216,12 +217,14 @@ import {useFilters} from '@/filters'
 import {useI18n} from 'vue-i18n'
 import type {Pagination} from '@/plugins/store/types/alerts-types'
 import type {EscalationRule} from '@/plugins/store/types/escalationRule-types'
+import Confirm from '../dialogs/Confirm.vue'
 
 const store: Store = useStore()
 const filters = useFilters()
 const {t} = useI18n()
 
 const emit = defineEmits(['update'])
+const confirm = ref<InstanceType<typeof Confirm> | null>(null)
 
 const selectedItem: Ref<EscalationRule | null> = ref(null)
 
@@ -335,8 +338,10 @@ function closeNew() {
   selectedItem.value = null
 }
 
-function deleteItem(item: EscalationRule) {
-  confirm(t('ConfirmDelete')) && store.dispatch('escalationRules/deleteEscalationRule', item.id!)
+async function deleteItem(item: EscalationRule) {
+  confirm.value &&
+    (await confirm.value.open(t('ConfirmDelete'))) &&
+    store.dispatch('escalationRules/deleteEscalationRule', item.id!)
 }
 
 function setPagination(value: Pagination) {

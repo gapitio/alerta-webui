@@ -18,6 +18,7 @@ declare module 'vue' {
     BlackoutAdd: typeof import('./src/components/dialogs/add/BlackoutAdd.vue')['default']
     ChangeActiveState: typeof import('./src/components/dialogs/ChangeActiveState.vue')['default']
     ChangeActiveStateBulk: typeof import('./src/components/dialogs/ChangeActiveStateBulk.vue')['default']
+    Confirm: typeof import('./src/components/dialogs/Confirm.vue')['default']
     DateEdit: typeof import('./src/components/DateEdit.vue')['default']
     DateTime: typeof import('./src/components/lib/DateTime.vue')['default']
     Detail: typeof import('./src/components/AlertDetail/Detail.vue')['default']

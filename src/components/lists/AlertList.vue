@@ -1,4 +1,5 @@
 <template>
+  <confirm ref="confirm" />
   <v-data-table-server
     v-model:sort-by="pagination.sortBy"
     v-model:items-per-page="pagination.itemsPerPage"
@@ -116,7 +117,7 @@
 </template>
 
 <script lang="ts" setup>
-import {computed} from 'vue'
+import {computed, ref} from 'vue'
 import {useStore} from 'vuex'
 import {useRoute, useRouter} from 'vue-router'
 import debounce from 'lodash/debounce'
@@ -125,12 +126,15 @@ import {useI18n} from 'vue-i18n'
 import type {Store} from '@/plugins/store/types'
 import {useFilters} from '@/filters'
 import type {Alert, Pagination} from '@/plugins/store/types/alerts-types'
+import Confirm from '../dialogs/Confirm.vue'
 
 const store: Store = useStore()
 const filters = useFilters()
 const route = useRoute()
 const router = useRouter()
 const {t} = useI18n()
+
+const confirm = ref<InstanceType<typeof Confirm> | null>(null)
 
 const headersMap = computed(() => ({
   id: {title: t('AlertId'), key: 'id'},
@@ -300,8 +304,8 @@ const unwatchAlert = debounce(
 )
 
 const deleteAlert = debounce(
-  (id: string) => {
-    if (confirm(t('ConfirmDelete'))) {
+  async (id: string) => {
+    if (confirm.value && (await confirm.value.open(t('ConfirmDelete')))) {
       store.dispatch('alerts/deleteAlert', id).then(() => store.dispatch('alerts/getAlerts'))
     }
   },

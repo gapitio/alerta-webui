@@ -1,4 +1,5 @@
 <template>
+  <confirm ref="confirm" />
   <v-card flat>
     <v-card tile flat>
       <h1>{{ t('Alert') }}</h1>
@@ -134,6 +135,7 @@ import type {Store} from '@/plugins/store/types'
 import {useRoute, useRouter} from 'vue-router'
 import type {Alert} from '@/plugins/store/types/alerts-types'
 import {useStore} from 'vuex'
+import Confirm from '../dialogs/Confirm.vue'
 
 const store: Store = useStore()
 const router = useRouter()
@@ -148,6 +150,7 @@ const props = defineProps({
 })
 
 const active = ref(false)
+const confirm = ref<InstanceType<typeof Confirm> | null>(null)
 
 const copyIconText = ref(t('Copy'))
 
@@ -278,8 +281,9 @@ const addNote = debounce(
 )
 
 const deleteAlert = debounce(
-  (id: string) => {
-    confirm(t('ConfirmDelete')) && store.dispatch('alerts/deleteAlert', id).then(() => router.push({name: 'alerts'}))
+  async (id: string) => {
+    if (confirm.value && (await confirm.value.open(t('ConfirmDelete'))))
+      store.dispatch('alerts/deleteAlert', id).then(() => router.push(redirect.value))
   },
   200,
   {leading: true, trailing: false}

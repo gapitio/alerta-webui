@@ -1,4 +1,5 @@
 <template>
+  <confirm ref="confirm" />
   <h1>
     {{ t('OnCall') }}
     <information-dialog :title="t('OnCall')" :info="[{title: '', info: t('OnCallInfo')}]" />
@@ -85,6 +86,7 @@
 </template>
 
 <script lang="ts" setup>
+import Confirm from '@/components/dialogs/Confirm.vue'
 import {useFilters} from '@/filters'
 import type {Store} from '@/plugins/store/types'
 import type {Pagination} from '@/plugins/store/types/alerts-types'
@@ -104,6 +106,7 @@ const {t} = useI18n()
 const store: Store = useStore()
 const filters = useFilters()
 
+const confirm = ref<InstanceType<typeof Confirm> | null>(null)
 const dialog = ref(false)
 const selectedItem = ref<OnCall | null>(null)
 
@@ -154,8 +157,8 @@ function getGroups() {
   store.dispatch('notificationGroups/getNotificationGroups')
 }
 
-function deleteItem(item: OnCall) {
-  confirm(t('ConfirmDelete')) && store.dispatch('onCalls/deleteOnCall', item.id!)
+async function deleteItem(item: OnCall) {
+  confirm.value && (await confirm.value.open(t('ConfirmDelete'))) && store.dispatch('onCalls/deleteOnCall', item.id!)
   getItems()
 }
 

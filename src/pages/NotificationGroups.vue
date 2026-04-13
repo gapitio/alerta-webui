@@ -1,4 +1,5 @@
 <template>
+  <confirm ref="confirm" />
   <v-row>
     <v-col cols="auto">
       <h1>
@@ -72,6 +73,7 @@
 
 <script lang="ts" setup>
 import utils from '@/common/utils'
+import Confirm from '@/components/dialogs/Confirm.vue'
 import type {Store} from '@/plugins/store/types'
 import type {SortBy} from '@/plugins/store/types/alerts-types'
 import type {NotificationGroup} from '@/plugins/store/types/notificationGroup-types'
@@ -92,6 +94,7 @@ const store: Store = useStore()
 const route = useRoute()
 const router = useRouter()
 
+const confirm = ref<InstanceType<typeof Confirm> | null>(null)
 const dialog = ref(false)
 const selectedItem = ref<Partial<NotificationGroup> | null>(null)
 const sortBy = ref<SortBy[]>([{key: 'name', order: 'asc'}])
@@ -126,7 +129,8 @@ function getItems() {
 async function deleteItem(item: NotificationGroup) {
   const res = await store.dispatch('notificationRules/getNoificationRulesGroup', item.id)
   const rules = res.notificationRules.map(({id, name}) => name ?? id)
-  confirm(`${t('ConfirmDelete')}\nNotification Rules affected:\n - ${rules.join('\n  - ')}`) &&
+  confirm.value &&
+    (await confirm.value.open(`${t('ConfirmDelete')}\nNotification Rules affected:\n - ${rules.join('\n  - ')}`)) &&
     store.dispatch('notificationGroups/deleteNotificationGroup', item.id)
   getItems()
 }

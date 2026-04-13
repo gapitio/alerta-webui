@@ -1,4 +1,5 @@
 <template>
+  <confirm ref="confirm" />
   <h1>
     {{ t('NotificationDelays') }}
   </h1>
@@ -38,6 +39,7 @@ import type {Pagination} from '@/plugins/store/types/alerts-types'
 import {computed, onUnmounted, ref, watch} from 'vue'
 import {useI18n} from 'vue-i18n'
 import {useStore} from 'vuex'
+import Confirm from '@/components/dialogs/Confirm.vue'
 
 definePage({
   meta: {
@@ -49,6 +51,7 @@ definePage({
 const {t} = useI18n()
 const store: Store = useStore()
 
+const confirm = ref<InstanceType<typeof Confirm> | null>(null)
 const headers = ref<
   {
     title: string
@@ -89,8 +92,10 @@ function getItems() {
 
 onUnmounted(() => clearTimeout(timeout.value))
 
-function deleteItem(item: NotificationDelay) {
-  confirm(t('ConfirmDelete')) && store.dispatch('notificationDelays/deleteNotificationDelay', item.id)
+async function deleteItem(item: NotificationDelay) {
+  confirm.value &&
+    (await confirm.value.open(t('ConfirmDelete'))) &&
+    store.dispatch('notificationDelays/deleteNotificationDelay', item.id)
   getItems()
 }
 
