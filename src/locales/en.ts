@@ -142,6 +142,7 @@ export const en = {
   Duration: 'Duration',
   LastReceiveId: 'Last Receive ID',
   LastNote: 'Last Note',
+  RemoveLastNote: 'Remove Last Note',
 
   // Alert list filter
   Filter: 'Filter',

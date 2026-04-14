@@ -62,24 +62,36 @@
           variant="text"
           icon="refresh"
           @click.stop="takeAction(item.id, 'open')"
-        />
+        >
+          <v-icon icon="refresh" />
+          <v-tooltip location="bottom" activator="parent" :text="t('Open')" />
+        </v-btn>
         <v-btn
           v-if="!isWatched(item.customTags)"
           density="compact"
           variant="text"
           icon="visibility"
           @click.stop="watchAlert(item.id)"
-        />
+        >
+          <v-icon icon="visibility" />
+          <v-tooltip location="bottom" activator="parent" :text="t('Watch')" />
+        </v-btn>
         <v-btn
           v-if="isWatched(item.customTags)"
           density="compact"
           variant="text"
           icon="visibility_off"
           @click.stop="unwatchAlert(item.id)"
-        />
+        >
+          <v-icon icon="visibility_off" />
+          <v-tooltip location="bottom" activator="parent" :text="t('Unwatch')" />
+        </v-btn>
         <v-template v-if="isOpen(item.status)">
           <timeout-action v-if="ackIsTimeout" action="ack" :id="item.id" dense />
-          <v-btn v-else density="compact" variant="text" icon="check" @click.stop="takeAction(item.id, 'ack')" />
+          <v-btn v-else density="compact" variant="text" icon="check" @click.stop="takeAction(item.id, 'ack')">
+            <v-icon icon="check" />
+            <v-tooltip location="bottom" activator="parent" :text="t('Ack')" />
+          </v-btn>
         </v-template>
 
         <v-btn
@@ -88,7 +100,10 @@
           variant="text"
           icon="undo"
           @click.stop="takeAction(item.id, 'unack')"
-        />
+        >
+          <v-icon icon="undo" />
+          <v-tooltip location="bottom" activator="parent" :text="t('Unack')" />
+        </v-btn>
         <timeout-action v-if="isOpen(item.status) || isAcked(item.status)" action="shelve" :id="item.id" dense />
         <v-btn
           v-if="isShelved(item.status)"
@@ -96,21 +111,30 @@
           variant="text"
           icon="restore"
           @click.stop="takeAction(item.id, 'unshelve')"
-        />
+        >
+          <v-icon icon="restore" />
+          <v-tooltip location="bottom" activator="parent" :text="t('Unshelve')" />
+        </v-btn>
         <v-btn
           v-if="!isClosed(item.status) && isAlertAlarmModel()"
           density="compact"
           variant="text"
           icon="highlight_off"
           @click.stop="takeAction(item.id, 'close')"
-        />
+        >
+          <v-icon icon="highlight_off" />
+          <v-tooltip location="bottom" activator="parent" :text="t('Close')" />
+        </v-btn>
         <v-btn
           v-if="haveDeleteScope()"
           density="compact"
           variant="text"
           icon="delete"
           @click.stop="deleteAlert(item.id)"
-        />
+        >
+          <v-icon icon="delete" />
+          <v-tooltip location="bottom" activator="parent" :text="t('Delete')" />
+        </v-btn>
       </div>
     </template>
   </v-data-table-server>

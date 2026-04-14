@@ -1,5 +1,8 @@
 <template>
-  <v-btn icon="note_add" variant="text" @click="dialog = true" />
+  <v-btn icon="note_add" variant="text" @click="dialog = true">
+    <v-icon icon="note_add" />
+    <v-tooltip location="bottom" activator="parent" :text="t('AddNote')" />
+  </v-btn>
   <v-dialog v-model="dialog" scrollable max-width="540px">
     <v-form ref="form">
       <v-card class="dialog-card">

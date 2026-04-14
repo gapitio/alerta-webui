@@ -1,5 +1,8 @@
 <template>
-  <v-btn :icon="actions[action].icon" variant="text" @click="dialog = true" />
+  <v-btn :icon="actions[action].icon" variant="text" @click="dialog = true">
+    <v-icon>{{ actions[action].icon }}</v-icon>
+    <v-tooltip location="bottom" activator="parent" :text="t(actions[action].header)"
+  /></v-btn>
   <v-dialog v-model="dialog" scrollable max-width="540px">
     <v-form ref="form">
       <v-card class="dialog-card">
