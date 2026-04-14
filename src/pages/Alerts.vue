@@ -44,17 +44,41 @@
         <g-switch v-model="isWatch" :label="t('Watch')" />
       </v-col>
       <v-col v-if="selected.length > 0" align-self="center">
-        <v-btn icon="visibility" variant="text" @click.stop="watchAlerts" />
-        <v-btn icon="visibility_off" variant="text" @click.stop="unwatchAlerts" />
+        <v-btn icon="visibility" variant="text" @click.stop="watchAlerts">
+          <v-icon icon="visibility" />
+          <v-tooltip location="bottom" activator="parent" :text="t('Watch')" />
+        </v-btn>
+        <v-btn icon="visibility_off" variant="text" @click.stop="unwatchAlerts">
+          <v-icon icon="visibility_off" />
+          <v-tooltip location="bottom" activator="parent" :text="t('Unwatch')" />
+        </v-btn>
         <timeout-actions v-if="ackIsTimeout" action="ack" />
-        <v-btn v-else icon="check" variant="text" @click.stop="takeAction('ack')" />
-        <v-btn icon="undo" variant="text" @click.stop="takeAction('unack')" />
+        <v-btn v-else icon="check" variant="text" @click.stop="takeAction('ack')">
+          <v-icon icon="check" />
+          <v-tooltip location="bottom" activator="parent" :text="t('Ack')" />
+        </v-btn>
+        <v-btn icon="undo" variant="text" @click.stop="takeAction('unack')">
+          <v-icon icon="undo" />
+          <v-tooltip location="bottom" activator="parent" :text="t('Unack')" />
+        </v-btn>
         <timeout-actions action="shelve" />
-        <v-btn icon="restore" variant="text" @click.stop="takeAction('unshelve')" />
-        <v-btn v-if="isAlertAlarmModel" icon="highlight_off" variant="text" @click.stop="takeAction('close')" />
-        <v-btn v-if="haveDeleteScope()" icon="delete" variant="text" @click.stop="deleteAlerts" />
+        <v-btn icon="restore" variant="text" @click.stop="takeAction('unshelve')">
+          <v-icon icon="restore" />
+          <v-tooltip location="bottom" activator="parent" :text="t('Unshelve')" />
+        </v-btn>
+        <v-btn v-if="isAlertAlarmModel" icon="highlight_off" variant="text" @click.stop="takeAction('close')">
+          <v-icon icon="highlight_off" />
+          <v-tooltip location="bottom" activator="parent" :text="t('Close')" />
+        </v-btn>
+        <v-btn v-if="haveDeleteScope()" icon="delete" variant="text" @click.stop="deleteAlerts">
+          <v-icon icon="delete" />
+          <v-tooltip location="bottom" activator="parent" :text="t('Delete')" />
+        </v-btn>
         <notes-add />
-        <v-btn v-if="haveDeleteScope()" icon="scan_delete" variant="text" @click.stop="removeLasNotes" />
+        <v-btn v-if="haveDeleteScope()" icon="scan_delete" variant="text" @click.stop="removeLasNotes">
+          <v-icon icon="scan_delete" />
+          <v-tooltip location="bottom" activator="parent" :text="t('RemoveLastNote')" />
+        </v-btn>
       </v-col>
     </v-row>
 
