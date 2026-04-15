@@ -86,13 +86,13 @@
           <v-icon icon="visibility_off" />
           <v-tooltip location="bottom" activator="parent" :text="t('Unwatch')" />
         </v-btn>
-        <v-template v-if="isOpen(item.status)">
+        <template v-if="isOpen(item.status)">
           <timeout-action v-if="ackIsTimeout" action="ack" :id="item.id" dense />
           <v-btn v-else density="compact" variant="text" icon="check" @click.stop="takeAction(item.id, 'ack')">
             <v-icon icon="check" />
             <v-tooltip location="bottom" activator="parent" :text="t('Ack')" />
           </v-btn>
-        </v-template>
+        </template>
 
         <v-btn
           v-if="isAcked(item.status)"
