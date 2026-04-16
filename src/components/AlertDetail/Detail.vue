@@ -74,11 +74,18 @@
           </span>
         </v-col>
         <v-col v-else-if="detail.value == 'text'" cols="9" style="white-space: pre-wrap">
-          {{ item[detail.value] }}
+          <div
+            ref="text"
+            style="max-height: 66px"
+            :style="textShowMore && textOverflow ? {overflow: 'visible', maxHeight: 'none'} : {overflow: 'hidden'}"
+          >
+            {{ item[detail.value] }}
+          </div>
+          <div v-if="textOverflow" text small @click="textShowMore = !textShowMore" class="clickable">
+            {{ textShowMore ? t('SeeLess') : t('SeeMore') }}
+          </div>
         </v-col>
-        <v-col v-else cols="9">
-          {{ item[detail.value] }}
-        </v-col>
+        <v-col v-else cols="9"> {{ item[detail.value] }} </v-col>
       </v-row>
     </template>
     <v-row dense>
@@ -113,6 +120,16 @@ const store: Store = useStore()
 const router = useRouter()
 const {t} = useI18n()
 const filters = useFilters()
+
+const text = ref<[HTMLDivElement] | null>(null)
+const textShowMore = ref(false)
+const textOverflow = computed(() => {
+  if (text.value) {
+    const [el] = text.value
+    return el.scrollHeight > el.clientHeight
+  }
+  return false
+})
 
 const alertDetails: Ref<{text: string; value: keyof Alert; searchable?: boolean; more?: boolean}[]> = ref([
   {text: t('Severity'), value: 'severity'},

@@ -103,6 +103,12 @@ td {
   border-bottom: 2px solid !important;
 }
 
+.alert-column {
+  max-width: 300px !important;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+}
+
 .no-cap-btn {
   text-transform: none;
 }

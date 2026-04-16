@@ -42,7 +42,9 @@ export const en = {
   Hide: 'Hide',
   Show: 'Show',
   ShowMore: 'Show-More',
+  SeeMore: 'See More',
   ShowLess: 'Show-Less',
+  SeeLess: 'See Less',
   DownloadAsCsv: 'Download as CSV',
 
   // Groups store

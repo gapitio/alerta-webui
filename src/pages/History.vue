@@ -240,7 +240,8 @@ function rowProps({item}: {item: any}) {
 
 const isDateRange = (date: DateRange | string[]): date is DateRange => !(date instanceof Array)
 
-function selectItem(item: History) {
+async function selectItem(item: History) {
+  await store.dispatch('alerts/getAlert', item.alertId)
   router.push({path: `/alert/${item.alertId}`, query: {redirect: route.fullPath}})
 }
 
@@ -289,7 +290,7 @@ function clearSearch() {
 
 function columnsProps() {
   return {
-    class: `table-column`
+    class: `table-column alert-column`
   }
 }
 

@@ -258,12 +258,13 @@ function rowProps({item}: {item: any}) {
 
 function columnsProps() {
   return {
-    class: `table-column`
+    class: `table-column alert-column`
   }
 }
 
-function selectItem(item: any) {
+async function selectItem(item: Alert) {
   if (!selected.value.length) {
+    await store.dispatch('alerts/getAlert', item.id)
     router.push({path: `/alert/${item.id}`, query: {redirect: route.fullPath}})
   }
 }

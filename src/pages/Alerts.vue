@@ -116,7 +116,7 @@
       </template>
     </v-row>
 
-    <alert-list :filter="filter" />
+    <alert-list />
   </v-card>
 </template>
 
