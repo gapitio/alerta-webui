@@ -159,6 +159,10 @@ const notes = computed(() => store.state.alerts.notes)
 const alertFilter = computed(() => store.state.alerts.filter)
 
 const queryBy = (attribute: string, value: any, shift?: boolean) => {
+  if ((typeof value === 'string' && value.startsWith('http://')) || value.startsWith('https://')) {
+    window.open(value, '_blank')
+    return
+  }
   const filter = shift
     ? {[attribute]: value}
     : {
