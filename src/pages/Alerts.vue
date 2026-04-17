@@ -38,6 +38,9 @@
         <alerts-filter />
       </v-col>
       <v-col cols="auto" align-self="center">
+        <filter-tabs />
+      </v-col>
+      <v-col cols="auto" align-self="center">
         <alerts-export />
       </v-col>
       <v-col cols="auto" align-self="center">
@@ -79,19 +82,31 @@
           <v-icon icon="scan_delete" />
           <v-tooltip location="bottom" activator="parent" :text="t('RemoveLastNote')" />
         </v-btn>
+        <v-btn icon="clear" variant="text" @click.stop="clearSelected">
+          <v-icon icon="clear" />
+          <v-tooltip location="bottom" activator="parent" :text="t('ClearSelected')" />
+        </v-btn>
       </v-col>
     </v-row>
 
     <v-tabs v-model="currentTab" slider-color="link-active" style="padding-left: 16px">
       <v-tab
-        v-for="env in environments"
-        :key="env"
-        :value="env"
+        v-for="tab in filterTabsItems"
+        :key="tab.name"
+        :value="tab.name"
         class="big-font bold no-cap-btn"
         style="padding: 0px; margin-right: 26px"
-        @click="setEnv(env)"
+        @click="setFilterTab(tab.filter)"
       >
-        {{ env }}&nbsp;({{ environmentCounts[env] || 0 }})
+        {{ tab.name }}&nbsp;({{ getTabCount(tab.name) }})
+      </v-tab>
+      <v-tab
+        style="padding: 0px; margin-right: 26px"
+        class="big-font bold no-cap-btn"
+        value="user-defined"
+        @click="setFilterTab(filter)"
+      >
+        user-defined ({{ pagination.totalItems }})
       </v-tab>
     </v-tabs>
     <v-row class="mt-0">
@@ -126,7 +141,7 @@ import {useStore} from 'vuex'
 import {useRoute, useRouter} from 'vue-router'
 import {useI18n} from 'vue-i18n'
 import utils from '@/common/utils'
-import type {Query, SortBy} from '@/plugins/store/types/alerts-types'
+import type {Filter, Query, SortBy} from '@/plugins/store/types/alerts-types'
 import type {State, Store} from '@/plugins/store/types'
 import moment from 'moment'
 import type {DateRange} from '@/plugins/store/types/notificationHistory-types'
@@ -144,10 +159,14 @@ const router = useRouter()
 const {t} = useI18n()
 
 const timeout = ref<ReturnType<typeof setTimeout> | undefined>(undefined)
-const tab = ref('All')
 const audio = ref<null | HTMLAudioElement>(null)
 const confirm = ref<InstanceType<typeof Confirm> | null>(null)
-const currentTab = computed(() => store.state.alerts.filter.environment ?? 'All')
+const currentTab = computed({
+  get: () => {
+    return store.state.filterTabs.currentTab
+  },
+  set: val => store.dispatch('filterTabs/setCurrentTab', val)
+})
 
 const filter = computed(() => store.state.alerts.filter)
 const storeQuery = computed(() => store.state.alerts.query.q)
@@ -156,30 +175,25 @@ const routeHash = computed(() => route.hash)
 const routeQuery = computed(() => route.query)
 const audioUrl = computed(() => store.getters.getConfig('audio').new ?? store.getters.getPreference('audioURL'))
 const showSearchBar = computed(() => store.getters.getPreference('showSearchBar'))
+const pagination = computed(() => store.state.alerts.pagination)
 
 const isWatch = computed({
   get: () => store.state.alerts.isWatch,
   set: val => store.dispatch('alerts/toggle', ['isWatch', val])
 })
 
-watch(storeQuery, val => (query.value = val))
-watch(routeHash, val => setHash(val))
-watch(isWatch, () => refreshAlerts(audio.value))
-
 const isDateRange = (date: DateRange | string[]): date is DateRange => !(date instanceof Array)
-
-watch(routeQuery, val => setQuery(val as Query))
-
-setQuery(route.query as Query)
 
 const userQueries = computed(() =>
   store.getters.getUserQueries.map(q => ({title: q.q, value: q.q, props: {appendIcon: 'delete'}}))
 )
 
-const defaultTab = computed(() => filter.value.environment || 'All')
-
 const selected = computed(() => store.state.alerts.selected)
 const isAlertAlarmModel = computed(() => !store.getters.getConfig('alarm_model').name.includes('ISA'))
+
+function clearSelected() {
+  store.dispatch('alerts/updateSelected', [])
+}
 
 function haveDeleteScope() {
   const scopes = store.getters['auth/scopes']
@@ -235,17 +249,7 @@ async function removeLasNotes() {
   getAlerts()
 }
 
-const alerts = computed(() => {
-  const allAlerts = store.getters['alerts/alerts']
-  return allAlerts
-  // const filterText = filter.value.text
-  // return filterText
-  //   ? allAlerts.filter(alert =>{
-  //       const alertKeys = Object.keys(alert) as [keyof typeof alert]
-  //       return alertKeys.some((k: keyof typeof alert) => alert[k]?.toString().toLowerCase().includes(filterText.toLowerCase()))
-  //     })
-  //   : allAlerts.map(b => ({ ...b, service: b.service?.join(', ') }))
-})
+const alerts = computed(() => store.state.alerts.alerts)
 
 const isNewOpenAlerts = computed(() =>
   alerts.value
@@ -254,12 +258,9 @@ const isNewOpenAlerts = computed(() =>
     .some(alert => !alert.repeat)
 )
 
-const showAllowedEnvs = computed(() => store.getters.getPreference('showAllowedEnvs'))
 const ackIsTimeout = computed(() => store.getters.getConfig('ack_timeout'))
-
-const environments = computed(() => ['All', ...store.getters['alerts/environments'](showAllowedEnvs.value)])
-
-const environmentCounts = computed(() => store.getters['alerts/counts'])
+const filterTabsItems = computed(() => store.state.filterTabs.items)
+const tabCounts = computed(() => store.state.filterTabs.counts)
 
 const refreshInterval = computed(
   () => store.getters.getPreference('refreshInterval') || store.getters.getConfig('refresh_interval')
@@ -272,6 +273,10 @@ function setQuery(q: Query) {
   store.dispatch('alerts/updateQuery', q)
   query.value = q.q
   getAlerts()
+}
+
+function getTabCount(tabname: string) {
+  return tabCounts.value[tabname] || 0
 }
 
 function setSearch(q: string) {
@@ -294,10 +299,17 @@ function clearSearch() {
   getAlerts()
 }
 
+function setFilterTab(tab: Filter) {
+  if (JSON.stringify(tab) !== JSON.stringify(filter.value)) {
+    store.dispatch('alerts/setFilter', tab)
+  }
+  router.replace({hash: store.getters['alerts/getHash'], query: routeQuery.value})
+}
+
 function setFilter(f: any) {
   const val: {[key: string]: any} = {}
   Object.keys(f)
-    .filter(key => key && !['sb', 'asi', 'sd'].includes(key))
+    .filter(key => key && !['sb', 'asi', 'sd', 'ct'].includes(key))
     .forEach(a => {
       if (a.includes('dateRange')) {
         const [key, child] = a.split('.')
@@ -308,6 +320,7 @@ function setFilter(f: any) {
       }
     })
   store.dispatch('alerts/setFilter', val)
+  refreshAlerts(audio.value)
 }
 
 function setSort({sb, sd}: {sb: string; sd: string; [key: string]: string}) {
@@ -318,10 +331,6 @@ function setSort({sb, sd}: {sb: string; sd: string; [key: string]: string}) {
 
 function setPage(page: number) {
   store.dispatch('alerts/setPagination', {page})
-}
-
-function setKiosk(isKiosk: boolean) {
-  store.dispatch('alerts/updateKiosk', isKiosk)
 }
 
 async function getAlerts() {
@@ -340,27 +349,24 @@ function getEnvironments() {
   store.dispatch('alerts/getEnvironments')
 }
 
+async function getFilterTabs(tab: string) {
+  await store.dispatch('filterTabs/getFilterTabs')
+  if (tab !== 'user-defined') {
+    const [filterTab] = filterTabsItems.value.filter(({name}) => name == tab)
+    setFilterTab(filterTab.filter)
+  }
+}
+
 function playSound(audioRef: HTMLAudioElement | null) {
   if (!isMute.value && audioRef) audioRef.play()
 }
 
-function setEnv(env: string) {
-  store.dispatch('alerts/setFilter', {
-    ...filter.value,
-    environment: env === 'All' ? null : env
-  })
-}
-
 const refresh = computed(() => store.state.refresh)
-
-watch(refresh, val => {
-  if (!val) return
-  refreshAlerts(audio.value)
-})
 
 async function refreshAlerts(audioRef: HTMLAudioElement | null) {
   if (timeout.value) clearTimeout(timeout.value)
   getEnvironments()
+  getFilterTabs(currentTab.value)
   if (isLoggedIn.value) {
     getQueries()
     getUserPrefs()
@@ -374,46 +380,44 @@ function setHash(val: string) {
   const hash = val.replace(/^#/, '')
 
   if (hash) {
-    const hashMap: {sd?: string; sb?: string; [key: string]: any} = utils.fromHash(hash)
-    setFilter(hashMap)
+    const hashMap: {sd?: string; sb?: string; ct?: string; [key: string]: any} = utils.fromHash(hash)
+    if (typeof hashMap.ct === 'string') {
+      if (hashMap.ct == 'user-defined') setFilter(hashMap)
+      currentTab.value = hashMap.ct
+    } else {
+      setFilter(hashMap)
+    }
     if (typeof hashMap.sd === 'string' && typeof hashMap.sb === 'string') {
       const typedHashMap = {sd: hashMap.sd, sb: hashMap.sb}
       setSort({sd: typedHashMap.sd ?? '', sb: typedHashMap.sb})
     }
   }
 }
+const getPrefs = () => store.dispatch('getUserPrefs')
 
 setHash(routeHash.value)
-// Lifecycle hooks
+router.replace({query: route.query, hash: store.getters['alerts/getHash']})
 setQuery(route.query as Query)
-
-setKiosk(route.query.isKiosk === 'true')
 refreshAlerts(audio.value)
+watch(refresh, val => {
+  if (!val) return
+  refreshAlerts(audio.value)
+})
+watch(routeHash, val => setHash(val))
+watch(isWatch, () => refreshAlerts(audio.value))
+watch(storeQuery, val => (query.value = val))
+watch(routeQuery, val => setQuery(val as Query))
+watch(filter, () => router.replace({hash: store.getters['alerts/getHash'], query: routeQuery.value}))
 
 onUnmounted(() => {
   clearTimeout(timeout.value)
 })
 
-const getPrefs = () => store.dispatch('getUserPrefs')
 getPrefs()
 
-watch(
-  () => tab.value,
-  () => {
-    setPage(1)
-  }
-)
+watch(currentTab, () => setPage(1))
 
-watch(
-  filter,
-  () => {
-    router.replace({hash: store.getters['alerts/getHash'], query: routeQuery.value})
-    tab.value = defaultTab.value
-    refreshAlerts(null)
-  },
-  {deep: true}
-)
+const sortBy = computed(() => pagination.value.sortBy)
 
-const pagination = computed(() => store.state.alerts.pagination)
-watch(pagination, () => router.replace({hash: store.getters['alerts/getHash'], query: routeQuery.value}))
+watch(sortBy, () => router.replace({hash: store.getters['alerts/getHash'], query: routeQuery.value}))
 </script>

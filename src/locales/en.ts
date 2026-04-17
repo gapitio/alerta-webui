@@ -145,6 +145,11 @@ export const en = {
   LastReceiveId: 'Last Receive ID',
   LastNote: 'Last Note',
   RemoveLastNote: 'Remove Last Note',
+  AddTab: 'Add Tab',
+  EditTabs: 'Edit Tabs',
+  NewFilterTab: 'New Filter Tab',
+  EditFilterTab: 'Edit Filter Tab',
+  ClearSelected: 'Clear Selected',
 
   // Alert list filter
   Filter: 'Filter',
@@ -626,6 +631,7 @@ export const en = {
   Error: 'Error',
   Send: 'Send',
   Required: 'Required',
+  AlreadyExists: ' already exists. Must be unique',
   Cancel: 'Cancel',
   Save: 'Save',
   NoDisplay: 'Sorry, nothing to display here :(',

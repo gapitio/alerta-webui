@@ -153,6 +153,16 @@ export interface Filter {
   [key: string]: any
 }
 
+export type FilterEdit = {
+  filter: Filter
+  period: {
+    startDate: string | null
+    startTime: string | null
+    endDate: string | null
+    endTime: string | null
+  }
+}
+
 interface EnvironmentsCount {
   [key: string]: number
 }
@@ -256,6 +266,6 @@ export type Getters = {
   historyCounts(state: State): EnvironmentsCount
   services(state: State): string[]
   tags(state: State): string[]
-  getHash(state: State): string
-  getHistoryHash(state: State): string
+  getHash(state: State, _: Getters, rootState: RootState): string
+  getHistoryHash(state: State, _: Getters, rootState: RootState): string
 }

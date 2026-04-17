@@ -57,6 +57,7 @@ import type {
 import type {State as ReportsState, Actions as ReportsActions} from './reports-types'
 import type {State as UsersState, Getters as UsersGetters, Actions as UsersActions} from './users-types'
 import type {State as IndexState, Actions as IndexActions} from '../index'
+import type {State as FilterTabState, Actions as FilterTabActions} from './filterTabs-types'
 
 import type {ActionContext as VuexContext, Store as defaultStore} from 'vuex'
 
@@ -100,6 +101,7 @@ export type State = {
   reports: ReportsState
   users: UsersState
   prefs: PreferencesState
+  filterTabs: FilterTabState
 } & IndexState
 
 type AlertModule = {
@@ -280,6 +282,10 @@ export type IndexDispatch = {
   [K in keyof IndexActions]: IndexActions[K]
 }
 
+export type FilterTabDispatch = {
+  [K in keyof FilterTabActions as `filterTabs/${K}`]: FilterTabActions[K]
+}
+
 export type Actions = AlertDispatch &
   AuthDispatch &
   ConfigDispatch &
@@ -302,7 +308,8 @@ export type Actions = AlertDispatch &
   PermsDispatch &
   PreferencesDispatch &
   ReportsDispatch &
-  UsersDispatch
+  UsersDispatch &
+  FilterTabDispatch
 
 type Dispatch = <K extends keyof Actions>(
   key: K,

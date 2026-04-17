@@ -196,10 +196,10 @@ const actions: Actions & ActionTree<State, RootState> = {
 
     try {
       const {alerts, total, pageSize} = await AlertsApi.getAlerts(params)
-      await commit('SET_ALERTS', [alerts, total, pageSize])
+      commit('SET_ALERTS', [alerts, total, pageSize])
       return alerts
     } catch {
-      await commit('RESET_LOADING')
+      commit('RESET_LOADING')
       return []
     }
   },
@@ -408,15 +408,15 @@ const getters: Getters = {
   tags: state => {
     return [...new Set(state.tags.map(t => t.tag).sort())]
   },
-  getHash: state => {
+  getHash: (state, _, rootState) => {
     const filterHash = utils.toHash(state.filter)
     const sortBy = state.pagination.sortBy ? state.pagination.sortBy : []
     const descending = sortBy.length > 0 ? sortBy.map(o => (o.order === 'desc' ? 1 : 0)) : [0, 1]
     const paginationHash = `sb:${sortBy.map(({key}) => key).join(',')};sd:${descending}`
-    const asiHash = `asi:${state.showPanel ? 1 : 0}`
-    return `#${filterHash};${paginationHash};${asiHash}`
+    const currentTabHash = `ct:${rootState.filterTabs.currentTab}`
+    return `#${filterHash};${paginationHash};${currentTabHash}`
   },
-  getHistoryHash: state => `#${utils.toHash(state.historyFilter)}`
+  getHistoryHash: (state, _, rootState) => `#${utils.toHash(state.historyFilter)};ct:${rootState.filterTabs.currentTab}`
 }
 
 export default {

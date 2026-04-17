@@ -20,6 +20,9 @@ h1 {
   font-weight: 500;
 }
 
+.table.scrollbar-offset .v-table__wrapper {
+  padding-right: 20px !important;
+}
 .sidebar {
   border-left: none !important;
   border-top: none !important;
