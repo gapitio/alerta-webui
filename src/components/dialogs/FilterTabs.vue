@@ -1,4 +1,5 @@
 <template>
+  <confirm ref="confirm" />
   <v-btn
     v-has-perms="'admin:alerts'"
     prepend-icon="filter_list"
@@ -92,7 +93,7 @@
           <filter-tab-add @save="addItem" :names="names" />
         </v-col>
         <v-col cols="3">
-          <v-btn variant="outlined" width="247" class="no-cap-btn btn" @click="close">
+          <v-btn variant="outlined" width="247" class="no-cap-btn btn" @click="close(false)">
             {{ t('Cancel') }}
           </v-btn>
         </v-col>
@@ -115,11 +116,19 @@ import moment from 'moment'
 import {computed, ref} from 'vue'
 import {useI18n} from 'vue-i18n'
 import {useStore} from 'vuex'
+import Confirm from './Confirm.vue'
 
 const store: Store = useStore()
 const {t} = useI18n()
 
-const dialog = ref(false)
+const _dialog = ref(false)
+const dialog = computed({
+  get: () => _dialog.value,
+  set: val => {
+    if (!val) close(false)
+  }
+})
+
 const isDateRange = (date: DateRange | string[]): date is DateRange => !(date instanceof Array)
 
 const headers: {title: string; key: keyof FilterTab | 'actions'; align?: 'start' | 'center' | 'end'}[] = [
@@ -127,7 +136,7 @@ const headers: {title: string; key: keyof FilterTab | 'actions'; align?: 'start'
   {title: t('Filter'), key: 'filter'},
   {title: t('Actions'), key: 'actions', align: 'end'}
 ]
-
+const confirm = ref<InstanceType<typeof Confirm> | null>(null)
 const deletes = ref<string[]>([])
 const updates = ref<FilterTab[]>([])
 const adds = ref<FilterTab[]>([])
@@ -142,7 +151,7 @@ const names = computed(() => items.value.map(({name}) => name))
 
 function openDialog() {
   items.value = JSON.parse(JSON.stringify(store_items.value)) as FilterTab[]
-  dialog.value = true
+  _dialog.value = true
 }
 function moveItem(fromIndex: number, toIndex: number) {
   orderChange.value = true
@@ -179,15 +188,29 @@ async function save() {
       'filterTabs/updateFilterTabIndexes',
       items.value.map((item, index) => ({name: item.name, index}))
     )
-  close()
+  close(true)
 }
 
-function close() {
-  dialog.value = false
-  deletes.value = []
-  adds.value = []
-  updates.value = []
-  orderChange.value = false
+function compareDict(a: any, b: any) {
+  if (a === null) return true
+  for (const key in a) {
+    if (b[key] === undefined) return false
+    if (a[key] !== null && typeof a[key] === typeof {}) {
+      if (b[key] === null || a[key].length !== b[key].length || !compareDict(a[key], b[key])) return false
+    } else if (a[key] !== b[key]) return false
+  }
+  return true
+}
+
+async function close(saved: boolean) {
+  const change = !compareDict(items.value, store_items.value)
+  if (saved || !change || (confirm.value && (await confirm.value.open('Are you sure you want to close the dialog?')))) {
+    _dialog.value = false
+    deletes.value = []
+    adds.value = []
+    updates.value = []
+    orderChange.value = false
+  }
 }
 
 const getTags = () => store.dispatch('alerts/getTags')

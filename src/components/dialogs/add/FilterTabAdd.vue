@@ -65,7 +65,7 @@ const store: Store = useStore()
 const {t} = useI18n()
 
 const props = defineProps<{
-  item: FilterTab | undefined
+  item?: FilterTab
   names: string[]
 }>()
 
