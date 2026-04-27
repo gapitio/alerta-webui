@@ -20,6 +20,7 @@ import reports from './modules/reports.store'
 import prefs from './modules/preferences.store'
 import management from './modules/management.store'
 import notifications from './modules/notifications.store'
+import filterTabs from './modules/filterTabs.store'
 import type {ActionContext, ActionTree} from 'vuex'
 import type {OmitIfUndefined, State as RootState} from './types'
 
@@ -79,7 +80,8 @@ const store = createStore({
     reports,
     prefs,
     management,
-    notifications
+    notifications,
+    filterTabs
   }
 })
 

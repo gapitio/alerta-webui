@@ -32,9 +32,24 @@
       <alerts-history-export />
     </v-col>
   </v-row>
-  <v-tabs v-model="currentTab" slider-color="link-active">
-    <v-tab v-for="env in environments" :key="env" :value="env" class="big-font bold no-cap-btn" @click="setEnv(env)">
-      {{ env }}&nbsp;({{ environmentCounts[env] || 0 }})
+  <v-tabs v-model="currentTab" slider-color="link-active" style="padding-left: 16px">
+    <v-tab
+      v-for="tab in filterTabsItems"
+      :key="tab.name"
+      :value="tab.name"
+      class="big-font bold no-cap-btn"
+      style="padding: 0px; margin-right: 26px"
+      @click="setFilterTab(tab.filter)"
+    >
+      {{ tab.name }}&nbsp;({{ getTabCount(tab.name) }})
+    </v-tab>
+    <v-tab
+      style="padding: 0px; margin-right: 26px"
+      class="big-font bold no-cap-btn"
+      value="user-defined"
+      @click="setFilterTab(filter)"
+    >
+      user-defined ({{ pagination.totalItems }})
     </v-tab>
   </v-tabs>
   <v-row class="mt-0">
@@ -110,7 +125,7 @@
 import utils from '@/common/utils'
 import {useFilters} from '@/filters'
 import type {Store} from '@/plugins/store/types'
-import type {History, Pagination, Query} from '@/plugins/store/types/alerts-types'
+import type {Filter, History, Pagination, Query} from '@/plugins/store/types/alerts-types'
 import type {DateRange} from '@/plugins/store/types/notificationHistory-types'
 import moment from 'moment'
 import {computed, onUnmounted, ref, watch} from 'vue'
@@ -136,16 +151,20 @@ const pagination = computed({
   set: value => store.dispatch('alerts/setHistoryPagination', value)
 })
 const filter = computed(() => store.state.alerts.historyFilter)
-const currentTab = ref<string | null>(null)
+const currentTab = computed({
+  get: () => {
+    return store.state.filterTabs.currentTab
+  },
+  set: val => store.dispatch('filterTabs/setCurrentTab', val)
+})
 const history = computed(() => store.state.alerts.history)
-const environmentCounts = computed(() => store.getters['alerts/historyCounts'])
-const showAllowedEnvs = computed(() => store.getters.getPreference('showAllowedEnvs'))
-const environments = computed(() => ['All', ...store.getters['alerts/environments'](showAllowedEnvs.value)])
 const storeQuery = computed(() => store.state.alerts.query.q)
 const interval = computed(() => store.getters.getPreference('refreshInterval'))
 const routeHash = computed(() => route.hash)
 const routeQuery = computed(() => route.query)
 const showSearchBar = computed(() => store.getters.getPreference('showSearchBar'))
+const filterTabsItems = computed(() => store.state.filterTabs.items)
+const tabCounts = computed(() => store.state.filterTabs.historyCounts)
 
 const query = ref('')
 const timeout = ref<number | undefined>(undefined)
@@ -186,6 +205,13 @@ const defaultHeaders = computed(() => [
   {title: t('Type'), key: 'type', sortable: false}
 ])
 
+async function setFilterTab(tab: Filter) {
+  if (JSON.stringify(tab) !== JSON.stringify(filter.value)) {
+    await store.dispatch('alerts/setHistoryFilter', tab)
+    // router.replace({query: routeQuery.value, hash: store.getters['alerts/getHistoryHash']})
+  }
+}
+
 const customHeaders = computed(() => {
   const configHeaders = store.state.config.columns.map(
     c =>
@@ -202,10 +228,14 @@ function setPagination(value: Pagination) {
   refreshAll()
 }
 
+function getTabCount(tabname: string) {
+  return tabCounts.value[tabname] || 0
+}
+
 function setFilter(f: any) {
   const val: {[key: string]: any} = {}
   Object.keys(f)
-    .filter(key => key && !['sb', 'asi', 'sd'].includes(key))
+    .filter(key => key && !['sb', 'asi', 'sd', 'ct'].includes(key))
     .forEach(a => {
       if (a.includes('dateRange')) {
         const [key, child] = a.split('.')
@@ -222,13 +252,15 @@ function setHash(val: string) {
   const hash = val.replace(/^#/, '')
 
   if (hash) {
-    const hashMap = utils.fromHash(hash)
-    setFilter(hashMap)
+    const hashMap: {sd?: string; sb?: string; ct?: string; [key: string]: any} = utils.fromHash(val)
+    if (typeof hashMap.ct === 'string') {
+      if (hashMap.ct == 'user-defined') setFilter(hashMap)
+      currentTab.value = hashMap.ct
+    } else {
+      setFilter(hashMap)
+    }
   }
 }
-
-setHash(routeHash.value)
-router.replace({query: route.query, hash: store.getters['alerts/getHistoryHash']})
 
 function rowProps({item}: {item: any}) {
   return {
@@ -245,24 +277,15 @@ async function selectItem(item: History) {
   router.push({path: `/alert/${item.alertId}`, query: {redirect: route.fullPath}})
 }
 
-function setEnv(env: string) {
-  store.dispatch('alerts/setHistoryFilter', {
-    ...filter.value,
-    environment: env === 'All' ? null : env
-  })
-  refreshAll()
+async function getFilterTabs(tab: string) {
+  await store.dispatch('filterTabs/getFilterTabs')
+  if (tab !== 'user-defined') {
+    const [filterTab] = filterTabsItems.value.filter(({name}) => name == tab)
+    setFilterTab(filterTab.filter)
+  }
 }
 
 const refresh = computed(() => store.state.refresh)
-
-watch(refresh, val => {
-  if (!val) return
-  refreshAll()
-})
-watch(routeHash, val => setHash(val))
-watch(filter, () => router.replace({query: routeQuery.value, hash: store.getters['alerts/getHistoryHash']}))
-watch(storeQuery, val => (query.value = val))
-watch(routeQuery, val => setQuery(val as Query))
 
 function setQuery(q: Query) {
   store.dispatch('alerts/updateQuery', q)
@@ -298,6 +321,7 @@ const refreshAll = () => {
   if (timeout.value) clearTimeout(timeout.value)
   getHistory()
   getEnvironments()
+  getFilterTabs(currentTab.value)
   getQueries()
   timeout.value = setTimeout(refreshAll, interval.value)
 }
@@ -317,6 +341,16 @@ function getQueries() {
   store.dispatch('getUserQueries')
 }
 
+setHash(routeHash.value)
+router.replace({query: route.query, hash: store.getters['alerts/getHistoryHash']})
+watch(refresh, val => {
+  if (!val) return
+  refreshAll()
+})
+watch(routeHash, val => setHash(val))
+watch(filter, () => router.replace({query: routeQuery.value, hash: store.getters['alerts/getHistoryHash']}))
+watch(storeQuery, val => (query.value = val))
+watch(routeQuery, val => setQuery(val as Query))
 setQuery(routeQuery.value as Query)
 refreshAll()
 </script>

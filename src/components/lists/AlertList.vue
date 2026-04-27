@@ -8,7 +8,7 @@
     fixed-header
     style="max-height: calc(99vh - calc(48px + 43px + 64px + 58px))"
     :headers="customHeaders"
-    :items="alerts"
+    :items="items"
     :items-length="pagination.totalItems!"
     :items-per-page-options="pagination.itemsPerPageOptions"
     :loading="isSearching"
@@ -192,22 +192,13 @@ const headersMap = computed(() => ({
   actions: {title: t('Actions'), key: 'actions', sortable: false, align: 'end'}
 }))
 
-const alerts = computed(() => {
-  const alertList = store.getters['alerts/alerts']
-  // if (props.filter.text) {
-  //   const text = props.filter.text.toLowerCase()
-  //   return alertList.filter((alert: Record<string, any>) =>
-  //     Object.keys(alert).some((k) => alert[k]?.toString().toLowerCase().includes(text))
-  //   )
-  // } else {
-  return alertList
-  // }
-})
-
+const items = computed(() => store.state.alerts.alerts)
 const isSearching = computed(() => (store.state.alerts.isSearching ? 'primary' : false))
 const pagination = computed({
   get: () => store.state.alerts.pagination,
-  set: value => store.dispatch('alerts/setPagination', value)
+  set: value => {
+    store.dispatch('alerts/setPagination', value)
+  }
 })
 
 const lastNote = (item: Alert) => {
@@ -266,6 +257,9 @@ async function selectItem(item: Alert) {
   if (!selected.value.length) {
     await store.dispatch('alerts/getAlert', item.id)
     router.push({path: `/alert/${item.id}`, query: {redirect: route.fullPath}})
+  } else {
+    const include = selected.value.includes(item.id)
+    include ? selected.value.splice(selected.value.indexOf(item.id), 1) : selected.value.push(item.id)
   }
 }
 

@@ -335,8 +335,20 @@ async function validate(close?: boolean) {
   }
 }
 
+function compareDict(a: any, b: any) {
+  if (a === null) return true
+  for (const key in a) {
+    if (b[key] === undefined) return false
+    if (a[key] !== null && typeof a[key] === typeof {}) {
+      if (b[key] === null || a[key].length !== b[key].length || !compareDict(a[key], b[key])) return false
+    } else if (a[key] !== b[key]) return false
+  }
+  return true
+}
+
 function apply() {
   const item = editedItem.value
+  if (!compareDict(filter, filter.value)) store.dispatch('filterTabs/setCurrentTab', 'user-defined')
   filter.value = {
     ...item,
     environment: (item.environment?.length ?? 0 > 0) ? item.environment : undefined,
