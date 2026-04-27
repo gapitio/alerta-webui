@@ -9,6 +9,8 @@
         prepend-inner-icon="calendar_month"
         :disabled="disabled"
         :placeholder="placeholder ?? label"
+        clearable
+        @click:clear="editDate = null"
       />
     </template>
 
@@ -20,7 +22,7 @@
 import moment from 'moment'
 import {computed, ref, watch} from 'vue'
 
-const value = defineModel<string>()
+const value = defineModel<string | null>()
 
 const componentProps = defineProps<{
   disabled?: boolean
@@ -33,7 +35,7 @@ const componentProps = defineProps<{
 const editDate = ref<string | null>(value.value == '' ? null : (value.value ?? null))
 const menu = ref(false)
 const editedDate = computed(() => {
-  if (editDate.value === null && !componentProps.newDate) return ''
+  if (editDate.value === null && !componentProps.newDate) return null
   return moment(editDate.value).format('YYYY-MM-DD')
 })
 
