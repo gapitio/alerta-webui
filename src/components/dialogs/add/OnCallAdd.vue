@@ -78,13 +78,7 @@
             </v-col>
 
             <v-col cols="12" class="pb-0">
-              <g-combobox
-                v-model="editedItem.repeatMonths"
-                multiple
-                show-header
-                :items="months"
-                :label="t('EndTime')"
-              />
+              <g-combobox v-model="editedItem.repeatMonths" multiple show-header :items="months" :label="t('Months')" />
             </v-col>
           </v-row>
         </v-card-text>
