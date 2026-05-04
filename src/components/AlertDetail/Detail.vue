@@ -169,7 +169,7 @@ const queryBy = (attribute: string, value: any, shift?: boolean) => {
         ...alertFilter.value,
         [attribute]: [...new Set([...(attribute in alertFilter.value ? alertFilter.value[attribute] : []), value])]
       }
-
+  store.dispatch('filterTabs/setCurrentTab', 'user-defined')
   store.dispatch('alerts/setFilter', filter)
   router.push({path: '/alerts'})
 }
