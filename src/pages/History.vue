@@ -252,7 +252,7 @@ function setHash(val: string) {
   const hash = val.replace(/^#/, '')
 
   if (hash) {
-    const hashMap: {sd?: string; sb?: string; ct?: string; [key: string]: any} = utils.fromHash(val)
+    const hashMap: {sd?: string; sb?: string; ct?: string; [key: string]: any} = utils.fromHash(hash)
     if (typeof hashMap.ct === 'string') {
       if (hashMap.ct == 'user-defined') setFilter(hashMap)
       currentTab.value = hashMap.ct
