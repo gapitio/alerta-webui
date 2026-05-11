@@ -5,7 +5,7 @@
  */
 
 // Composables
-import {createRouter, createWebHistory, type Router} from 'vue-router/auto'
+import {createRouter, createWebHashHistory, type Router} from 'vue-router/auto'
 import {routes} from 'vue-router/auto-routes'
 import type {Store} from './store/types'
 import type {App} from 'vue'
@@ -13,7 +13,7 @@ import type {App} from 'vue'
 export default function registerRouter(app: App) {
   const config = app.config.globalProperties.$config
   const router = createRouter({
-    history: createWebHistory(config.base ?? '/'),
+    history: createWebHashHistory(config.base ?? '/'),
     routes
   })
 
