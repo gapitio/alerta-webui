@@ -149,6 +149,7 @@ const alertDetails: Ref<{text: string; value: keyof Alert; searchable?: boolean;
   {text: t('AlertId'), value: 'id', more: true},
   {text: t('LastReceiveAlertId'), value: 'lastReceiveId', more: true},
   {text: t('Timeout'), value: 'timeout', more: true},
+  {text: t('Correlate'), value: 'correlate', searchable: true, more: true},
   {text: t('Watchers'), value: 'customTags', searchable: true, more: true}
 ])
 
