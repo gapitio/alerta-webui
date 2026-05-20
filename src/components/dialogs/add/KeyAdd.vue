@@ -105,7 +105,7 @@ const editedExpireDate = computed({
 
 const formTitle = computed(() => (props.item?.id !== undefined ? t('EditApiKey') : t('NewApiKey')))
 const scopes = computed(() => store.state.perms.scopes)
-const users = computed(() => store.state.users.items.map(a => a.email))
+const users = computed(() => store.state.users.items.map(a => a.login))
 const dialog = computed({
   get: () => props.dialog,
   set: val => {
