@@ -105,7 +105,8 @@ const editedExpireDate = computed({
 
 const formTitle = computed(() => (props.item?.id !== undefined ? t('EditApiKey') : t('NewApiKey')))
 const scopes = computed(() => store.state.perms.scopes)
-const users = computed(() => store.state.users.items.map(a => a.email))
+const user = computed(() => store.state.auth.payload.preferred_username)
+const users = computed(() => store.state.users.items.map(a => a.login))
 const dialog = computed({
   get: () => props.dialog,
   set: val => {
@@ -126,7 +127,8 @@ watch(dialog, val => {
       valueStart.value = JSON.parse(JSON.stringify(obj))
     } else {
       const obj = {
-        ...(JSON.parse(JSON.stringify(defaultItem)) as Key)
+        ...(JSON.parse(JSON.stringify(defaultItem)) as Key),
+        user: user.value ?? ''
       }
       editedItem.value = obj
       valueStart.value = JSON.parse(JSON.stringify(obj))
