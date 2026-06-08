@@ -69,7 +69,7 @@
           <v-icon icon="restore" />
           <v-tooltip location="bottom" activator="parent" :text="t('Unshelve')" />
         </v-btn>
-        <v-btn v-if="isAlertAlarmModel" icon="highlight_off" variant="text" @click.stop="takeAction('close')">
+        <v-btn v-if="closeIsAllowed" icon="highlight_off" variant="text" @click.stop="closeAlerts">
           <v-icon icon="highlight_off" />
           <v-tooltip location="bottom" activator="parent" :text="t('Close')" />
         </v-btn>
@@ -189,7 +189,7 @@ const userQueries = computed(() =>
 )
 
 const selected = computed(() => store.state.alerts.selected)
-const isAlertAlarmModel = computed(() => !store.getters.getConfig('alarm_model').name.includes('ISA'))
+const closeIsAllowed = computed(() => store.getters.getConfig('alarm_model').name.toLowerCase().includes('alerta'))
 
 function clearSelected() {
   store.dispatch('alerts/updateSelected', [])
@@ -234,6 +234,12 @@ async function deleteAlerts() {
     await store.dispatch('alerts/deleteAlerts', selected.value)
     store.dispatch('alerts/updateSelected', [])
     refreshAlerts(audio.value)
+  }
+}
+
+async function closeAlerts() {
+  if (confirm.value && (await confirm.value.open(t('ConfirmCloses')))) {
+    await takeAction('close')
   }
 }
 

@@ -120,7 +120,7 @@
           density="compact"
           variant="text"
           icon="highlight_off"
-          @click.stop="takeAction(item.id, 'close')"
+          @click.stop="closeAlert(item.id)"
         >
           <v-icon icon="highlight_off" />
           <v-tooltip location="bottom" activator="parent" :text="t('Close')" />
@@ -294,7 +294,7 @@ function haveDeleteScope() {
 }
 
 function isAlertAlarmModel() {
-  return store.state.config.alarm_model.name.includes('ISA 18')
+  return store.state.config.alarm_model.name.toLowerCase().includes('alerta')
 }
 
 // Debounced methods
@@ -321,6 +321,12 @@ const unwatchAlert = debounce(
   200,
   {leading: true, trailing: false}
 )
+
+const closeAlert = debounce(async (id: string) => {
+  if (confirm.value && (await confirm.value.open(t('ConfirmClose')))) {
+    takeAction(id, 'close')
+  }
+})
 
 const deleteAlert = debounce(
   async (id: string) => {

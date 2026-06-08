@@ -65,7 +65,7 @@
         :disabled="isClosed(item?.status!)"
         variant="text"
         icon
-        @click="takeAction(item?.id!, 'close')"
+        @click="closeAlert(item?.id!)"
       >
         <v-icon icon="cancel" />
         <v-tooltip location="bottom" activator="parent" :text="t('Close')" />
@@ -208,7 +208,7 @@ function haveDeleteScope() {
 }
 
 function isAlertAlarmModel() {
-  return !store.state.config.alarm_model.name.includes('ISA 18')
+  return store.state.config.alarm_model.name.toLowerCase().includes('alerta')
 }
 
 function isOpen(status: string) {
@@ -288,6 +288,13 @@ const deleteAlert = debounce(
   200,
   {leading: true, trailing: false}
 )
+
+const closeAlert = debounce(async (id: string) => {
+  if (confirm.value && (await confirm.value.open(t('ConfirmClose')))) {
+    takeAction(id, 'close')
+  }
+})
+
 const showMore = ref(false)
 const show = (val: boolean) => (showMore.value = val)
 
