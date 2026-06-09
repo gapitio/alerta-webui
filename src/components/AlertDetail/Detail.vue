@@ -28,7 +28,7 @@
         <v-col cols="3" class="text-grey">
           {{ detail.text }}
         </v-col>
-        <v-col v-if="detail.value === 'severity'" cols="9">
+        <v-col v-if="detail.value === 'severity'" cols="9" style="z-index: -1">
           <v-chip label size="small" class="chip" :class="[item.previousSeverity]">
             {{ filters.capitalize(item?.previousSeverity) }}
           </v-chip>
@@ -37,7 +37,7 @@
             {{ filters.capitalize(item?.severity) }}
           </v-chip>
         </v-col>
-        <v-col v-else-if="['tags', 'customTags'].includes(detail.value)" cols="9">
+        <v-col v-else-if="['tags', 'customTags'].includes(detail.value)" cols="9" style="z-index: -1">
           <v-chip
             v-for="tag in item[detail.value as 'tags' | 'customTags']"
             :key="tag"
