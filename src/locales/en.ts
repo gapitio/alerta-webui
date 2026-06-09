@@ -89,6 +89,8 @@ export const en = {
   TextIsRequired: 'Text is required',
   TextMustBeLessThan: 'Text must be less than',
   characters: 'characters',
+  ConfirmClose: 'Are you sure you want to close the alert?',
+  ConfirmCloses: 'Are you sure you want to close the selected alerts?',
 
   // Alert detail
   Alert: 'Alert',

@@ -125,14 +125,14 @@ type Action = {
 const isAcked = computed(() => ['ack', 'ACKED'].includes(props.status))
 const isShelved = computed(() => ['shelved', 'SHLVD'].includes(props.status))
 const isClosed = computed(() => props.status == 'closed')
-const isAlertAlarmModel = computed(() => !store.getters.getConfig('alarm_model').name.includes('ISA'))
+const allowCloseAction = computed(() => store.getters.getConfig('alarm_model').name.toLowerCase().includes('alerta'))
 const showMore = ref(false)
 
 watch(showMore, val => emits('show', val))
 
 const actions: Action[] = [
   {title: t('Open'), value: 'open', action: 'take-action', show: () => isClosed.value},
-  {title: t('Close'), value: 'close', action: 'take-action', show: () => !isClosed.value && isAlertAlarmModel.value},
+  {title: t('Close'), value: 'close', action: 'take-action', show: () => !isClosed.value && allowCloseAction.value},
   {title: t('Unack'), value: 'unack', action: 'take-action', show: () => isAcked.value},
   {
     title: t('Ack'),
