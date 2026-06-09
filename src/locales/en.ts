@@ -512,7 +512,7 @@ export const en = {
   AlertSettings: 'Alert summary',
   ShowAllowedEnvs: 'Always show allowed environments',
   ShowNotesIcon: 'Show notes icon',
-  ShowSearchBar: 'Show advanced searh bar',
+  ShowSearchBar: 'Show advanced search bar',
   ShowNotesHint: 'Show icon next to alert status to indicate an operator note',
   Font: 'Font',
   FontSize: 'Font Size',
