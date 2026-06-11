@@ -245,7 +245,7 @@ const editedItem: Ref<
     reactivateDate: string | null
     reactivateTime: string | null
     timeObj: {
-      time: number | null
+      time: number | string | null
       interval: string | null
     }
     period: {
@@ -316,7 +316,7 @@ watch(dialog, val => {
         ...compProps.item!,
         reactivateDate: compProps.item.reactivate,
         reactivateTime: timeFromIsoString(compProps.item.reactivate),
-        timeObj: {time: null, interval: null},
+        timeObj: {time: compProps.item.delayTime, interval: 'seconds'},
         period: {
           startTime: compProps.item.startTime ? filters.hhmmUtcToLocal(compProps.item.startTime) : '',
           endTime: compProps.item.endTime ? filters.hhmmUtcToLocal(compProps.item.endTime) : ''
