@@ -12,11 +12,11 @@ export default {
   setStatus(alertId: string, data: object) {
     return api.put(`/alert/${alertId}/status`, data)
   },
-  actionAlert(alertId: string, data: object) {
-    return api.put(`/alert/${alertId}/action`, data)
+  actionAlert(alertId: string, data: {action: string; text?: string; timeout?: number}) {
+    return api.put(`/alert/${alertId}/action/${data.action}`, data)
   },
   actionAlerts(data: {action: string; text?: string; timeout?: number; alerts: string[]}) {
-    return api.put(`/alerts/action`, data)
+    return api.put(`/alerts/action/${data.action}`, data)
   },
   tagAlert(alertId: string, data: object) {
     return api.put(`/alert/${alertId}/tag`, data)
