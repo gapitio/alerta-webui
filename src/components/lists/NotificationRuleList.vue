@@ -301,7 +301,7 @@ const headers = ref([
   {title: t('Active'), key: 'active', info: [t('ActiveInfoTrue'), t('ActiveInfoFalse')]},
   {title: t('Reactivate'), key: 'reactivate', info: t('ReactivateDateInfo')},
   {title: t('Customer'), key: 'customer'},
-  {title: t('Delay'), key: 'delay', info: t('DelayTimeInfo')},
+  {title: t('Delay'), key: 'delayTime', info: t('DelayTimeInfo')},
   {title: t('Name'), key: 'name', info: t('NameInfo')},
   {title: t('Environment'), key: 'environment', info: t('EnvironmentInfo')},
   {title: t('Channel'), key: 'channelId', info: t('NotificationHistoryChannel')},
