@@ -21,7 +21,13 @@
         <v-card-text style="overflow-x: hidden">
           <v-row>
             <v-col cols="12">
-              <g-text-field v-model="timeout" show-header :label="t('Timeout')" type="number" />
+              <g-text-field
+                v-model="timeout"
+                show-header
+                :label="t('Timeout')"
+                type="number"
+                :rules="[(val: number) => val >= 0]"
+              />
             </v-col>
             <v-col cols="12">
               <g-text-field
