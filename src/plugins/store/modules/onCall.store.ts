@@ -2,6 +2,7 @@ import OnCallApi from '@/services/api/onCall.service'
 import type {State, Getters, Actions, Mutations} from '../types/onCall-types'
 import type {ActionTree} from 'vuex'
 import type {State as RootState} from '../types'
+import {checkForIllegalSorting} from '@/common/utils'
 
 const namespaced = true
 
@@ -59,7 +60,12 @@ const actions: Actions & ActionTree<State, RootState> = {
 
     return OnCallApi.getOnCalls(params)
       .then(({onCalls, total, pageSize}) => commit('SET_ON_CALL', [onCalls, total, pageSize]))
-      .catch(() => commit('RESET_LOADING'))
+      .catch(e => {
+        commit('RESET_LOADING')
+        state.pagination.sortBy = checkForIllegalSorting(e, state.pagination.sortBy!, [
+          {key: 'startTime', order: 'asc'}
+        ])
+      })
   },
   createOnCall({dispatch}, notificationrule) {
     return OnCallApi.createOnCall(notificationrule).then(() => {

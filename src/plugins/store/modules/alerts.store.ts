@@ -3,8 +3,9 @@ import type {Mutations, Actions, Getters, State} from '../types/alerts-types'
 import type {State as RootState} from '../types'
 
 import moment from 'moment'
-import utils from '@/common/utils'
+import utils, {checkForIllegalSorting} from '@/common/utils'
 import type {ActionTree} from 'vuex'
+import {AxiosError} from 'axios'
 
 const namespaced = true
 
@@ -55,7 +56,6 @@ const state: State = {
   pagination: {
     page: 1,
     itemsPerPage: 20,
-    sortBy: [],
     descending: false,
     totalItems: 0,
     itemsPerPageOptions: [5, 10, 20, 50, 100, 200]
@@ -198,8 +198,9 @@ const actions: Actions & ActionTree<State, RootState> = {
       const {alerts, total, pageSize} = await AlertsApi.getAlerts(params)
       commit('SET_ALERTS', [alerts, total, pageSize])
       return alerts
-    } catch {
+    } catch (e) {
       commit('RESET_LOADING')
+      if (e instanceof AxiosError) state.pagination.sortBy = checkForIllegalSorting(e, state.pagination.sortBy!, [])
       return []
     }
   },

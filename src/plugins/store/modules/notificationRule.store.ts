@@ -1,4 +1,5 @@
 import NotificationRuleApi from '@/services/api/notificationRule.service'
+import {checkForIllegalSorting} from '@/common/utils'
 import type {State, Getters, Actions, Mutations, Filter} from '../types/notificationRule-types'
 import type {ActionTree} from 'vuex'
 import type {State as RootState} from '../types'
@@ -40,7 +41,7 @@ const state: State = {
   pagination: {
     page: 1,
     itemsPerPage: 15,
-    sortBy: [{key: 'startTime', order: 'asc'}],
+    sortBy: [{key: 'name', order: 'asc'}],
     descending: true,
     itemsPerPageOptions: [10, 15, 30, 50, 100, 200]
   },
@@ -143,7 +144,10 @@ const actions: Actions & ActionTree<State, RootState> = {
 
     return NotificationRuleApi.getNotificationRules(params)
       .then(({notificationRules, total, pageSize}) => commit('SET_ITEMS', [notificationRules, total, pageSize]))
-      .catch(() => commit('RESET_LOADING'))
+      .catch(e => {
+        commit('RESET_LOADING')
+        state.pagination.sortBy = checkForIllegalSorting(e, state.pagination.sortBy!, [{key: 'name', order: 'asc'}])
+      })
   },
   async getAlerts({commit, state}, notification_rule) {
     commit('SET_ALERTS_LOADING')
