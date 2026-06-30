@@ -64,6 +64,8 @@ export const en = {
   Open: 'Open',
   Assign: 'Assign',
   Ack: 'Ack',
+  AckInfo:
+    'Set the status of the alert status to closed if the status is unacked else set the status to ack. Ack status means that the alert is still active, but an operator have acknowledged it/seen it and is reacting/have reacted to the alert',
   Shelved: 'Shelved',
   Blackout: 'Blackout',
   Closed: 'Closed',
@@ -74,6 +76,8 @@ export const en = {
   // operator actions
   Unack: 'Unack',
   Shelve: 'Shelve',
+  ShelveInfo:
+    'Set the alert status to shelved. When the alert status is shelved, no SMS or emails are sent for this alert.',
   Unshelve: 'Unshelve',
   Close: 'Close',
   Watch: 'Watch',
@@ -114,6 +118,9 @@ export const en = {
   Text: 'Text',
   TrendIndication: 'Trend Indication',
   Timeout: 'Timeout',
+  TimeoutNegative: 'Timeout can not be negaitve',
+  TimeoutInfo:
+    'Timeout for the alert to stay in this state. After the timeout expires, the alert will return to its previous state. Leaving the timeout empty or setting the timeout to "0" will set an infinite timeout, and the alert will never return to its previous state automatically',
   Type: 'Type',
   DuplicateCount: 'Duplicate count',
   Repeat: 'Repeat',
@@ -206,6 +213,7 @@ export const en = {
   End: 'End',
   Created: 'Created',
   Reason: 'Reason',
+  ReasonInfo: 'The reason is added to the alert history as text(description) field',
   NewBlackout: 'New Blackout',
   AddBlackout: 'Add Blackout',
   EditBlackout: 'Edit Blackout',
