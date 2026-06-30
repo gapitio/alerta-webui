@@ -44,10 +44,10 @@
       {{ tab.name }}&nbsp;({{ getTabCount(tab.name) }})
     </v-tab>
     <v-tab
+      v-if="currentTab == 'user-defined'"
       style="padding: 0px; margin-right: 26px"
       class="big-font bold no-cap-btn"
       value="user-defined"
-      @click="setFilterTab(filter)"
     >
       user-defined ({{ pagination.totalItems }})
     </v-tab>
