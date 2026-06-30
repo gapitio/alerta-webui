@@ -16,6 +16,11 @@
         <v-card-title>
           <v-col cols="12">
             <span class="header"> {{ t(actions[action].header) }} {{ id }} </span>
+            <br />
+            <information-dialog
+              :info="[actions[action].info, ...info]"
+              :title="actions[action].header + ' ' + t('Action')"
+            />
           </v-col>
         </v-card-title>
         <v-card-text style="overflow-x: hidden">
@@ -84,12 +89,18 @@ type Description = {
   header: string
   icon: string
   text: string
+  info: {title: string; info: string}
 }
 
 const actions: {shelve: Description; ack: Description} = {
-  shelve: {header: 'Shelve', icon: 'schedule', text: 'Reason'},
-  ack: {header: 'Ack', icon: 'check', text: 'Description'}
+  shelve: {header: 'Shelve', icon: 'schedule', text: 'Reason', info: {title: t('Shelve'), info: t('ShelveInfo')}},
+  ack: {header: 'Ack', icon: 'check', text: 'Description', info: {title: t('Ack'), info: t('AckInfo')}}
 }
+
+const info = [
+  {title: t('Timeout'), info: t('TimeoutInfo')},
+  {title: t('Reason'), info: t('ReasonInfo')}
+]
 
 const timeoutUnits = {
   seconds: 1,
