@@ -1,3 +1,6 @@
+import type {SortBy} from '@/plugins/store/types/alerts-types'
+import type {AxiosError} from 'axios'
+
 export default {
   getAllowedScopes(scopes: string[], allScopes: string[]) {
     const derivedScopes: string[] = []
@@ -44,4 +47,21 @@ export default {
           .reduce((a, [k, v]) => Object.assign(a, {[k]: v}), {})
       : {}
   }
+}
+
+export function checkForIllegalSorting(errorResponse: AxiosError, sort: SortBy[], defaultSort: SortBy[]): SortBy[] {
+  const res = errorResponse.response
+  if (res) {
+    if (typeof res.data == 'object' && res.data && 'message' in res.data) {
+      const message = res.data.message as string
+      if (message.includes('Sorting by')) {
+        const illegalKey = message.match(/'(.+)'/)?.[1]
+        if (illegalKey) {
+          const _sortBy = sort.filter(({key}) => key !== illegalKey)
+          return _sortBy.length > 0 ? _sortBy : defaultSort
+        }
+      }
+    }
+  }
+  return sort
 }

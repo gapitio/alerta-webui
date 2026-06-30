@@ -2,7 +2,7 @@ import EscalationRuleApi from '@/services/api/escalationRule.service'
 import type {State, Mutations, Actions, Getters, Filter} from '../types/escalationRule-types'
 import type {ActionTree} from 'vuex'
 import type {State as RootState} from '../types'
-import utils from '@/common/utils'
+import utils, {checkForIllegalSorting} from '@/common/utils'
 
 const namespaced = true
 
@@ -103,7 +103,12 @@ const actions: Actions & ActionTree<State, RootState> = {
 
     return EscalationRuleApi.getEscalationRules(params)
       .then(({escalationRules, total, pageSize}) => commit('SET_ITEMS', [escalationRules, total, pageSize]))
-      .catch(() => commit('RESET_LOADING'))
+      .catch(e => {
+        commit('RESET_LOADING')
+        state.pagination.sortBy = checkForIllegalSorting(e, state.pagination.sortBy!, [
+          {key: 'startTime', order: 'asc'}
+        ])
+      })
   },
   setActiveFilter({commit, dispatch}, filter) {
     commit('SET_ACTIVE_FILTER', filter)
