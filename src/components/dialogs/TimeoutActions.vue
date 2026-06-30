@@ -9,18 +9,25 @@
         <v-card-title>
           <v-col cols="12">
             <span class="header"> {{ t(actions[action].header) }} ({{ alerts.length }}) </span>
+            <information-dialog
+              :info="[actions[action].info, ...info]"
+              :title="actions[action].header + ' ' + t('Action')"
+            />
           </v-col>
         </v-card-title>
         <v-card-text style="overflow-x: hidden">
           <v-row>
-            <v-col cols="12">
+            <v-col cols="7">
               <g-text-field
                 v-model="timeout"
                 show-header
                 type="number"
-                :rules="[(val: number) => val >= 0]"
+                :rules="[(val: number) => (val >= 0 ? true : t('TimeoutNegative'))]"
                 :label="t('Timeout')"
               />
+            </v-col>
+            <v-col cols="5">
+              <g-select v-model="timeoutUnit" :items="Object.keys(timeoutUnits)" show-header :label="t('Unit')" />
             </v-col>
             <v-col cols="12">
               <g-text-field
@@ -66,6 +73,7 @@ const store: Store = useStore()
 const dialog = ref(false)
 const text = ref('')
 const timeout = ref<null | number>(null)
+const timeoutUnit = ref<keyof typeof timeoutUnits>('minutes')
 const form = ref<VForm | null>(null)
 const maxNoteLength = 200
 
@@ -73,11 +81,24 @@ type Description = {
   header: string
   icon: string
   text: string
+  info: {title: string; info: string}
 }
 
 const actions: {shelve: Description; ack: Description} = {
-  shelve: {header: 'Shelve', icon: 'schedule', text: 'Reason'},
-  ack: {header: 'Ack', icon: 'check', text: 'Description'}
+  shelve: {header: 'Shelve', icon: 'schedule', text: 'Reason', info: {title: t('Shelve'), info: t('ShelveInfo')}},
+  ack: {header: 'Ack', icon: 'check', text: 'Description', info: {title: t('Ack'), info: t('AckInfo')}}
+}
+
+const info = [
+  {title: t('Timeout'), info: t('TimeoutInfo')},
+  {title: t('Reason'), info: t('ReasonInfo')}
+]
+
+const timeoutUnits = {
+  seconds: 1,
+  minutes: 60,
+  hours: 3600,
+  days: 24 * 3600
 }
 
 const props = defineProps<{action: 'shelve' | 'ack'}>()
@@ -93,7 +114,8 @@ async function validate() {
 }
 
 async function save() {
-  await store.dispatch('alerts/takeActions', [alerts.value, props.action, text.value, timeout.value || undefined])
+  const timeoutSeconds = (timeout.value ?? 0) * timeoutUnits[timeoutUnit.value]
+  await store.dispatch('alerts/takeActions', [alerts.value, props.action, text.value, timeoutSeconds || undefined])
   store.dispatch('alerts/getAlerts')
   close()
 }
