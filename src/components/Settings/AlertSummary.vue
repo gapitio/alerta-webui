@@ -16,6 +16,9 @@
     <v-col cols="12">
       <g-select v-model="refreshInterval" show-header :items="refreshOptions" :label="t('RefreshInterval')" />
     </v-col>
+    <v-col cols="12">
+      <g-select v-model="maxActionItems" show-header :items="actionOptions" :label="t('MaxActionItems')" />
+    </v-col>
   </v-row>
 </template>
 
@@ -47,5 +50,11 @@ const noteIcon = computed({
 const searchBar = computed({
   get: () => store.getters.getPreference('showSearchBar'),
   set: val => store.dispatch('setUserPrefs', {showSearchBar: val})
+})
+
+const actionOptions = computed(() => store.state.alerts.pagination.itemsPerPageOptions)
+const maxActionItems = computed({
+  get: () => store.getters.getPreference('maxActionItems'),
+  set: val => store.dispatch('setUserPrefs', {maxActionItems: val})
 })
 </script>

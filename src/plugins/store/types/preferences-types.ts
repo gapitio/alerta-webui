@@ -40,6 +40,7 @@ export interface State {
   queries: Query[]
   navBarCollapsed: boolean
   showSearchBar: boolean
+  maxActionItems: number
 }
 
 export type Mutations<S = State> = {

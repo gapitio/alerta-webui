@@ -40,21 +40,21 @@
       {{ filters.hhmmss(timeoutLeft(item)) }}
     </template>
     <template #[`item.severity`]="{item}">
-      <v-chip :class="[item.severity]" class="chip" label variant="flat" size="small">
+      <div class="chip" :class="[item.severity]">
         {{ item.severity }}
-      </v-chip>
+      </div>
     </template>
     <template #[`item.status`]="{item}">
-      <v-chip class="chip" label variant="flat" size="small">
+      <div class="chip">
         {{ item.status }}
-      </v-chip>
+      </div>
       <v-tooltip v-if="lastNote(item)" location="bottom" :text="lastNote(item)">
         <template #activator="{props}">
           <v-icon v-bind="props"> sticky_note_2 </v-icon>
         </template>
       </v-tooltip>
     </template>
-    <template #[`item.actions`]="{item}">
+    <template #[`item.actions`]="{item}" v-if="itemsPerPage <= maxItemsWithActions">
       <div class="action-buttons">
         <v-btn
           v-if="isAcked(item.status) || isClosed(item.status)"
@@ -141,7 +141,7 @@
 </template>
 
 <script lang="ts" setup>
-import {computed, ref} from 'vue'
+import {computed, ref, watch} from 'vue'
 import {useStore} from 'vuex'
 import {useRoute, useRouter} from 'vue-router'
 import debounce from 'lodash/debounce'
@@ -160,7 +160,15 @@ const {t} = useI18n()
 
 const confirm = ref<InstanceType<typeof Confirm> | null>(null)
 
-const headersMap = computed(() => ({
+const headersMap = computed<{
+  [key: string]: {
+    title: string
+    key: string
+    headerProps?: {class: string}
+    sortable?: boolean
+    align?: 'end'
+  }
+}>(() => ({
   id: {title: t('AlertId'), key: 'id'},
   resource: {title: t('Resource'), key: 'resource'},
   event: {title: t('Event'), key: 'event'},
@@ -170,7 +178,7 @@ const headersMap = computed(() => ({
   status: {title: t('Status'), key: 'status'},
   service: {title: t('Service'), key: 'service'},
   group: {title: t('Group'), key: 'group'},
-  value: {title: t('Value'), value: 'value'},
+  value: {title: t('Value'), key: 'value'},
   tags: {title: t('Tags'), key: 'tags'},
   attributes: {title: t('Attribute'), key: 'attributes'},
   origin: {title: t('Origin'), key: 'origin'},
@@ -201,6 +209,14 @@ const pagination = computed({
   }
 })
 
+const maxItemsWithActions = computed(() => store.getters.getPreference('maxActionItems'))
+const itemsPerPage = computed(() => store.state.alerts.pagination.itemsPerPage)
+
+watch(itemsPerPage, value => {
+  if (value <= maxItemsWithActions.value && items.value.length > maxItemsWithActions.value)
+    store.commit('alerts/SET_ALERTS', [[], 0, value])
+})
+
 const lastNote = (item: Alert) => {
   const note = item.history.filter(h => ['note', 'dismiss'].includes(h.type)).pop()
   return note?.type == 'note' ? note.text : ''
@@ -215,7 +231,12 @@ const customHeaders = computed(() => {
         sortable: true
       }
   )
-  return [...configHeaders, headersMap.value.actions]
+  return [
+    ...configHeaders,
+    itemsPerPage.value > maxItemsWithActions.value
+      ? {...headersMap.value.actions, headerProps: {class: 'text-disabled'}}
+      : headersMap.value.actions
+  ]
 })
 
 const selected = computed({
