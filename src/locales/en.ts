@@ -88,6 +88,7 @@ export const en = {
 
   // Filter
   RegexHint: 'Add ~ the start of the any of the texts to change to partial search',
+  UserDefined: 'User Filter',
 
   // Alert actions
   TextIsRequired: 'Text is required',

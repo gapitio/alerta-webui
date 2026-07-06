@@ -106,7 +106,7 @@
         class="big-font bold no-cap-btn"
         value="user-defined"
       >
-        user-defined ({{ pagination.totalItems }})
+        {{ t('UserDefined') }} ({{ pagination.totalItems }})
       </v-tab>
     </v-tabs>
     <v-row class="mt-0">

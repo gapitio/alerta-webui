@@ -71,7 +71,7 @@ const props = defineProps<{
 
 const rules = {
   required: (v: string) => !!v || t('Required'),
-  uniqueName: (v: string) => !['user-defined', ...props.names].includes(v) || v + t('AlreadyExists')
+  uniqueName: (v: string) => ![t('UserDefined'), ...props.names].includes(v) || v + t('AlreadyExists')
 }
 const dialog = ref(false)
 
