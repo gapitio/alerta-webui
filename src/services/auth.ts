@@ -2,7 +2,7 @@ import VueAuthenticate, {type AuthenticateOptions} from 'vue-authenticate-2'
 import type {App} from 'vue'
 
 function getRedirectUri(path: string) {
-  return window.location.origin + (path || '')
+  return (window.location.origin + (path || '') + '/auth').replace('//auth', '/auth')
 }
 
 type AuthenticateOptionsFix = AuthenticateOptions & {tokenPath: string}
