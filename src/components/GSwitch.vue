@@ -1,9 +1,9 @@
 <template>
-  <v-row no-gutters>
-    <v-col v-if="label !== ''" cols="auto" class="label pr-2">
+  <v-row>
+    <v-col v-if="label !== ''" cols="auto" class="label">
       {{ label }}
     </v-col>
-    <v-col>
+    <v-col cols="auto">
       <v-switch
         v-model="model"
         density="compact"

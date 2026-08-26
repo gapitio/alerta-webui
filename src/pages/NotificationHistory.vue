@@ -43,7 +43,7 @@
       />
     </v-col>
   </v-row>
-  <v-row class="pt-0 mt-0" ref="filterHeader">
+  <v-row class="pt-0" ref="filterHeader">
     <template v-for="(f, d) in filter" :key="d">
       <v-col v-if="d == 'dateRange' && f && isDateRange(f) && (f.from || f.to)" cols="auto">
         <v-chip v-if="(f.from ?? 0) < 0" variant="flat" class="chip" size="small">
