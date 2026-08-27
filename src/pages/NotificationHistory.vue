@@ -93,13 +93,23 @@
       <v-icon :icon="item.sent ? 'check' : 'close'" />
     </template>
     <template #[`item.alert`]="{item}">
-      <a v-if="item.alert !== 'Test Notification Channel'" :href="`alert/${item.alert}`"> {{ item.alert }} </a>
+      <div
+        v-if="item.alert !== 'Test Notification Channel'"
+        class="clickable"
+        @click.prevent="router.push({path: 'alert/' + item.alert})"
+      >
+        {{ item.alert }}
+      </div>
       <template v-else> Test Notification Channel </template>
     </template>
     <template #[`item.rule`]="{item}">
-      <a v-if="item.alert !== 'Test Notification Channel'" :href="`notificationrules?q=id:${item.rule}`">
+      <div
+        v-if="item.alert !== 'Test Notification Channel'"
+        class="clickable"
+        @click="router.push({path: `notificationrules`, query: {q: `id:${item.rule}`}})"
+      >
         {{ getRule(item) }}
-      </a>
+      </div>
       <template v-else> Test Notification Channel </template>
     </template>
   </v-data-table-server>
