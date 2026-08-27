@@ -1,9 +1,9 @@
 <template>
   <v-row>
-    <v-col v-if="label !== ''" cols="auto" class="label">
+    <v-col v-if="label !== '' && label !== undefined" cols="auto" class="label">
       {{ label }}
     </v-col>
-    <v-col cols="auto">
+    <v-col cols="auto" class="pt-0 pb-0">
       <v-switch
         v-model="model"
         density="compact"
