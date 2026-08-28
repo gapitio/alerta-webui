@@ -36,6 +36,7 @@ export type NotificationSend = {
 
 export interface State {
   isLoading: boolean
+  item: null | NotificationChannel
   items: NotificationChannel[]
   encryptionKey: string
   pagination: Pagination
@@ -48,10 +49,11 @@ export type Mutations<S = State> = {
   SET_LOADING(state: S): void
   SET_FILTER(state: S, filter: Filter): void
   RESET_LOADING(state: S): void
-  SET_NOTIFICATION_CHANNEL(
+  SET_NOTIFICATION_CHANNELS(
     state: S,
     [notificationChannel, total, pageSize]: [NotificationChannel[], number, number]
   ): void
+  SET_NOTIFICATION_CHANNEL(state: S, notificationChannel: NotificationChannel): void
   SET_PAGINATION(state: S, pagination: Pagination): void
 }
 
@@ -61,6 +63,7 @@ export type Actions = {
   getEncryptionKey({commit}: AugmentedActionContext): void
   setFilter({commit}: AugmentedActionContext, filter: Filter): void
   getNotificationChannels({commit, state}: AugmentedActionContext): void
+  getNotificationChannel({commit, state}: AugmentedActionContext, id: string): Promise<NotificationChannel>
   createNotificationChannel({dispatch}: AugmentedActionContext, notificationChannel: NotificationChannel): void
   updateNotificationChannel(
     {dispatch}: AugmentedActionContext,
