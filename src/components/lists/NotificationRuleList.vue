@@ -76,7 +76,7 @@
         </v-col>
         <v-spacer />
       </v-row>
-      <v-row class="pt-0 mt-0">
+      <v-row class="pt-0">
         <div v-for="(f, d) in filter" :key="d">
           <v-col v-if="typeof f == 'object' && (f?.length ?? 0) > 0" cols="auto">
             <v-chip v-for="a in f" :key="a" variant="flat" class="chip" size="small"> {{ d }}: {{ a }} </v-chip>
