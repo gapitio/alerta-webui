@@ -117,6 +117,7 @@ export const en = {
   Status: 'Status',
   Value: 'Value',
   Text: 'Text',
+  Subject: 'Subject',
   TrendIndication: 'Trend Indication',
   Timeout: 'Timeout',
   TimeoutNegative: 'Timeout can not be negaitve',

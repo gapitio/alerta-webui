@@ -25,6 +25,7 @@ export type NotificationRule = {
   startTime: string | null
   tags: Tag[]
   text: string
+  subject: string
   triggers: Trigger[]
   useOnCall: boolean
   user?: string

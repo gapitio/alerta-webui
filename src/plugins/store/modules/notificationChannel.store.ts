@@ -10,6 +10,7 @@ const state: State = {
   isLoading: false,
 
   items: [],
+  item: null,
   encryptionKey: '',
   query: {q: ''},
   pagination: {
@@ -32,11 +33,14 @@ const mutations: Mutations = {
   SET_FILTER(state, filter) {
     state.filter = filter
   },
-  SET_NOTIFICATION_CHANNEL(state, [notificationChannel, total, pageSize]) {
+  SET_NOTIFICATION_CHANNELS(state, [notificationChannels, total, pageSize]) {
     state.isLoading = false
-    state.items = notificationChannel
+    state.items = notificationChannels
     state.pagination.totalItems = total
     state.pagination.itemsPerPage = pageSize
+  },
+  SET_NOTIFICATION_CHANNEL(state, notificationChannel) {
+    state.item = notificationChannel
   },
   RESET_LOADING(state) {
     state.isLoading = false
@@ -79,7 +83,7 @@ const actions: Actions & ActionTree<State, RootState> = {
 
     return NotificationChannelApi.getNotificationChannels(params)
       .then(({notificationChannels: notificationChannels, total, pageSize}) =>
-        commit('SET_NOTIFICATION_CHANNEL', [notificationChannels, total, pageSize])
+        commit('SET_NOTIFICATION_CHANNELS', [notificationChannels, total, pageSize])
       )
       .catch(() => commit('RESET_LOADING'))
   },
@@ -92,6 +96,12 @@ const actions: Actions & ActionTree<State, RootState> = {
     return NotificationChannelApi.updateNotificationChannel(notificationChannelId, update).then(() => {
       dispatch('getNotificationChannels')
     })
+  },
+  async getNotificationChannel({commit}, id) {
+    const {notificationChannel} = await NotificationChannelApi.getNotificationChannel(id)
+
+    commit('SET_NOTIFICATION_CHANNEL', notificationChannel)
+    return notificationChannel
   },
   deleteNotificationChannel({dispatch}, notificationChannelId) {
     return NotificationChannelApi.deleteNotificationChannel(notificationChannelId).then(() => {

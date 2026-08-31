@@ -12,6 +12,7 @@ export type NotificationSend = {
 export type NotificationSendData = {
   receivers: string[]
   text: string
+  subject: string
   notifications: NotificationSend[]
 }
 

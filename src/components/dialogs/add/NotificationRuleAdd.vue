@@ -60,6 +60,7 @@
                 :label="t('NotificationChannel') + '*'"
                 :items="currentChannelsIds"
                 :rules="[rules.required]"
+                @update:model-value="() => getChannel()"
               />
             </v-col>
             <v-col cols="6">
@@ -76,6 +77,12 @@
             </v-col>
             <v-col cols="6">
               <g-combobox v-model="editedItem.period.endTime" show-header :items="times" :label="t('EndTime')" />
+            </v-col>
+            <v-col
+              cols="12"
+              v-if="editedItem.channelId != '' && channel && (channel.type === 'sendgrid' || channel.type === 'smtp')"
+            >
+              <g-text-field v-model.trim="editedItem.subject" show-header :label="t('Subject')" />
             </v-col>
             <v-col cols="12">
               <g-textarea v-model.trim="editedItem.text" show-header :label="t('Text')">
@@ -229,6 +236,7 @@ const defaultItem: NotificationRule = {
   reactivate: null,
   endTime: '',
   text: '',
+  subject: 'Alerta Notification: {environment} / {event}',
   days: [],
   triggers: [{from_severity: [], to_severity: [], status: []}],
   channelId: '',
@@ -290,6 +298,8 @@ const editedDate = computed(() => {
   return `${date.getFullYear()}-${month < 10 ? 0 : ''}${month}-${dayOfMonth < 10 ? 0 : ''}${dayOfMonth}`
 })
 
+const channel = computed(() => store.state.notificationChannels.item)
+
 const timeFromIsoString = (time: string | null) => {
   if (!time) return null
   const date = new Date(time)
@@ -314,6 +324,7 @@ watch(dialog, val => {
     if (compProps.item) {
       const obj = {
         ...compProps.item!,
+        subject: compProps.item.subject ?? 'Alerta',
         reactivateDate: compProps.item.reactivate,
         reactivateTime: timeFromIsoString(compProps.item.reactivate),
         timeObj: {time: compProps.item.delayTime, interval: 'seconds'},
@@ -324,6 +335,7 @@ watch(dialog, val => {
       }
       editedItem.value = obj
       valueStart.value = JSON.parse(JSON.stringify(obj))
+      getChannel()
     } else {
       const obj = {
         ...(JSON.parse(JSON.stringify(defaultItem)) as NotificationRule),
@@ -404,6 +416,7 @@ async function save() {
         excludedTags: editedItem.value.excludedTags,
         startTime: sTimeStr,
         endTime: eTimeStr,
+        subject: editedItem.value.subject.replace(/\{([\w\[\]\. ]*)\}/g, '%($1)s'),
         text: editedItem.value.text.replace(/\{([\w\[\]\. ]*)\}/g, '%($1)s'),
         days: editedItem.value.days,
         channelId: editedItem.value.channelId,
@@ -426,6 +439,7 @@ async function save() {
         delayTime: editedItem.value.timeObj.time
           ? `${editedItem.value.timeObj.time} ${editedItem.value.timeObj.interval}`
           : null,
+        subject: editedItem.value.subject.replace(/\{([\w\[\]\. ]*)\}/g, '%($1)s'),
         text: editedItem.value.text.replace(/\{([\w\[\]\. ]*)\}/g, '%($1)s'),
         triggers: editedItem.value.triggers.map(b => {
           return {...b, text: b.text !== undefined ? b.text.replace(/\{([\w\[\]\. ]*)\}/g, '%($1)s') : b.text}
@@ -468,6 +482,10 @@ async function validate() {
     form.value?.resetValidation()
     save()
   }
+}
+
+async function getChannel() {
+  await store.dispatch('notificationChannels/getNotificationChannel', editedItem.value.channelId)
 }
 
 const getEmails = () => store.dispatch('users/getEmails')

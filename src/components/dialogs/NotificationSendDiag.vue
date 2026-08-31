@@ -33,6 +33,11 @@
                 :label="t('SMSChannel')"
               />
             </v-col>
+
+            <v-col cols="12" class="pb-0">
+              <g-text-field v-model="editedItem.subject" show-header :label="t('Subject')" />
+            </v-col>
+
             <v-col cols="12" class="pb-0">
               <g-textarea v-model="editedItem.text" show-header :label="t('Message')" />
             </v-col>
@@ -83,6 +88,7 @@ const smsChannels = computed(() => store.state.notificationChannels.items.filter
 
 const defaultItem: NotificationSendData = {
   text: '',
+  subject: 'Alerta Notification',
   receivers: [],
   notifications: []
 }
