@@ -194,6 +194,7 @@ function getNotes() {
 }
 
 function haveDeleteScope() {
+  if (!store.getters.getConfig('auth_required')) return true
   const scopes = store.getters['auth/scopes']
   if (store.state.config.delete_alert_scope_enforced)
     return scopes.includes('admin') || scopes.includes('admin:alerts') || scopes.includes('delete:alerts')
