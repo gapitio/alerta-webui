@@ -16,6 +16,7 @@ export type NotificationChannel = {
   id: string
   apiSid?: string
   apiToken?: string
+  platformId?: string
   sender: string
   type: NotificationChannelType
   verify: boolean | null

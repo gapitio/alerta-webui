@@ -236,6 +236,8 @@ export const en = {
   ShowError: 'Show Error',
   ApiToken: 'API Token',
   ApiSid: 'API SID',
+  AccountSID: 'Account SID',
+  UseAPIKey: 'Use API key',
   ClientID: 'Client ID',
   ClientSecret: 'Client secret',
   ShowAllData: 'Show all data',
