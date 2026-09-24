@@ -39,6 +39,19 @@
             <v-col cols="12" class="pb-0">
               <g-select v-model="editedItem.type" show-details show-header :items="types" :label="t('Type')" />
             </v-col>
+            <v-col cols="12" v-if="editedItem.type.includes('twilio')">
+              <g-checkbox :label="t('UseAPIKey')" v-model="showPlatformId"></g-checkbox>
+            </v-col>
+            <v-col cols="12" class="pb-0" v-if="editedItem.type.includes('twilio') && showPlatformId">
+              <g-text-field
+                v-model="editedItem.platformId"
+                show-details
+                show-header
+                :rules="[rules.required]"
+                required
+                :label="t('AccountSID')"
+              />
+            </v-col>
 
             <v-col cols="12" class="pb-0">
               <g-text-field
@@ -150,6 +163,7 @@ const labels = {
 }
 
 const edit = ref(false)
+const showPlatformId = ref(false)
 
 const form = ref<VForm | null>(null)
 const editedItem = ref<NotificationChannel>({
@@ -171,6 +185,7 @@ const dialog = computed({
 })
 
 watch(dialog, val => {
+  showPlatformId.value = false
   if (val) {
     if (props.item) {
       const obj = {
