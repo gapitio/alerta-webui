@@ -14,7 +14,7 @@
         <v-card-text style="overflow-x: hidden">
           <v-row>
             <v-col cols="12" class="pb-0">
-              <g-select
+              <g-combobox
                 v-model="editedItem.user"
                 show-details
                 show-header
