@@ -91,7 +91,7 @@ function toggleFullScreen() {
 
 async function getPreferences() {
   await store.dispatch('getUserPrefs')
-  theme.global.name.value = isDark.value ? 'gapitDark' : 'gapitLight'
+  theme.change(isDark.value ? 'gapitDark' : 'gapitLight')
 }
 
 if (isLoggedIn.value) getPreferences()
