@@ -133,7 +133,7 @@ async function login() {
   }
   await store.dispatch('auth/login', creds)
   await store.dispatch('getUserPrefs')
-  theme.global.name.value = isDark.value ? 'gapitDark' : 'gapitLight'
+  theme.change(isDark.value ? 'gapitDark' : 'gapitLight')
   router.push(redirect.value)
 }
 
@@ -142,7 +142,7 @@ async function authenticate() {
     message.value = `Authenticating with ${authProvider.value} ...`
     try {
       await store.dispatch('auth/authenticate', provider.value)
-      theme.global.name.value = isDark.value ? 'gapitDark' : 'gapitLight'
+      theme.change(isDark.value ? 'gapitDark' : 'gapitLight')
       router.push(redirect.value)
     } catch (e) {
       if (e instanceof AxiosError) error.value = (e.response?.data as {message: string}).message
