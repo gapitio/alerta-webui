@@ -31,8 +31,8 @@ export type Filter = {
 export type NotificationSend = {
   text: string
   receivers: string[]
-  users: string[]
-  groups: string[]
+  usersEmails: string[]
+  groupIds: string[]
 }
 
 export interface State {

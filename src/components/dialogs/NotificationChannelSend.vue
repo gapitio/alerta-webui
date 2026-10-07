@@ -21,7 +21,7 @@
             </v-col>
             <v-col cols="12" class="pb-0">
               <g-combobox
-                v-model="editedItem.groups"
+                v-model="editedItem.groupIds"
                 multiple
                 :items="groups"
                 item-title="name"
@@ -32,7 +32,7 @@
             </v-col>
             <v-col cols="12" class="pb-0">
               <g-combobox
-                v-model="editedItem.users"
+                v-model="editedItem.usersEmails"
                 multiple
                 :items="emails"
                 item-title="name"
@@ -89,8 +89,8 @@ const groups = computed(() => store.state.notificationGroups.items)
 const defaultItem: NotificationSend = {
   text: '',
   receivers: [],
-  users: [],
-  groups: []
+  usersEmails: [],
+  groupIds: []
 }
 
 const form = ref<VForm | null>(null)
