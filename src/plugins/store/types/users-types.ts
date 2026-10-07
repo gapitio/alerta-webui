@@ -42,8 +42,10 @@ export type Attributes = {
   queries: Query[]
 }
 
+export type UserInfo = {name: string; email: string; phoneNumber: string}
+
 export type EmailsResponse = {
-  emails: {name: string; email: string}[]
+  emails: UserInfo[]
   status: 'ok'
   total: number
   message?: 'not found'
@@ -73,7 +75,7 @@ export interface State {
   isLoading: boolean
   countryCodes: string[]
   domains: string[]
-  emails: {name: string; email: string}[]
+  emails: UserInfo[]
   items: User[]
   groups: Group[]
   filter: Filter
@@ -86,7 +88,7 @@ export type Mutations<S = State> = {
   SET_FILTER(state: S, filter: Filter): void
   SET_ACTIVE_FILTER(state: S, filter: Partial<ActiveFilter>): void
   SET_ITEMS(state: S, users: User[]): void
-  SET_EMAILS(state: S, emails: {name: string; email: string}[]): void
+  SET_EMAILS(state: S, emails: UserInfo[]): void
   SET_USER_GROUPS(state: S, groups: Group[]): void
   RESET_USER_GROUPS(state: S): void
 }
