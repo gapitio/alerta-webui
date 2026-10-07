@@ -1,4 +1,5 @@
 $primary-600: #1570ef;
+$heatmap-5: #112241;
 
 $surface-primary: #1d232a;
 $surface-secondary-alt: #161719;
@@ -49,7 +50,8 @@ $severity-color: #1d2939;
   scrollbar-color: $border-secondary $surface-primary;
 }
 
-.v-theme--gapitDark .text-link-active {
+.v-theme--gapitDark .text-link-active,
+.v-theme--gapitDark .text-link-active .material-icons {
   color: $link-active;
 }
 
@@ -63,9 +65,38 @@ $severity-color: #1d2939;
 }
 
 .v-theme--gapitDark .dialog-card {
-  background-color: $surface-secondary-alt;
+  background-color: $surface-secondary-alt !important;
 }
 
+.v-theme--gapitDark .v-calendar-daily {
+  background-color: $surface-tertiary;
+}
+
+.v-theme--gapitDark .v-calendar-weekly,
+.v-theme--gapitDark .v-calendar-daily_head-day,
+.v-theme--gapitDark .v-calendar-daily__intervals-head,
+.v-theme--gapitDark .v-calendar-daily__interval {
+  background-color: $surface-primary;
+}
+
+.v-theme--gapitDark .calendar-selector {
+  border-color: $border-secondary;
+}
+
+.v-theme--gapitDark .calendar-selector .v-btn {
+  color: $link-active;
+}
+
+.v-theme--gapitDark .v-calendar-weekly .v-calendar-weekly__day.v-outside,
+.v-theme--gapitDark .v-calendar-weekly .v-calendar-weekly__head-weekday.v-outside {
+  background-color: $surface-tertiary !important;
+  margin-right: 0px !important;
+}
+
+.v-theme--gapitDark .v-calendar-weekly .v-calendar-weekly__day.v-outside {
+  border-right-color: $border-primary;
+  border-bottom-color: $border-primary;
+}
 .v-theme--gapitDark .dialog-card-actions {
   border-color: $border-primary;
 }
@@ -90,6 +121,11 @@ $severity-color: #1d2939;
 
 .v-theme--gapitDark .bg-primary-600 {
   background-color: $primary-600 !important;
+  color: white !important;
+}
+
+.v-theme--gapitDark .bg-heatmap-5 {
+  background-color: $heatmap-5 !important;
   color: white !important;
 }
 
@@ -155,19 +191,24 @@ $severity-color: #1d2939;
 .v-theme--gapitDark .severity.critical {
   background-color: $critical-color;
 }
-.v-theme--gapitDark .severity.major {
+.v-theme--gapitDark .severity.major,
+.v-theme--gapitDark .bg-major {
   background-color: $major-color;
 }
-.v-theme--gapitDark .severity.normal {
+.v-theme--gapitDark .severity.normal,
+.v-theme--gapitDark .bg-normal {
   background-color: $normal-color;
 }
-.v-theme--gapitDark .severity.warning {
+.v-theme--gapitDark .severity.warning,
+.v-theme--gapitDark .bg-warning {
   background-color: $warning-color;
 }
-.v-theme--gapitDark .severity.minor {
+.v-theme--gapitDark .severity.minor,
+.v-theme--gapitDark .bg-minor {
   background-color: $minor-color;
 }
-.v-theme--gapitDark .severity.informational {
+.v-theme--gapitDark .severity.informational,
+.v-theme--gapitDark .bg-informational {
   background-color: $informational-color;
 }
 .v-theme--gapitDark .severity.ack {
@@ -180,22 +221,26 @@ $severity-color: #1d2939;
 .v-theme--gapitDark .chip.critical {
   background-color: $critical-chip-color;
 }
-.v-theme--gapitDark .chip.major {
+.v-theme--gapitDark .chip.major,
+.v-theme--gapitDark .bg-chip-major {
   background-color: $major-chip-color;
 }
-.v-theme--gapitDark .chip.normal {
+.v-theme--gapitDark .chip.normal,
+.v-theme--gapitDark .bg-normal-chip {
   background-color: $normal-chip-color;
 }
 .v-theme--gapitDark .chip.warning {
   background-color: $warning-chip-color;
   color: #000000 !important;
 }
-.v-theme--gapitDark .chip.minor {
+.v-theme--gapitDark .chip.minor,
+.v-theme--gapitDark .bg-chip-minor {
   background-color: $minor-chip-color;
   color: #000000 !important;
 }
 
-.v-theme--gapitDark .chip.informational {
+.v-theme--gapitDark .chip.informational,
+.v-theme--gapitDark .bg-chip-informational {
   background-color: $informational-chip-color;
 }
 

@@ -1,9 +1,7 @@
 <template>
-  <confirm ref="confirm" />
   <h1>
     {{ t('OnCall') }}
     <information-dialog :title="t('OnCall')" :info="[{title: '', info: t('OnCallInfo')}]" />
-
     <v-btn
       perms="write:oncalls"
       prepend-icon="add"
@@ -14,86 +12,53 @@
     />
     <on-call-add :dialog="dialog" :item="selectedItem" @close="close" />
   </h1>
-
-  <v-data-table-server
-    v-model:sort-by="pagination.sortBy"
-    v-model:items-per-page="pagination.itemsPerPage"
-    class="table"
-    :headers="computedHeaders"
-    :items="items"
-    style="max-height: calc(100vh - calc(64px + 74px))"
-    :items-length="pagination.totalItems ?? 0"
-    :items-per-page-options="pagination.itemsPerPageOptions"
-    :row-props="{class: 'bg-surface-tertiary table-row'}"
-    :cell-props="{class: 'table-column'}"
-    sort-desc-icon="arrow_drop_down"
-    sort-asc-icon="arrow_drop_up"
-    @update:options="setPagination"
-  >
-    <template v-for="desc in ['repeatDays', 'repeatWeeks', 'repeatMonths']" #[`item.${desc}`]="{item}">
-      {{ item[desc as 'repeatDays']?.join(', ') ?? '' }}
+  <v-row align="center">
+    <v-col cols="auto">
+      <g-switch v-model="showCalendar" :label="t('CalendarView')" style="padding-left: 16px" />
+    </v-col>
+    <template v-if="showCalendar">
+      <v-col cols="auto">
+        <v-row class="calendar-selector" :class="calendarType" no-gutters>
+          <v-col cols="auto" style="text-align: center">
+            <v-btn
+              class="text-link-active"
+              variant="text"
+              icon="arrow_back"
+              @click="() => calendar?.moveCalendarPage(true)"
+            />
+          </v-col>
+          <v-col align-self="center" style="text-align: center">
+            <span style="padding: 0"> {{ calendarHeading() }} </span>
+          </v-col>
+          <v-col cols="auto" style="text-align: center">
+            <v-btn
+              class="text-link-active"
+              variant="text"
+              icon="arrow_forward"
+              @click="() => calendar?.moveCalendarPage(false)"
+            />
+          </v-col>
+        </v-row>
+      </v-col>
+      <v-col cols="auto">
+        <v-btn @click="() => (calendarType = 'week')" :color="calendarType == 'week' ? 'primary-600' : 'heatmap-5'">
+          {{ t('Weekly') }}
+        </v-btn>
+        <v-btn @click="() => (calendarType = 'month')" :color="calendarType == 'month' ? 'primary-600' : 'heatmap-5'">
+          {{ t('Monthly') }}
+        </v-btn>
+      </v-col>
     </template>
-    <template #[`item.usersEmails`]="{item}">
-      <v-chip
-        v-for="email in item.usersEmails.filter(e => emails[e] !== undefined)"
-        :key="email"
-        class="chip"
-        size="x-small"
-        variant="flat"
-        :text="emails[email]"
-      />
-      <v-chip
-        v-for="email in item.usersEmails.filter(e => emails[e] === undefined)"
-        :key="email"
-        class="chip critical"
-        size="x-small"
-        variant="flat"
-        :text="email"
-      />
-    </template>
-    <template #[`item.groupIds`]="{item}">
-      {{ getGroupNames(item.groupIds).join(', ') }}
-    </template>
-    <template v-for="desc in ['startTime', 'endTime']" #[`item.${desc}`]="{item}">
-      {{
-        item[desc as 'startTime' | 'endTime'] ? filters.hhmmUtcToLocal(item[desc as 'startTime' | 'endTime']!) : null
-      }}
-    </template>
-    <template #[`item.actions`]="{item}">
-      <v-btn
-        v-has-perms.disable="'write:on_calls'"
-        icon="edit"
-        density="compact"
-        variant="text"
-        @click="editItem(item)"
-      />
-      <v-btn
-        v-has-perms.disable="'write:on_calls'"
-        icon="content_copy"
-        density="compact"
-        variant="text"
-        @click="copyItem(item)"
-      />
-      <v-btn
-        v-has-perms.disable="'write:on_calls'"
-        icon="delete"
-        density="compact"
-        variant="text"
-        @click="deleteItem(item)"
-      />
-    </template>
-  </v-data-table-server>
+  </v-row>
+  <on-call-calendar v-if="showCalendar" v-model="calendarInfo" v-model:calendar-type="calendarType" ref="calendar" />
+  <on-call-list @open="open" v-if="!showCalendar" />
 </template>
 
 <script lang="ts" setup>
-import Confirm from '@/components/dialogs/Confirm.vue'
-import {useFilters} from '@/filters'
-import type {Store} from '@/plugins/store/types'
-import type {Pagination} from '@/plugins/store/types/alerts-types'
-import type {OnCall} from '@/plugins/store/types/onCall-types'
-import {computed, ref, watch} from 'vue'
+import OnCallCalendar from '@/components/OnCallCalendar.vue'
+import type {OnCall, OnCallAdd} from '@/plugins/store/types/onCall-types'
+import {ref} from 'vue'
 import {useI18n} from 'vue-i18n'
-import {useStore} from 'vuex'
 
 definePage({
   meta: {
@@ -103,82 +68,17 @@ definePage({
 })
 
 const {t} = useI18n()
-const store: Store = useStore()
-const filters = useFilters()
 
-const confirm = ref<InstanceType<typeof Confirm> | null>(null)
 const dialog = ref(false)
-const selectedItem = ref<OnCall | null>(null)
+const calendar = ref<null | typeof OnCallCalendar>(null)
+const selectedItem = ref<OnCall | OnCallAdd | null>(null)
+const showCalendar = ref(false)
+const calendarType = ref<'week' | 'month'>('month')
+const calendarInfo = ref<{start?: string; end?: string; title?: string}>({})
 
-const headers = ref<{title: string; key: keyof OnCall | 'actions'; info?: string | string[]; align?: 'end'}[]>([
-  {title: t('Users'), key: 'usersEmails'},
-  {title: t('Groups'), key: 'groupIds'},
-  {title: t('Start'), key: 'startTime'},
-  {title: t('End'), key: 'endTime'},
-  {title: t('StartDate'), key: 'startDate'},
-  {title: t('EndDate'), key: 'endDate'},
-  {title: t('Days'), key: 'repeatDays'},
-  {title: t('Weeks'), key: 'repeatWeeks'},
-  {title: t('Months'), key: 'repeatMonths'},
-  {title: t('Actions'), key: 'actions', align: 'end'}
-])
-const items = computed(() => store.state.onCalls.items)
-const computedHeaders = computed(() =>
-  headers.value.filter(h => (store.state.config.customer_views ? true : h.key != 'customer'))
-)
-const emails = computed(() => Object.fromEntries(store.state.users.emails.map(e => [e.email, e.name])))
-
-const pagination = computed({
-  get: () => store.getters['onCalls/pagination'],
-  set: value => store.dispatch('onCalls/setPagination', value)
-})
-
-const refresh = computed(() => store.state.refresh)
-
-watch(refresh, val => {
-  if (!val) return
-  getItems()
-})
-
-function getItems() {
-  store.dispatch('onCalls/getOnCalls')
-}
-
-function setPagination(value: Pagination) {
-  store.dispatch('onCalls/setPagination', value)
-  getItems()
-}
-
-function getEmails() {
-  store.dispatch('users/getEmails')
-}
-
-function getGroups() {
-  store.dispatch('notificationGroups/getNotificationGroups')
-}
-
-async function deleteItem(item: OnCall) {
-  confirm.value && (await confirm.value.open(t('ConfirmDelete'))) && store.dispatch('onCalls/deleteOnCall', item.id!)
-  getItems()
-}
-
-function editItem(item: OnCall) {
-  selectedItem.value = item
+function open(item?: OnCallAdd) {
+  selectedItem.value = item ?? null
   dialog.value = true
-}
-
-function copyItem(item: OnCall) {
-  selectedItem.value = {...item, id: undefined}
-  dialog.value = true
-}
-
-function getGroupNames(ids: string[]) {
-  return ids.map(id => getGroupName(id))
-}
-
-function getGroupName(id: string) {
-  const group = store.state.notificationGroups.items.find(u => u.id == id)
-  return group?.name ?? id
 }
 
 function close() {
@@ -186,7 +86,15 @@ function close() {
   selectedItem.value = null
 }
 
-getItems()
-getEmails()
-getGroups()
+const calendarHeading = () => {
+  const info = calendarInfo.value
+  if (calendarType.value == 'month') return info.title
+  const [, , start] = info.start?.split('-') ?? []
+  const [, , end] = info.end?.split('-') ?? []
+  if (info.title?.includes(' - ')) {
+    const [startTitle, endTitle] = info.title.split(' - ')
+    return `${start}. ${startTitle} - ${end}. ${endTitle}`
+  }
+  return `${start}. - ${end}. ${info.title}`
+}
 </script>
