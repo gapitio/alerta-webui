@@ -6,18 +6,20 @@ export type OnCall = {
   endDate: string | null
   endTime: string | null
   groupIds: string[]
-  href?: string
-  id?: string
+  href: string
+  id: string
   repeatDays: string[]
   repeatMonths: string[]
   repeatType?: 'list'
   repeatWeeks: number[]
   startDate: string | null
   startTime: string | null
+  offset: number
   user?: string
   usersEmails: string[]
 }
 
+export type OnCallAdd = Omit<OnCall, 'id' | 'href' | 'offset'>
 export interface State {
   isLoading: boolean
   items: OnCall[]
@@ -36,8 +38,8 @@ type AugmentedActionContext = ActionContext<Mutations, Actions, State>
 
 export type Actions = {
   getOnCalls({commit, state}: AugmentedActionContext): void
-  createOnCall({dispatch}: AugmentedActionContext, onCall: OnCall): void
-  updateOnCall({dispatch}: AugmentedActionContext, [id, update]: [string, OnCall]): void
+  createOnCall({dispatch}: AugmentedActionContext, onCall: OnCallAdd): void
+  updateOnCall({dispatch}: AugmentedActionContext, [id, update]: [string, Omit<OnCallAdd, 'id'>]): void
   deleteOnCall({dispatch}: AugmentedActionContext, id: string): void
   setPagination({commit}: AugmentedActionContext, status: Pagination): void
 }

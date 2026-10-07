@@ -343,6 +343,8 @@ export const en = {
   NewOnCall: 'Add On Call',
   AddOnCall: 'Add On Call',
   EditOnCall: 'Edit On Call',
+  ShowCalendar: 'Show Calendar',
+  Offset: 'Offset',
   DelayTime: 'Delay Time',
   DelayTimeInfo:
     'Time to delay before sending SMS/Email. If the alert changes status or severity, then the delayed notification is canceled',

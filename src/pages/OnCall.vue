@@ -3,7 +3,7 @@
   <h1>
     {{ t('OnCall') }}
     <information-dialog :title="t('OnCall')" :info="[{title: '', info: t('OnCallInfo')}]" />
-
+    <oncall-calendar-view />
     <v-btn
       perms="write:oncalls"
       prepend-icon="add"
@@ -90,7 +90,7 @@ import Confirm from '@/components/dialogs/Confirm.vue'
 import {useFilters} from '@/filters'
 import type {Store} from '@/plugins/store/types'
 import type {Pagination} from '@/plugins/store/types/alerts-types'
-import type {OnCall} from '@/plugins/store/types/onCall-types'
+import type {OnCall, OnCallAdd} from '@/plugins/store/types/onCall-types'
 import {computed, ref, watch} from 'vue'
 import {useI18n} from 'vue-i18n'
 import {useStore} from 'vuex'
@@ -108,7 +108,7 @@ const filters = useFilters()
 
 const confirm = ref<InstanceType<typeof Confirm> | null>(null)
 const dialog = ref(false)
-const selectedItem = ref<OnCall | null>(null)
+const selectedItem = ref<OnCall | OnCallAdd | null>(null)
 
 const headers = ref<{title: string; key: keyof OnCall | 'actions'; info?: string | string[]; align?: 'end'}[]>([
   {title: t('Users'), key: 'usersEmails'},
@@ -168,7 +168,7 @@ function editItem(item: OnCall) {
 }
 
 function copyItem(item: OnCall) {
-  selectedItem.value = {...item, id: undefined}
+  selectedItem.value = {...item, id: undefined} as OnCallAdd
   dialog.value = true
 }
 

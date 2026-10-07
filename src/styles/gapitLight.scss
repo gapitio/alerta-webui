@@ -64,7 +64,12 @@ $severity-color: #f2f4f7;
 }
 
 .v-theme--gapitLight .dialog-card {
-  background-color: $surface-secondary-alt;
+  background-color: $surface-secondary-alt !important;
+}
+
+.v-theme--gapitLight .v-calendar-weekly .v-calendar-weekly__day.v-outside,
+.v-theme--gapitLight .v-calendar-weekly .v-calendar-weekly__head-weekday.v-outside {
+  background-color: $surface-secondary-alt !important;
 }
 
 .v-theme--gapitLight .dialog-card-actions {
@@ -156,19 +161,24 @@ $severity-color: #f2f4f7;
 .v-theme--gapitLight .severity.critical {
   background-color: $critical-color;
 }
-.v-theme--gapitLight .severity.major {
+.v-theme--gapitLight .severity.major,
+.v-theme--gapitLight .bg-major {
   background-color: $major-color;
 }
-.v-theme--gapitLight .severity.normal {
+.v-theme--gapitLight .severity.normal,
+.v-theme--gapitLight .bg-normal {
   background-color: $normal-color;
 }
-.v-theme--gapitLight .severity.warning {
+.v-theme--gapitLight .severity.warning,
+.v-theme--gapitLight .bg-warning {
   background-color: $warning-color;
 }
-.v-theme--gapitLight .severity.minor {
+.v-theme--gapitLight .severity.minor,
+.v-theme--gapitLight .bg-minor {
   background-color: $minor-color;
 }
-.v-theme--gapitLight .severity.informational {
+.v-theme--gapitLight .severity.informational,
+.v-theme--gapitLight .bg-informational {
   background-color: $informational-color;
 }
 .v-theme--gapitLight .severity.ack {
@@ -181,21 +191,25 @@ $severity-color: #f2f4f7;
 .v-theme--gapitLight .chip.critical {
   background-color: $critical-chip-color;
 }
-.v-theme--gapitLight .chip.major {
+.v-theme--gapitLight .chip.major,
+.v-theme--gapitLight .bg-chip-major {
   background-color: $major-chip-color;
 }
-.v-theme--gapitLight .chip.normal {
+.v-theme--gapitLight .chip.normal,
+.v-theme--gapitLight .bg-normal-chip {
   background-color: $normal-chip-color;
 }
 .v-theme--gapitLight .chip.warning {
   background-color: $warning-chip-color;
   color: #000000;
 }
-.v-theme--gapitLight .chip.minor {
+.v-theme--gapitLight .chip.minor,
+.v-theme--gapitLight .bg-chip-minor {
   background-color: $minor-chip-color;
   color: #000000;
 }
-.v-theme--gapitLight .chip.informational {
+.v-theme--gapitLight .chip.informational,
+.v-theme--gapitLight .bg-chip-informational {
   background-color: $informational-chip-color;
 }
 
