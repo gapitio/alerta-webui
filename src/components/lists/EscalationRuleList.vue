@@ -16,7 +16,6 @@
           v-has-perms="'write:escalation_rules'"
           prepend-icon="add"
           class="no-cap-btn bg-primary-600"
-          color=""
           style="position: absolute; right: 10px"
           :text="t('AddEscalationRule')"
           @click="newDialog = true"

@@ -94,6 +94,10 @@ $severity-color: #f2f4f7;
   color: white !important;
 }
 
+.v-theme--gapitLight .bg-primary-600 .material-icons {
+  color: white;
+}
+
 .v-theme--gapitLight .g-input .v-input__control,
 .v-theme--gapitLight .v-list,
 .v-theme--gapitLight .toolbar,
