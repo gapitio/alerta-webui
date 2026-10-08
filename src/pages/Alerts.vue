@@ -196,6 +196,7 @@ function clearSelected() {
 }
 
 function haveDeleteScope() {
+  if (!store.getters.getConfig('auth_required')) return true
   const scopes = store.getters['auth/scopes']
   const config = store.state.config
   if (config.delete_alert_scope_enforced) {
