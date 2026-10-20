@@ -107,7 +107,7 @@ import {useStore} from 'vuex'
 import {useI18n} from 'vue-i18n'
 import type {Store} from '@/plugins/store/types'
 import type {VForm} from 'vuetify/components'
-import type {OnCall} from '@/plugins/store/types/onCall-types'
+import type {OnCall, OnCallAdd} from '@/plugins/store/types/onCall-types'
 import {useFilters} from '@/filters'
 import Confirm from '../Confirm.vue'
 
@@ -120,14 +120,14 @@ const rules = {
 const filters = useFilters()
 
 const props = defineProps<{
-  item: OnCall | undefined
+  item: OnCallAdd | undefined
   dialog: boolean
 }>()
 
 const emit = defineEmits(['close'])
 const confirm = ref<InstanceType<typeof Confirm> | null>(null)
 
-const defaultItem: OnCall = {
+const defaultItem: OnCallAdd = {
   usersEmails: [],
   groupIds: [],
   startTime: null,
@@ -140,12 +140,12 @@ const defaultItem: OnCall = {
 }
 
 const form = ref<VForm | null>(null)
-const editedItem = ref<OnCall & {period: {start: string | null; end: string | null}}>({
+const editedItem = ref<(OnCallAdd | OnCall) & {period: {start: string | null; end: string | null}}>({
   ...defaultItem,
   period: {start: null, end: null}
 })
 
-const valueStart = ref<OnCall & {period: {start: string | null; end: string | null}}>({
+const valueStart = ref<OnCallAdd & {period: {start: string | null; end: string | null}}>({
   ...defaultItem,
   period: {start: null, end: null}
 })
@@ -163,7 +163,7 @@ const selectEven = () =>
 
 const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
-const formTitle = computed(() => (props.item?.id !== undefined ? t('EditOnCall') : t('NewOnCall')))
+const formTitle = computed(() => (props.item && isOnCall(props.item) ? t('EditOnCall') : t('NewOnCall')))
 const emails = computed(() => store.state.users.emails)
 const groups = computed(() => store.state.notificationGroups.items)
 const times = computed(() =>
@@ -205,7 +205,7 @@ watch(dialog, val => {
       valueStart.value = JSON.parse(JSON.stringify(obj))
     } else {
       const obj = {
-        ...(JSON.parse(JSON.stringify(defaultItem)) as OnCall),
+        ...(JSON.parse(JSON.stringify(defaultItem)) as OnCallAdd),
         period: {start: null, end: null}
       }
       editedItem.value = obj
@@ -214,17 +214,21 @@ watch(dialog, val => {
   }
 })
 
+function isOnCall(item: OnCall | OnCallAdd): item is OnCall {
+  return (item as OnCall).id !== undefined && (item as OnCall).id !== null
+}
+
 async function save() {
   const endTime =
     typeof editedItem.value.period.end == 'string' ? filters.hhmmLocalToUtc(editedItem.value.period.end) : null
   const startTime =
     typeof editedItem.value.period.start == 'string' ? filters.hhmmLocalToUtc(editedItem.value.period.start) : null
-  if (editedItem.value.id) {
+  if (isOnCall(editedItem.value)) {
+    const {id, ...update} = editedItem.value
     await store.dispatch('onCalls/updateOnCall', [
-      editedItem.value.id,
+      id,
       {
-        ...editedItem.value,
-        id: undefined,
+        ...update,
         endTime: endTime,
         startTime: startTime
       }

@@ -57,6 +57,7 @@ declare module 'vue' {
     NotificationSendDiag: typeof import('./src/components/dialogs/NotificationSendDiag.vue')['default']
     NotificationSendFilter: typeof import('./src/components/dialogs/filters/NotificationSendFilter.vue')['default']
     OnCallAdd: typeof import('./src/components/dialogs/add/OnCallAdd.vue')['default']
+    OncallCalendarView: typeof import('./src/components/dialogs/OncallCalendarView.vue')['default']
     PermAdd: typeof import('./src/components/dialogs/add/PermAdd.vue')['default']
     PermsFilter: typeof import('./src/components/dialogs/filters/PermsFilter.vue')['default']
     ProfileInfo: typeof import('./src/components/auth/ProfileInfo.vue')['default']
