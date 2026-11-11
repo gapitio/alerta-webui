@@ -45,7 +45,7 @@
       </div>
     </template>
     <template #[`item.status`]="{item}">
-      <div class="chip">
+      <div class="chip" style="display: inline-block">
         {{ item.status }}
       </div>
       <v-tooltip v-if="lastNote(item)" location="bottom" :text="lastNote(item)">
