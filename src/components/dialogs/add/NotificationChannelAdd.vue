@@ -220,10 +220,11 @@ watch(dialog, val => {
 
 async function save() {
   if (edit.value) {
+    const {id, ...update} = editedItem.value
     await store.dispatch('notificationChannels/updateNotificationChannel', [
-      editedItem.value.id,
+      id,
       {
-        ...editedItem.value
+        ...update
       }
     ])
   } else {
