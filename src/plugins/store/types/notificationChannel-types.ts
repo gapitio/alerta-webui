@@ -19,7 +19,7 @@ export type NotificationChannel = {
   platformId?: string
   sender: string
   type: NotificationChannelType
-  verify: boolean | null
+  verify: string | null
 }
 
 export type Filter = {
@@ -68,7 +68,7 @@ export type Actions = {
   createNotificationChannel({dispatch}: AugmentedActionContext, notificationChannel: NotificationChannel): void
   updateNotificationChannel(
     {dispatch}: AugmentedActionContext,
-    [notificationChannelId, update]: [string, NotificationChannel]
+    [notificationChannelId, update]: [string, Omit<NotificationChannel, 'id'>]
   ): void
   deleteNotificationChannel({dispatch}: AugmentedActionContext, notificationChannelId: NotificationChannel['id']): void
   setPagination({commit}: AugmentedActionContext, pagination: Pagination): void

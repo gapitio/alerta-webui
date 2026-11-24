@@ -89,7 +89,10 @@
               />
             </v-col>
             <v-col cols="3" class="pb-0" style="position: relative; top: 11px" align-self="center">
-              <g-checkbox v-model="editedItem.verify" :label="t('Verify')" />
+              <g-checkbox v-model="verify" :label="t('Verify')" :true-value="null" false-value="false" />
+            </v-col>
+            <v-col cols="12" v-if="verify === null">
+              <g-text-field v-model="verifyText" show-header :label="t('CAPath')" :hint="t('CAPathInfo')" />
             </v-col>
           </v-row>
         </v-card-text>
@@ -162,6 +165,16 @@ const labels = {
   my_link: {token: t('ClientSecret'), sid: t('ClientID')}
 }
 
+const verify = computed<'false' | null>({
+  get: () => (editedItem.value.verify?.toLowerCase() === 'false' ? 'false' : null),
+  set: val => (editedItem.value.verify = val)
+})
+
+const verifyText = computed({
+  get: () => (editedItem.value.verify?.toLowerCase() === 'false' ? null : editedItem.value.verify),
+  set: (val: string) => (editedItem.value.verify = val === '' ? null : val)
+})
+
 const edit = ref(false)
 const showPlatformId = ref(false)
 
@@ -207,10 +220,11 @@ watch(dialog, val => {
 
 async function save() {
   if (edit.value) {
+    const {id, ...update} = editedItem.value
     await store.dispatch('notificationChannels/updateNotificationChannel', [
-      editedItem.value.id,
+      id,
       {
-        ...editedItem.value
+        ...update
       }
     ])
   } else {
