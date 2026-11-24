@@ -8,6 +8,7 @@ export type NotificationChannelType =
   | 'twilio_call'
   | 'link_mobility_xml'
   | 'my_link'
+  | 'sms_eagle'
 
 export type NotificationChannel = {
   customer?: string | null

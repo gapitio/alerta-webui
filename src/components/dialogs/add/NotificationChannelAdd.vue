@@ -23,7 +23,7 @@
                 :label="t('Name')"
               />
             </v-col>
-            <v-col cols="12" class="pb-0">
+            <v-col cols="12" class="pb-0" v-if="editedItem.type !== 'sms_eagle'">
               <g-text-field
                 v-model="editedItem.sender"
                 show-details
@@ -40,7 +40,7 @@
               <g-select v-model="editedItem.type" show-details show-header :items="types" :label="t('Type')" />
             </v-col>
             <v-col cols="12" v-if="editedItem.type.includes('twilio')">
-              <g-checkbox :label="t('UseAPIKey')" v-model="showPlatformId"></g-checkbox>
+              <g-checkbox :label="t('UseAPIKey')" v-model="showPlatformId" />
             </v-col>
             <v-col cols="12" class="pb-0" v-if="editedItem.type.includes('twilio') && showPlatformId">
               <g-text-field
@@ -55,7 +55,7 @@
 
             <v-col cols="12" class="pb-0">
               <g-text-field
-                v-if="editedItem.type !== 'sendgrid'"
+                v-if="editedItem.type !== 'sendgrid' && editedItem.type !== 'sms_eagle'"
                 v-model="editedItem.apiSid"
                 show-details
                 show-header
@@ -77,7 +77,7 @@
               />
             </v-col>
           </v-row>
-          <v-row v-if="['link_mobility_xml', 'smtp'].includes(editedItem.type)">
+          <v-row v-if="['link_mobility_xml', 'smtp', 'sms_eagle'].includes(editedItem.type)">
             <v-col cols="9" class="pb-0">
               <g-text-field
                 v-model="editedItem.host"
@@ -145,7 +145,8 @@ const types: {title: string; value: NotificationChannelType}[] = [
   {title: 'twilio (sms)', value: 'twilio_sms'},
   {title: 'twilio (call + sms)', value: 'twilio_call'},
   {title: 'link moblity xml (sms)', value: 'link_mobility_xml'},
-  {title: 'my link (sms)', value: 'my_link'}
+  {title: 'my link (sms)', value: 'my_link'},
+  {title: 'sms eagle (sms)', value: 'sms_eagle'}
 ]
 
 const defaultItem: NotificationChannel = {
@@ -162,7 +163,8 @@ const labels = {
   link_mobility_xml: {token: t('Password'), sid: t('Username')},
   twilio_call: {token: t('ApiToken'), sid: t('ApiSid')},
   twilio_sms: {token: t('ApiToken'), sid: t('ApiSid')},
-  my_link: {token: t('ClientSecret'), sid: t('ClientID')}
+  my_link: {token: t('ClientSecret'), sid: t('ClientID')},
+  sms_eagle: {token: t('AuthToken')}
 }
 
 const verify = computed<'false' | null>({
