@@ -19,7 +19,7 @@ export type NotificationChannel = {
   platformId?: string
   sender: string
   type: NotificationChannelType
-  verify: boolean | null
+  verify: string | null
 }
 
 export type Filter = {
