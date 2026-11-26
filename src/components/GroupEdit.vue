@@ -26,6 +26,15 @@
             chips
             multiple
           />
+          <g-combobox
+            v-else-if="setup?.type == 'combo'"
+            v-model="model![index][key]"
+            show-header
+            :items="setup?.items"
+            :label="setup?.label"
+            chips
+            multiple
+          />
           <g-textarea v-else v-model="item.text" show-header :rows="1" :label="setup?.label" />
         </v-col>
       </v-row>
@@ -51,6 +60,8 @@ const model = defineModel<{[key: string]: string | string[]}[]>()
 const props = defineProps<{items: {[key: string]: Item}; header: string}>()
 
 function getNewItem() {
-  return Object.fromEntries(Object.keys(props.items).map(key => [key, props.items[key].type == 'select' ? [] : '']))
+  return Object.fromEntries(
+    Object.keys(props.items).map(key => [key, ['select', 'combo'].includes(props.items[key].type) ? [] : ''])
+  )
 }
 </script>

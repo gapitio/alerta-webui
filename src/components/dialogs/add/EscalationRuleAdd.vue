@@ -239,8 +239,8 @@ const currentTags = computed(() => store.getters['alerts/tags'])
 const severities = computed(() => Object.keys(store.getters.getConfig('alarm_model').severity))
 const statuses = computed(() => Object.keys(store.getters.getConfig('alarm_model').status))
 const tagItems = computed(() => ({
-  all: {label: t('AND'), items: currentTags.value, type: 'select'},
-  any: {label: t('OR'), items: currentTags.value, type: 'select'}
+  all: {label: t('AND'), items: currentTags.value, type: 'combo'},
+  any: {label: t('OR'), items: currentTags.value, type: 'combo'}
 }))
 const triggerItems = computed(() => ({
   from_severity: {label: t('PreviousSeverity'), items: severities.value, type: 'select'},
