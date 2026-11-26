@@ -81,7 +81,8 @@ const types: NotificationChannelType[] = [
   'twilio_sms',
   'twilio_call',
   'link_mobility_xml',
-  'my_link'
+  'my_link',
+  'sms_eagle'
 ]
 const filter = computed({
   get: () => store.state.notificationChannels.filter,
