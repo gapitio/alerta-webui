@@ -111,6 +111,22 @@ td {
   overflow-x: hidden;
   text-overflow: ellipsis;
 }
+.calendar-selector {
+  border: 1px solid;
+  border-radius: 4px;
+  height: 36px;
+  width: 300px;
+  font-size: 16px;
+}
+
+.calendar-selector.week {
+  width: 350px;
+}
+
+.calendar-selector .v-btn {
+  height: 36px;
+  width: 36px;
+}
 
 .no-cap-btn {
   text-transform: none;

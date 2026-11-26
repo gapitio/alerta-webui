@@ -68,12 +68,12 @@ const actions: Actions & ActionTree<State, RootState> = {
       })
   },
   createOnCall({dispatch}, notificationrule) {
-    return OnCallApi.createOnCall(notificationrule).then(() => {
+    return OnCallApi.createOnCall({...notificationrule, offset: new Date().getTimezoneOffset() * -1}).then(() => {
       dispatch('getOnCalls')
     })
   },
   updateOnCall({dispatch}, [onCallId, update]) {
-    return OnCallApi.updateOnCall(onCallId, update).then(() => {
+    return OnCallApi.updateOnCall(onCallId, {...update, offset: new Date().getTimezoneOffset() * -1}).then(() => {
       dispatch('getOnCalls')
     })
   },
